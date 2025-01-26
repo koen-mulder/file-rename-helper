@@ -21,13 +21,13 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     //implementation(libs.guava)
     
-    //implementation("org.apache.pdfbox:pdfbox:3.0.0")
+    implementation("org.apache.pdfbox:pdfbox:3.0.0")
     
-    //implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
-    //implementation("com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0")
+    implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
+    implementation("com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0")
 
     // Optional for you ; just to avoid the same error with JBIG2 images
-    //implementation("org.apache.pdfbox:jbig2-imageio:3.0.0")
+    implementation("org.apache.pdfbox:jbig2-imageio:3.0.0")
     
 }
 
