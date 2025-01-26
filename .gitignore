@@ -1,6 +1,11 @@
 # Eclipse
 /.classpath
 .project
+/.settings/
+
+# 
+/.gradle/
 
 # Compiled files
 /bin/
+/build/
