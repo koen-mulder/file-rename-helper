@@ -2,22 +2,14 @@ package main.java;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
-
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
-
 
 public class FileDisplayPanel extends JPanel {
 
@@ -75,18 +67,6 @@ public class FileDisplayPanel extends JPanel {
 				if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     filenameField.setText(selectedFile.getName());
-                    
-                    try {
-						PDDocument doc = Loader.loadPDF(selectedFile);
-						PDFRenderer renderer = new PDFRenderer(doc);
-//						renderer.setSubsamplingAllowed(true);
-//						BufferedImage image = renderer.renderImageWithDPI(0, 100);
-						BufferedImage image = renderer.renderImage(0);
-						picLabel.setIcon(new ImageIcon(image));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
                 }
 			}
 		});
