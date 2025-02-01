@@ -19,7 +19,16 @@ dependencies {
     //api(libs.commons.math3)
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    //implementation(libs.guava)
+    implementation(libs.guava)
+    
+
+    // PDF viewer    
+    implementation("com.github.pcorless.icepdf:icepdf-core:7.2.3")
+    implementation("com.github.pcorless.icepdf:icepdf-viewer:7.2.3")
+    implementation("com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0")
+    //implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
+    //implementation("org.apache.pdfbox:jbig2-imageio:3.0.0")
+        
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
