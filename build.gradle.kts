@@ -21,7 +21,6 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation(libs.guava)
     
-
     // PDF viewer    
     implementation("com.github.pcorless.icepdf:icepdf-core:7.2.3")
     implementation("com.github.pcorless.icepdf:icepdf-viewer:7.2.3")
@@ -35,6 +34,9 @@ dependencies {
 
     // SLF4J binding for Log4j2 (optional, if you want to use SLF4J with Log4j2)
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.24.3")
+    
+    // JSON for parsing configuration
+    implementation("com.google.code.gson:gson:2.12.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
