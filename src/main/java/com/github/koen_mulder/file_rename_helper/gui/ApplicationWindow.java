@@ -1,4 +1,4 @@
-package main.java;
+package com.github.koen_mulder.file_rename_helper.gui;
 
 import java.awt.BorderLayout;
 
@@ -55,7 +55,7 @@ public class ApplicationWindow {
         tabbedPane.addTab("Configuration", null, configurationTabPanel, null);
     }
 
-    protected void setVisible(boolean visible) {
+    public void setVisible(boolean visible) {
         this.frame.setVisible(visible);
     }
 

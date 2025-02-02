@@ -1,15 +1,17 @@
 /**
  * 
  */
-package main.java;
+package com.github.koen_mulder.file_rename_helper.application;
 
 import java.awt.EventQueue;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.koen_mulder.file_rename_helper.gui.ApplicationWindow;
 
 
 public class Application {

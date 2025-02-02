@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main.java.interfaces;
+package com.github.koen_mulder.file_rename_helper.interfaces;
 
 /**
  * The FileSelectionPublisher interface is implemented by classes that manage 

@@ -1,4 +1,4 @@
-package main.java;
+package com.github.koen_mulder.file_rename_helper.gui;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,7 +9,7 @@ import org.icepdf.ri.common.views.DocumentViewController;
 import org.icepdf.ri.util.FontPropertiesManager;
 import org.icepdf.ri.util.ViewerPropertiesManager;
 
-import main.java.interfaces.FileSelectionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionListener;
 
 public class FileViewPanel extends JPanel implements FileSelectionListener {
 

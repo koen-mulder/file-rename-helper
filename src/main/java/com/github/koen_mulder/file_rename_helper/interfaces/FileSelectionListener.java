@@ -1,7 +1,7 @@
 /**
  * 
  */
-package main.java.interfaces;
+package com.github.koen_mulder.file_rename_helper.interfaces;
 
 /**
  * The FileSelectionListener interface is implemented by components that need to

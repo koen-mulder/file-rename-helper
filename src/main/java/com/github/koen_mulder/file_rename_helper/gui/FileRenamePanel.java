@@ -1,4 +1,4 @@
-package main.java;
+package com.github.koen_mulder.file_rename_helper.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,10 +15,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
+import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
 import com.google.common.collect.Lists;
-
-import main.java.interfaces.FileSelectionListener;
-import main.java.interfaces.FileSelectionPublisher;
 
 public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
 
