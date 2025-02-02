@@ -47,7 +47,7 @@ public class ConfigManager {
     }
 
     // Load configuration from JSON file
-    public synchronized Config loadConfig() {
+    private Config loadConfig() {
         try (FileReader reader = new FileReader(CONFIG_FILE)) {
             Config fromJson = gson.fromJson(reader, Config.class);
             if (fromJson == null) {
