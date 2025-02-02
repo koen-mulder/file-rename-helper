@@ -4,7 +4,7 @@
 - Read Java coding standards
 - Add something like sonar for code quality
 - Add vulnerability scan
-- Add logging
+- ~~Add logging~~
 - See how the program works on another PC and with a different resolution
 - Instruction for adding debug/source libraries for debugging IcePDF and other
   dependencies.
