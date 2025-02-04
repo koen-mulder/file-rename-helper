@@ -9,6 +9,8 @@
 - Instruction for adding debug/source libraries for debugging IcePDF and other
   dependencies.
 - Change (to proper) design patterns
+- Add version numbering
+- Add build script
 
 #Features
 - Annotating in the PDF to focus on certain aspects. Possibly annotating other
