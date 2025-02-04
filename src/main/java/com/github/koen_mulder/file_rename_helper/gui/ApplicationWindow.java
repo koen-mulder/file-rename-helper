@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.koen_mulder.file_rename_helper.config.ConfigManager;
+import com.github.koen_mulder.file_rename_helper.controller.AIController;
 
 public class ApplicationWindow {
 
@@ -29,14 +30,14 @@ public class ApplicationWindow {
     /**
      * Create the application.
      */
-    public ApplicationWindow() {
-        initialize();
+    public ApplicationWindow(AIController aiController) {
+        initialize(aiController);
     }
 
     /**
      * Initialize the contents of the frame.
      */
-    private void initialize() {
+    private void initialize(AIController aiController) {
         ConfigManager configManager = ConfigManager.getInstance();
 
         frame = new JFrame("File rename helper");
@@ -70,12 +71,17 @@ public class ApplicationWindow {
         splitPane.setLeftComponent(fileViewPanel);
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
 
-        FileRenamePanel fileRenamePanel = new FileRenamePanel();
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController);
         fileRenamePanel.addFileSelectionListener(fileViewPanel);
         splitPane.setRightComponent(fileRenamePanel);
 
         JPanel configurationTabPanel = new JPanel();
         tabbedPane.addTab("Configuration", null, configurationTabPanel, null);
+        configurationTabPanel.setLayout(new BorderLayout(0, 0));
+        
+        ConfigurationPanel configurationPanel = new ConfigurationPanel();
+
+        configurationTabPanel.add(configurationPanel, BorderLayout.CENTER);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -93,10 +99,18 @@ public class ApplicationWindow {
 
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
+                if (frame.getExtendedState() == JFrame.ICONIFIED) {
+                    // Don't store window minimized state because we wouldn't want the app to start minimized
+                    return;
+                }
+                
                 if (!frame.getBounds().equals(configManager.getWindowBounds())) {
                     logger.debug("Window resized and new bounds stored in configuration.");
-                    configManager.setWindowBounds(frame.getBounds());
                     configManager.setWindowExtendedState(frame.getExtendedState());
+                    if (frame.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+                        // Don't store window location and size when maximized
+                        configManager.setWindowBounds(frame.getBounds());
+                    }
                 }
             }
         });

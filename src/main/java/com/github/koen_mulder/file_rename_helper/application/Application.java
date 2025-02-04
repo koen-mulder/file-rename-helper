@@ -11,6 +11,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.gui.ApplicationWindow;
 
 
@@ -27,6 +28,9 @@ public class Application {
         // Log messages at various levels
         logger.debug("Main has been called!");
         
+        // Setup controllers
+        AIController aiController = new AIController();
+        
         // Set the look and feel to the system default
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -38,7 +42,7 @@ public class Application {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    ApplicationWindow window = new ApplicationWindow();
+                    ApplicationWindow window = new ApplicationWindow(aiController);
                     window.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

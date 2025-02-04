@@ -34,6 +34,13 @@ dependencies {
     
     // JSON for parsing configuration
     implementation("com.google.code.gson:gson:2.12.1")
+    
+    // LangChain for integration with LLM providers
+    implementation("dev.langchain4j:langchain4j:1.0.0-alpha1")
+    implementation("dev.langchain4j:langchain4j-easy-rag:1.0.0-alpha1")
+    //implementation("dev.langchain4j:langchain4j-embedding-store-inmemory:1.0.0-alpha1")
+    // Ollama integration
+    implementation("dev.langchain4j:langchain4j-ollama:1.0.0-alpha1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

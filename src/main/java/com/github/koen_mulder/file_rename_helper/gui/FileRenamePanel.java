@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -12,9 +13,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
+import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
 import com.google.common.collect.Lists;
@@ -23,10 +28,14 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
 
     private static final long serialVersionUID = 5393373407385885597L;
    
-    private ArrayList<FileSelectionListener> listeners;
+    private ArrayList<FileSelectionListener> listeners = Lists.newArrayList();
+    
+    public AIController aiController;
 
-    public FileRenamePanel() {
-        listeners = Lists.newArrayList();
+    private JTextArea aiConsole;
+
+    public FileRenamePanel(AIController aiController) {
+        this.aiController = aiController;
         
         // Create a file chooser dialog
         JFileChooser fileChooser = new JFileChooser();
@@ -67,17 +76,24 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                     fileNameField.setText(selectedFile.getName());
                     // Now that the GUI is all in place, we can try openning a PDF
                     notifyFileSelectionListeners(selectedFile.getAbsolutePath());
+                    startAIRenameThread(selectedFile.getAbsolutePath());
                 }
             }
         });
         
         JSeparator separator = new JSeparator();
+        
+        aiConsole = new JTextArea();
+        
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup()
                     .addGap(6)
                     .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(groupLayout.createSequentialGroup()
+                            .addComponent(aiConsole)
+                            .addContainerGap())
                         .addGroup(groupLayout.createSequentialGroup()
                             .addComponent(selectFileLabel)
                             .addGap(6)
@@ -99,13 +115,42 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                             .addComponent(fileNameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addComponent(selectFileButton))
                     .addGap(6)
-                    .addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(aiConsole, GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                    .addContainerGap())
         );
         setLayout(groupLayout);
     }
     
-    public void addFileSelectionListener() {
+    protected void startAIRenameThread(String filePath) {
+        SwingWorker<String, Integer> worker = new SwingWorker<>() {
 
+            @Override
+            protected String doInBackground() throws Exception {
+                // TODO Auto-generated method stub
+                String result = aiController.generatePossibleFileNames(filePath);
+                return result;
+            }
+            
+            @Override
+            protected void done() {
+                // this method is called when the background 
+                // thread finishes execution 
+                try { 
+                    String statusMsg = get(); 
+                    aiConsole.setText(statusMsg);
+                } 
+                catch (InterruptedException e) { 
+                    e.printStackTrace(); 
+                } 
+                catch (ExecutionException e) { 
+                    e.printStackTrace(); 
+                } 
+            }
+        };
+        
+        worker.execute();
     }
 
     @Override
