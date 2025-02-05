@@ -21,13 +21,13 @@ import com.google.gson.Gson;
  * thread-safe access to the values.
  * </p>
  */
-public class ConfigManager {
+public class WindowConfigManager {
     // Eagerly initialize the Singleton instance
-    private static final ConfigManager instance = new ConfigManager();
+    private static final WindowConfigManager instance = new WindowConfigManager();
 
     private static final String CONFIG_FILE = "config.json";
 
-    private Config config;
+    private WindowConfig config;
     private Gson gson;
     
     private boolean isConfigChanged = false;
@@ -35,29 +35,29 @@ public class ConfigManager {
     // Prompt config
 
     // Private constructor to prevent instantiation
-    private ConfigManager() {
+    private WindowConfigManager() {
         // Initialize default values
         gson = new Gson();
         config = loadConfig();
     }
 
     // Public method to get the instance
-    public static ConfigManager getInstance() {
+    public static WindowConfigManager getInstance() {
         return instance;
     }
 
     // Load configuration from JSON file
-    private Config loadConfig() {
+    private WindowConfig loadConfig() {
         try (FileReader reader = new FileReader(CONFIG_FILE)) {
-            Config fromJson = gson.fromJson(reader, Config.class);
+            WindowConfig fromJson = gson.fromJson(reader, WindowConfig.class);
             if (fromJson == null) {
-                return new Config(); // Return default config
+                return new WindowConfig(); // Return default config
             }
             return fromJson;
         } catch (IOException e) {
             //TODO: Log error, take appropriate action like showing a dialog to the user about how to proceed.
             System.out.println("Could not load config, using default values.");
-            return new Config(); // Return default config
+            return new WindowConfig(); // Return default config
         }
     }
 

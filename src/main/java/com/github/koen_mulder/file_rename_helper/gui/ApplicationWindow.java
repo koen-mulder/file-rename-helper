@@ -17,7 +17,7 @@ import javax.swing.JTabbedPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.koen_mulder.file_rename_helper.config.ConfigManager;
+import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 
 public class ApplicationWindow {
@@ -38,7 +38,7 @@ public class ApplicationWindow {
      * Initialize the contents of the frame.
      */
     private void initialize(AIController aiController) {
-        ConfigManager configManager = ConfigManager.getInstance();
+        WindowConfigManager configManager = WindowConfigManager.getInstance();
 
         frame = new JFrame("File rename helper");
         frame.setBounds(configManager.getWindowBounds());

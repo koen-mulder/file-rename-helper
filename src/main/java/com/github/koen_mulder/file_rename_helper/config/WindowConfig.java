@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
-public class Config {
+public class WindowConfig {
 
     //TODO: Make config items Atomic reference to manage thread-safe mutable objects
     //TODO: Make names of method arguments consistent with the rest of the codebase
