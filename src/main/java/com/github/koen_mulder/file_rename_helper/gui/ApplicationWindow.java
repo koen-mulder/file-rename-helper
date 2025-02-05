@@ -82,7 +82,9 @@ public class ApplicationWindow {
         ConfigurationPanel configurationPanel = new ConfigurationPanel();
 
         configurationTabPanel.add(configurationPanel, BorderLayout.CENTER);
-
+        
+        frame.addWindowListener(aiController.getWindowListener());
+        
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
