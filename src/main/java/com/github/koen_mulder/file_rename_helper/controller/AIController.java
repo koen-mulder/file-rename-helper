@@ -4,7 +4,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.function.Function;
+import java.util.List;
 
 import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.EConfigIdentifier;
@@ -14,10 +14,15 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.Capability;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
@@ -25,8 +30,13 @@ public class AIController implements ConfigChangeListener {
 
     interface RenameAssistant {
 
-        String chat(String userMessage);
+        @SystemMessage("{{renamePrompt}}")
+        FilenameSuggestions getFilenameSuggestions(@V("renamePrompt") String renamePrompt, @UserMessage String fileContent);
+        
     }
+    
+    record FilenameSuggestions(List<String> possibleFilenames, List<String> relevantWords, List<String> relevantDates) {
+    };
 
     private ChatLanguageModel model;
     private InMemoryEmbeddingStore<TextSegment> embeddingStore;
@@ -58,22 +68,16 @@ public class AIController implements ConfigChangeListener {
                 .logRequests(true)
                 .logResponses(true)
                 .modelName(modelName)
+                .responseFormat(ResponseFormat.JSON)
+                .supportedCapabilities(Capability.RESPONSE_FORMAT_JSON_SCHEMA)
                 .build();
         
         embeddingStore = loadEmbeddingStore(embeddingStoreFile);
-        
-        Function<Object, String> systemMessageProvider = new Function<Object, String>() {
-            @Override
-            public String apply(Object t) {
-                return systemMessage;
-            }
-        };
         
         assistant = AiServices.builder(RenameAssistant.class)
                 .chatLanguageModel(model)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
                 .contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
-                .systemMessageProvider(systemMessageProvider)
                 .build();
     }
 
@@ -81,8 +85,8 @@ public class AIController implements ConfigChangeListener {
         // Load document
         Document document = FileSystemDocumentLoader.loadDocument(filePath);
         
-        String answer = assistant.chat(document.toString());
-        return answer;
+        FilenameSuggestions answer = assistant.getFilenameSuggestions(systemMessage, document.toString());
+        return answer.toString();
     }
     
     public void ingestRenamedPdf(String newFilePath) {
