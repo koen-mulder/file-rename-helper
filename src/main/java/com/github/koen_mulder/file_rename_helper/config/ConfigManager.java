@@ -77,6 +77,11 @@ abstract class ConfigManager<T> implements ConfigChangePublisher {
     protected void setConfigChanged() {
         isConfigChanged = true;
     }
+    
+    protected void setConfigChanged(EConfigIdentifier configId) {
+        isConfigChanged = true;
+        notifyConfigChangeListeners(configId);
+    }
 
     @Override
     public void addConfigChangeListener(ConfigChangeListener listener) {

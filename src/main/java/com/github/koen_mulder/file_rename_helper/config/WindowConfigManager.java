@@ -21,7 +21,7 @@ public class WindowConfigManager extends ConfigManager<WindowConfig> {
     // Eagerly initialize the Singleton instance
     private static final WindowConfigManager instance = new WindowConfigManager();
 
-    private static final String CONFIG_FILE = "config.json";
+    private static final String CONFIG_FILE = "window_config.json";
 
     // Private constructor to prevent instantiation
     private WindowConfigManager() {

@@ -6,6 +6,10 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.function.Function;
 
+import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
+import com.github.koen_mulder.file_rename_helper.config.EConfigIdentifier;
+import com.github.koen_mulder.file_rename_helper.interfaces.ConfigChangeListener;
+
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.segment.TextSegment;
@@ -17,29 +21,46 @@ import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
-public class AIController  {
+public class AIController implements ConfigChangeListener {
 
     interface RenameAssistant {
 
         String chat(String userMessage);
     }
 
-    private static final String MODEL_NAME = "llama3.2:3b";
-    private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
-    
-    private static final String EMBEDDING_STORE_FILE = "embeddingStore.json";
-
     private ChatLanguageModel model;
     private InMemoryEmbeddingStore<TextSegment> embeddingStore;
     private RenameAssistant assistant;
     
-    private String systemMessage = "Je hebt een PDF bestand ontvangen met deze informatie. Geeft 10 suggesties voor de naamgeving van dit document.";
+    private AIConfigManager aiConfigManager = AIConfigManager.getInstance();
+    
+    private String systemMessage;
+    private String modelName;
+    private String ollamaEndpoint;
+    private String embeddingStoreFile;
+    
 
     public AIController() {
-        model = OllamaChatModel.builder().baseUrl(OLLAMA_ENDPOINT).temperature(0.2).logRequests(true).logResponses(true)
-                .modelName(MODEL_NAME).build();
+        aiConfigManager.addConfigChangeListener(this);
         
-        embeddingStore = loadEmbeddingStore(EMBEDDING_STORE_FILE);
+        systemMessage = aiConfigManager.getFilenamePrompt();
+        modelName = aiConfigManager.getModelName();
+        ollamaEndpoint = aiConfigManager.getOllamaEndpoint();
+        embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
+        
+        initializeAIServices();
+    }
+
+    private void initializeAIServices() {
+        model = OllamaChatModel.builder()
+                .baseUrl(ollamaEndpoint)
+                .temperature(0.2)
+                .logRequests(true)
+                .logResponses(true)
+                .modelName(modelName)
+                .build();
+        
+        embeddingStore = loadEmbeddingStore(embeddingStoreFile);
         
         Function<Object, String> systemMessageProvider = new Function<Object, String>() {
             @Override
@@ -80,7 +101,7 @@ public class AIController  {
         return new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                saveEmbeddingStore(EMBEDDING_STORE_FILE);
+                saveEmbeddingStore(embeddingStoreFile);
             }
         };
     }
@@ -100,5 +121,27 @@ public class AIController  {
     
     private void saveEmbeddingStore(String filePath) {
         embeddingStore.serializeToFile(filePath);
+    }
+
+    @Override
+    public void onConfigChanged(EConfigIdentifier configId) {
+        switch (configId) {
+        case EConfigIdentifier.FILENAME_PROMPT:
+            systemMessage = aiConfigManager.getFilenamePrompt();
+            break;
+        case EConfigIdentifier.MODEL_NAME:
+            modelName = aiConfigManager.getModelName();
+            break;
+        case EConfigIdentifier.OLLAMA_ENDPOINT:
+            ollamaEndpoint = aiConfigManager.getOllamaEndpoint();
+            break;
+        case EConfigIdentifier.EMBEDDING_STORE_FILE_PATH:
+            embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
+            break;
+        default:
+            break;
+        }
+        
+        initializeAIServices();
     }
 }
