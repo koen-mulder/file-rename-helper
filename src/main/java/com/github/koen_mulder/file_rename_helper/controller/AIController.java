@@ -33,9 +33,12 @@ public class AIController implements ConfigChangeListener {
         @SystemMessage("{{renamePrompt}}")
         FilenameSuggestions getFilenameSuggestions(@V("renamePrompt") String renamePrompt, @UserMessage String fileContent);
         
+        @UserMessage("{{message}}")
+        FilenameSuggestions getAdditionalFilenameSuggestions(@V("message") String userMessage);
+        
     }
     
-    record FilenameSuggestions(List<String> possibleFilenames, List<String> relevantWords, List<String> relevantDates) {
+    public record FilenameSuggestions(List<String> possibleFilenames, List<String> relevantWords, List<String> relevantDates) {
     };
 
     private ChatLanguageModel model;
@@ -44,7 +47,8 @@ public class AIController implements ConfigChangeListener {
     
     private AIConfigManager aiConfigManager = AIConfigManager.getInstance();
     
-    private String systemMessage;
+    private String filenameSuggestionsPrompt;
+    private String additionalFilenameSuggestionsPrompt;
     private String modelName;
     private String ollamaEndpoint;
     private String embeddingStoreFile;
@@ -53,15 +57,17 @@ public class AIController implements ConfigChangeListener {
     public AIController() {
         aiConfigManager.addConfigChangeListener(this);
         
-        systemMessage = aiConfigManager.getFilenamePrompt();
+        filenameSuggestionsPrompt = aiConfigManager.getFilenamePrompt();
+        additionalFilenameSuggestionsPrompt = aiConfigManager.getAdditionalFilenamePrompt();
+        
         modelName = aiConfigManager.getModelName();
         ollamaEndpoint = aiConfigManager.getOllamaEndpoint();
         embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
         
-        initializeAIServices();
+        initializeModelAndEmbeddingStore();
     }
 
-    private void initializeAIServices() {
+    private void initializeModelAndEmbeddingStore() {
         model = OllamaChatModel.builder()
                 .baseUrl(ollamaEndpoint)
                 .temperature(0.2)
@@ -74,6 +80,9 @@ public class AIController implements ConfigChangeListener {
         
         embeddingStore = loadEmbeddingStore(embeddingStoreFile);
         
+    }
+    
+    private void initializeRenameAssistant() {
         assistant = AiServices.builder(RenameAssistant.class)
                 .chatLanguageModel(model)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
@@ -81,19 +90,24 @@ public class AIController implements ConfigChangeListener {
                 .build();
     }
 
-    public String generatePossibleFileNames(String filePath) {
+    public FilenameSuggestions generatePossibleFileNames(String filePath) {
+        // Get AI assistant with clean chat memory
+        initializeRenameAssistant();
+        
         // Load document
         Document document = FileSystemDocumentLoader.loadDocument(filePath);
-        
-        FilenameSuggestions answer = assistant.getFilenameSuggestions(systemMessage, document.toString());
-        return answer.toString();
+        // Get suggestions
+        return assistant.getFilenameSuggestions(filenameSuggestionsPrompt, document.toString());
+    }
+    
+    public FilenameSuggestions getAdditionalFilenameSuggestions() {
+        // Get additional suggestions
+        return assistant.getAdditionalFilenameSuggestions(additionalFilenameSuggestionsPrompt);
     }
     
     public void ingestRenamedPdf(String newFilePath) {
-        
         // Load document
         Document document = FileSystemDocumentLoader.loadDocument(newFilePath);
-        
         // Ingest document
         EmbeddingStoreIngestor.ingest(document, embeddingStore);
     }
@@ -131,8 +145,11 @@ public class AIController implements ConfigChangeListener {
     public void onConfigChanged(EConfigIdentifier configId) {
         switch (configId) {
         case EConfigIdentifier.FILENAME_PROMPT:
-            systemMessage = aiConfigManager.getFilenamePrompt();
+            filenameSuggestionsPrompt = aiConfigManager.getFilenamePrompt();
             break;
+            case EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT:
+                additionalFilenameSuggestionsPrompt = aiConfigManager.getAdditionalFilenamePrompt();
+                break;
         case EConfigIdentifier.MODEL_NAME:
             modelName = aiConfigManager.getModelName();
             break;
@@ -146,6 +163,7 @@ public class AIController implements ConfigChangeListener {
             break;
         }
         
-        initializeAIServices();
+        initializeModelAndEmbeddingStore();
+        initializeRenameAssistant();
     }
 }

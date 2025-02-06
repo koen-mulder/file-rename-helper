@@ -40,6 +40,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setOllamaEndpoint(String ollamaEndpoint) {
         if (!getOllamaEndpoint().equals(ollamaEndpoint)) {
             config.setOllamaEndpoint(ollamaEndpoint);
+            setConfigChanged();
             notifyConfigChangeListeners(EConfigIdentifier.OLLAMA_ENDPOINT);
         }
     }
@@ -51,6 +52,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setEmbeddingStoreFile(String filePath) {
         if (!getEmbeddingStoreFile().equals(filePath)) {
             config.setEmbeddingStoreFile(filePath);
+            setConfigChanged();
             notifyConfigChangeListeners(EConfigIdentifier.EMBEDDING_STORE_FILE_PATH);
         }
     }
@@ -62,8 +64,21 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setFilenamePrompt(String prompt) {
         if (!config.getFilenamePrompt().equals(prompt)) {
             config.setFilenamePrompt(prompt);
+            setConfigChanged();
             notifyConfigChangeListeners(EConfigIdentifier.FILENAME_PROMPT);
         }
     }
-   
+
+    public String getAdditionalFilenamePrompt() {
+        return config.getAdditionalFilenamePrompt();
+    }
+    
+    public void setAdditionalFilenamePrompt(String prompt) {
+        if (!config.getAdditionalFilenamePrompt().equals(prompt)) {
+            config.setAdditionalFilenamePrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT);
+        }
+    }
+
 }

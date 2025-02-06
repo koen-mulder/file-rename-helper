@@ -17,6 +17,7 @@ import javax.swing.JTabbedPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 
@@ -39,11 +40,12 @@ public class ApplicationWindow {
      */
     private void initialize(AIController aiController) {
         WindowConfigManager configManager = WindowConfigManager.getInstance();
+        AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
         frame = new JFrame("File rename helper");
         frame.setBounds(configManager.getWindowBounds());
         frame.setExtendedState(frame.getExtendedState() | configManager.getWindowExtendedState());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
         JPanel statusBarPanel = new JPanel();
@@ -88,14 +90,21 @@ public class ApplicationWindow {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                if (configManager.isConfigChanged()) {
+                if (aiConfigManager.isConfigChanged()) {
                     int result = JOptionPane.showConfirmDialog(frame, "Do you want to save the configuration changes?",
-                            "Save configuration changes", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
+                            "Save configuration changes", JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+                        return;
+                    } else if (result == JOptionPane.YES_OPTION) {
                         logger.debug("Configuration changes saved.");
-                        configManager.saveConfig();
+                        aiConfigManager.saveConfig();
                     }
                 }
+                // Always save window config
+                if (configManager.isConfigChanged()) {
+                    configManager.saveConfig();
+                }
+                System.exit(0);
             }
         });
 
