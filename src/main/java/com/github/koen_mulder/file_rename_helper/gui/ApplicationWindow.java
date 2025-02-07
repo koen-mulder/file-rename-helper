@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
+import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
 
 public class ApplicationWindow {
 

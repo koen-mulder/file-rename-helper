@@ -1,6 +1,5 @@
-package com.github.koen_mulder.file_rename_helper.gui;
+package com.github.koen_mulder.file_rename_helper.gui.rename;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -32,16 +30,22 @@ import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormClearListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormClearPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
 import com.google.common.collect.Lists;
 
-public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
+public class FileRenamePanel extends JPanel implements FileSelectionPublisher, SuggestionPublisher, FormClearPublisher {
 
     private static final long serialVersionUID = 5393373407385885597L;
 
-    private ArrayList<FileSelectionListener> listeners = Lists.newArrayList();
+    private ArrayList<FileSelectionListener> fileSelectionListeners = Lists.newArrayList();
+    private ArrayList<SuggestionListener> suggestionListeners = Lists.newArrayList();
+    private ArrayList<FormClearListener> formClearListeners = Lists.newArrayList();
 
     public AIController aiController;
-    private JTextField newFilename;
+    private JTextField newFilenameField;
 
     private JList<String> suggestedFilenameList;
 
@@ -49,7 +53,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
 
     private JScrollPane suggestedFilenameScrollPane;
 
-    private JPanel importantKeywordPanel;
+    private KeywordButtonPanel importantKeywordPanel;
 
     public FileRenamePanel(AIController aiController) {
         this.aiController = aiController;
@@ -91,9 +95,12 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     fileNameField.setText(selectedFile.getName());
-                    // Now that the GUI is all in place, we can try openning a PDF
+                    // Now that the GUI is all in place, we can try opening a PDF
                     notifyFileSelectionListeners(selectedFile.getAbsolutePath());
+                    // Start worker for the slow process of LLM API calls
                     startGeneratePossibleFileNamesWorker(selectedFile.getAbsolutePath());
+                    // Clear forms of previous suggestions
+                    notifyFormClearListeners();
                 }
             }
         });
@@ -104,8 +111,8 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
 
         JLabel lblNewLabel_1 = new JLabel("New filename:");
 
-        newFilename = new JTextField();
-        newFilename.setColumns(10);
+        newFilenameField = new JTextField();
+        newFilenameField.setColumns(10);
 
         suggestedFilenameScrollPane = new JScrollPane();
 
@@ -121,13 +128,9 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
         removeCharactersPanel
                 .setBorder(new TitledBorder(null, "Remove", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
-        importantKeywordPanel = new JPanel();
-        FlowLayout fl_importantKeywordPanel = (FlowLayout) importantKeywordPanel.getLayout();
-        fl_importantKeywordPanel.setAlignment(FlowLayout.LEFT);
-        importantKeywordPanel.setBorder(new TitledBorder(
-                new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
-                "Insert important keywords", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-
+        importantKeywordPanel = new KeywordButtonPanel(newFilenameField);
+        addFormClearListener(importantKeywordPanel);
+        
         JButton moreSuggestionsButton = new JButton("Get more suggestions");
         moreSuggestionsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -170,7 +173,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                         .addGroup(Alignment.LEADING,
                                 groupLayout.createSequentialGroup().addComponent(lblNewLabel_1)
                                         .addPreferredGap(ComponentPlacement.RELATED)
-                                        .addComponent(newFilename, GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE))
+                                        .addComponent(newFilenameField, GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE))
                         .addComponent(removeCharactersPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 789,
                                 Short.MAX_VALUE)
                         .addComponent(replaceCharacterPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 789,
@@ -194,7 +197,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                                 .addComponent(moreSuggestionsButton).addComponent(clearSuggestionsButton))
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblNewLabel_1)
-                                .addComponent(newFilename, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                .addComponent(newFilenameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                                         GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
@@ -207,9 +210,6 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                         .addPreferredGap(ComponentPlacement.RELATED).addComponent(removeCharactersPanel,
                                 GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 
-        JLabel keywordsPlaceholder = new JLabel("Load file to get suggestions");
-        importantKeywordPanel.add(keywordsPlaceholder);
-
         JButton btnNewButton_4 = new JButton("New button");
         panel_3.add(btnNewButton_4);
 
@@ -219,7 +219,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
         JButton replaceSpaceWithUnderscoreButton = new JButton("[space] → _ [underscore]");
         replaceSpaceWithUnderscoreButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fileNameField.setText(fileNameField.getText().replace(" ", "_"));
+                newFilenameField.setText(newFilenameField.getText().replace(" ", "_"));
             }
         });
         replaceCharacterPanel.add(replaceSpaceWithUnderscoreButton);
@@ -227,7 +227,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
         JButton replaceDashWithUnderscoreButton = new JButton("[dash] - → _ [underscore]");
         replaceDashWithUnderscoreButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fileNameField.setText(fileNameField.getText().replace("-", "_"));
+                newFilenameField.setText(newFilenameField.getText().replace("-", "_"));
             }
         });
         replaceCharacterPanel.add(replaceDashWithUnderscoreButton);
@@ -235,7 +235,7 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
         JButton replaceUnderscoreWithSpace = new JButton("[underscore] _ → [space]");
         replaceUnderscoreWithSpace.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fileNameField.setText(fileNameField.getText().replace("_", " "));
+                newFilenameField.setText(newFilenameField.getText().replace("_", " "));
             }
         });
         replaceCharacterPanel.add(replaceUnderscoreWithSpace);
@@ -253,12 +253,12 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                     return;
                 }
 
-                newFilename.setText(suggestedFilename);
-                newFilename.grabFocus();
+                newFilenameField.setText(suggestedFilename);
+                newFilenameField.grabFocus();
 
                 int extensionIndex = suggestedFilename.lastIndexOf(".");
                 if (extensionIndex > 0) {
-                    newFilename.setCaretPosition(extensionIndex);
+                    newFilenameField.setCaretPosition(extensionIndex);
                 }
 
                 suggestedFilenameList.clearSelection();
@@ -287,37 +287,10 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
                     suggestedFilenameListModel.clear();
                     suggestedFilenameListModel.addAll(result.possibleFilenames());
 
-                    // Remove all keyword buttons
-                    importantKeywordPanel.removeAll();
+                    notifySuggestionListeners(result);
 
-                    // Add new keyword buttons
-                    for (String relevantWord : result.relevantWords()) {
-                        JButton keywordButton = new JButton(relevantWord);
-                        keywordButton.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                // Insert relevant word (and overwrite selection if applicable)
-                                newFilename.replaceSelection(" " + relevantWord + " ");
-                                newFilename.grabFocus();
-                            }
-                        });
-                        importantKeywordPanel.add(keywordButton);
-                    }
-
-                    // Add new keyword buttons
-                    for (String relevantDate : result.relevantDates()) {
-                        JButton dateButton = new JButton(relevantDate);
-                        dateButton.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                // Insert relevant word (and overwrite selection if applicable)
-                                newFilename.replaceSelection(" " + relevantDate + " ");
-                                newFilename.grabFocus();
-                            }
-                        });
-                        importantKeywordPanel.add(dateButton);
-                    }
-
-//                    importantKeywordPanel.repaint();
                     importantKeywordPanel.revalidate();
+                    importantKeywordPanel.repaint();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -359,19 +332,54 @@ public class FileRenamePanel extends JPanel implements FileSelectionPublisher {
 
     @Override
     public void addFileSelectionListener(FileSelectionListener listener) {
-        this.listeners.add(listener);
+        this.fileSelectionListeners.add(listener);
 
     }
 
     @Override
     public void removeFileSelectionListener(FileSelectionListener listener) {
-        this.listeners.remove(listener);
+        this.fileSelectionListeners.remove(listener);
     }
 
     @Override
     public void notifyFileSelectionListeners(String filePath) {
-        for (FileSelectionListener listener : listeners) {
+        for (FileSelectionListener listener : fileSelectionListeners) {
             listener.onFileSelected(filePath);
+        }
+    }
+
+    @Override
+    public void addSuggestionListener(SuggestionListener listener) {
+        this.suggestionListeners.add(listener);
+    }
+
+    @Override
+    public void removeSuggestionListener(SuggestionListener listener) {
+        this.suggestionListeners.remove(listener);
+        
+    }
+
+    @Override
+    public void notifySuggestionListeners(FilenameSuggestions suggestions) {
+        for (SuggestionListener listener : suggestionListeners) {
+            listener.onSuggestionsGenerated(suggestions);
+        }
+    }
+
+    @Override
+    public void addFormClearListener(FormClearListener listener) {
+        this.formClearListeners.add(listener);
+    }
+
+    @Override
+    public void removeFormClearListener(FormClearListener listener) {
+        this.formClearListeners.remove(listener);
+    }
+
+    @Override
+    public void notifyFormClearListeners() {
+        for (FormClearListener listener : formClearListeners) {
+            listener.onClearFormEvent();
         }
     }
 }

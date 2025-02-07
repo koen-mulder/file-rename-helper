@@ -38,16 +38,16 @@ public class ConfigurationPanel extends JPanel {
     public ConfigurationPanel() {
         aiConfigManager = AIConfigManager.getInstance();
 
-        JButton btnNewButton_1 = new JButton("Apply config changes and save config to file for next sessions");
-        btnNewButton_1.addActionListener(new ActionListener() {
+        JButton saveChangesButton = new JButton("Apply config changes and save config to file for next sessions");
+        saveChangesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 applyConfigChangesAction.actionPerformed(e);
                 aiConfigManager.saveConfig();
             }
         });
 
-        JButton btnNewButton_2 = new JButton("Apply config changes to current session");
-        btnNewButton_2.setAction(applyConfigChangesAction);
+        JButton applyChangesButton = new JButton("Apply config changes to current session");
+        applyChangesButton.setAction(applyConfigChangesAction);
 
         JPanel modelConfigPanel = new JPanel();
         modelConfigPanel.setBorder(BorderFactory.createTitledBorder("Model configuration"));
@@ -64,8 +64,8 @@ public class ConfigurationPanel extends JPanel {
                         .addComponent(modelConfigPanel, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 899,
                                 Short.MAX_VALUE)
                         .addGroup(Alignment.TRAILING,
-                                gl_configurationPanel.createSequentialGroup().addComponent(btnNewButton_2)
-                                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(btnNewButton_1)))
+                                gl_configurationPanel.createSequentialGroup().addComponent(applyChangesButton)
+                                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(saveChangesButton)))
                         .addContainerGap()));
         gl_configurationPanel.setVerticalGroup(gl_configurationPanel.createParallelGroup(Alignment.LEADING)
                 .addGroup(gl_configurationPanel.createSequentialGroup().addContainerGap()
@@ -74,36 +74,36 @@ public class ConfigurationPanel extends JPanel {
                         .addComponent(panel, GroupLayout.PREFERRED_SIZE, 334, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(gl_configurationPanel.createParallelGroup(Alignment.BASELINE)
-                                .addComponent(btnNewButton_1).addComponent(btnNewButton_2))
+                                .addComponent(saveChangesButton).addComponent(applyChangesButton))
                         .addContainerGap(159, Short.MAX_VALUE)));
 
-        JLabel promptLabel = new JLabel("Initial filename suggestion prompt:");
+        JLabel initialPromptLabel = new JLabel("Initial filename suggestion prompt:");
 
         JScrollPane initialPromptScrollPane = new JScrollPane();
 
-        JLabel lblNewLabel = new JLabel("Additional filename suggestion prompt:");
+        JLabel additionalPromptLabel = new JLabel("Additional filename suggestion prompt:");
 
-        JScrollPane scrollPane = new JScrollPane();
+        JScrollPane additionalPromptScrollPane = new JScrollPane();
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING).addGroup(Alignment.TRAILING,
                 gl_panel.createSequentialGroup().addContainerGap().addGroup(gl_panel
                         .createParallelGroup(Alignment.TRAILING)
-                        .addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
+                        .addComponent(additionalPromptScrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                         .addComponent(initialPromptScrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 867,
                                 Short.MAX_VALUE)
-                        .addComponent(promptLabel, Alignment.LEADING).addComponent(lblNewLabel, Alignment.LEADING))
+                        .addComponent(initialPromptLabel, Alignment.LEADING).addComponent(additionalPromptLabel, Alignment.LEADING))
                         .addContainerGap()));
         gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING).addGroup(gl_panel
-                .createSequentialGroup().addContainerGap().addComponent(promptLabel)
+                .createSequentialGroup().addContainerGap().addComponent(initialPromptLabel)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(initialPromptScrollPane, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED).addComponent(lblNewLabel)
+                .addPreferredGap(ComponentPlacement.RELATED).addComponent(additionalPromptLabel)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE).addContainerGap()));
+                .addComponent(additionalPromptScrollPane, GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE).addContainerGap()));
 
         additionalFilenamePromptField = new JTextArea();
         additionalFilenamePromptField.setText(aiConfigManager.getAdditionalFilenamePrompt());
-        scrollPane.setViewportView(additionalFilenamePromptField);
+        additionalPromptScrollPane.setViewportView(additionalFilenamePromptField);
 
         initialFilenamePromptField = new JTextPane();
         initialPromptScrollPane.setViewportView(initialFilenamePromptField);
