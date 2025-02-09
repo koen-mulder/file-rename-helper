@@ -7,30 +7,31 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormClearListener;
+import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
+import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
 
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements SuggestionListener, FormClearListener{
+public class KeywordButtonPanel extends JPanel implements SuggestionListener, FormEventListener{
 
     private static final long serialVersionUID = 7824169572049309584L;
 
-    private JTextField filenameField;
+    private NewFilenameFieldController newFilenameFieldController;
 
     /**
      * Panel for insert keyword buttons.
      * 
-     * @param filenameField JTextfield the keyword should be inserted in once the keyword button is pressed.
+     * @param newFilenameFieldController the keyword should be inserted in once the keyword button is pressed.
      */
-    public KeywordButtonPanel(JTextField filenameField) {
-        this.filenameField = filenameField;
+    public KeywordButtonPanel(NewFilenameFieldController newFilenameFieldController) {
         
+        this.newFilenameFieldController = newFilenameFieldController;
         setLayout(new FlowLayout(FlowLayout.LEFT));
         setBorder(new TitledBorder("Insert important keywords"));
     }
@@ -59,9 +60,11 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
     }
 
     @Override
-    public void onClearFormEvent() {
+    public void onFormEvent(EFormEvent event) {
         // Clean panel for suggestions based on the new file
-        clearPanel();
+        if (event == EFormEvent.CLEAR) {
+            clearPanel();
+        }
     }
 
     /**
@@ -86,9 +89,9 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
         
         public void actionPerformed(ActionEvent e) {
             // Insert relevant word (and overwrite selection if applicable)
-            filenameField.replaceSelection(" " + keyword + " ");
+            newFilenameFieldController.replaceSelection(" " + keyword + " ");
             // Focus on the filename field
-            filenameField.grabFocus();
+            newFilenameFieldController.grabFocus();
         }
     }
 }

@@ -21,6 +21,9 @@ import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
 
 public class ApplicationWindow {
 
@@ -32,14 +35,16 @@ public class ApplicationWindow {
     /**
      * Create the application.
      */
-    public ApplicationWindow(AIController aiController) {
-        initialize(aiController);
+    public ApplicationWindow(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
+            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
+        initialize(aiController, fileSelectionPublisher, suggestionPublisher, formEventPublisher);
     }
 
     /**
      * Initialize the contents of the frame.
      */
-    private void initialize(AIController aiController) {
+    private void initialize(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
+            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
         WindowConfigManager configManager = WindowConfigManager.getInstance();
         AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
@@ -73,21 +78,21 @@ public class ApplicationWindow {
         FileViewPanel fileViewPanel = new FileViewPanel(frame);
         splitPane.setLeftComponent(fileViewPanel);
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
+        fileSelectionPublisher.addFileSelectionListener(fileViewPanel);
 
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController);
-        fileRenamePanel.addFileSelectionListener(fileViewPanel);
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, fileSelectionPublisher, suggestionPublisher, formEventPublisher);
         splitPane.setRightComponent(fileRenamePanel);
 
         JPanel configurationTabPanel = new JPanel();
         tabbedPane.addTab("Configuration", null, configurationTabPanel, null);
         configurationTabPanel.setLayout(new BorderLayout(0, 0));
-        
+
         ConfigurationPanel configurationPanel = new ConfigurationPanel();
 
         configurationTabPanel.add(configurationPanel, BorderLayout.CENTER);
-        
+
         frame.addWindowListener(aiController.getWindowListener());
-        
+
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -112,10 +117,11 @@ public class ApplicationWindow {
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 if (frame.getExtendedState() == JFrame.ICONIFIED) {
-                    // Don't store window minimized state because we wouldn't want the app to start minimized
+                    // Don't store window minimized state because we wouldn't want the app to start
+                    // minimized
                     return;
                 }
-                
+
                 if (!frame.getBounds().equals(configManager.getWindowBounds())) {
                     logger.debug("Window resized and new bounds stored in configuration.");
                     configManager.setWindowExtendedState(frame.getExtendedState());
