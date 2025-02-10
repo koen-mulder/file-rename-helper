@@ -11,6 +11,8 @@
 - Change (to proper) design patterns
 - Add version numbering
 - Add build script
+- Make sure GUI actions are done in the correct thread
+- Add Unit tests (also for GUI)
 
 #Features
 - Annotating in the PDF to focus on certain aspects. Possibly annotating other
