@@ -36,6 +36,7 @@ public class FilenameSuggestionWorker extends SwingWorker<FilenameSuggestions, I
             FilenameSuggestions result = get();
             suggestionPublisher.notifySuggestionListeners(result);
             formEventPublisher.notifyFormEventListeners(EFormEvent.ENABLE);
+            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_STOP);
         } catch (InterruptedException e) {
             // TODO: Properly handle exceptions
             e.printStackTrace();

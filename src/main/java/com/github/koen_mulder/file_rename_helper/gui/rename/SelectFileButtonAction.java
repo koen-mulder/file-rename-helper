@@ -84,6 +84,8 @@ public class SelectFileButtonAction extends AbstractAction {
             File selectedFile = fileChooser.getSelectedFile();
             // Now that the GUI is all in place, we can try opening a PDF
             fileSelectionPublisher.notifyFileSelectionListeners(selectedFile.getAbsolutePath());
+            // Start showing progress in the progress bar
+            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_START);
             // Start worker for the slow process of LLM API calls
             new FilenameSuggestionWorker(aiController, suggestionPublisher, formEventPublisher,
                     selectedFile.getAbsolutePath()).execute();

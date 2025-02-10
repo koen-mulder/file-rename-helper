@@ -24,6 +24,7 @@ import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import java.awt.Dimension;
 
 public class ApplicationWindow {
 
@@ -54,9 +55,12 @@ public class ApplicationWindow {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
-        JPanel statusBarPanel = new JPanel();
+        StatusBarPanel statusBarPanel = new StatusBarPanel();
+        statusBarPanel.setPreferredSize(new Dimension(1221, 15));
+        statusBarPanel.setMinimumSize(new Dimension(182, 10));
         frame.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
-
+        formEventPublisher.addFormEventListener(statusBarPanel);
+        
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 

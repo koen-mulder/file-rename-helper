@@ -59,8 +59,9 @@ public class ReplaceCharacterPanel extends JPanel implements FormEventListener {
 
     @Override
     public void onFormEvent(EFormEvent event) {
-        // Disable on form events unless it is the enable event
-        setEnabled(event == EFormEvent.ENABLE);
+        if (event == EFormEvent.ENABLE || event == EFormEvent.DISABLE) {
+            setEnabled(event == EFormEvent.ENABLE);
+        }
     }
 
     private class ReplaceCharacterButtonAction extends AbstractAction {

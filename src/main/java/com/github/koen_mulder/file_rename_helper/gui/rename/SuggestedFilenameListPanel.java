@@ -23,8 +23,10 @@ import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldCont
 import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
 import com.github.koen_mulder.file_rename_helper.gui.rename.workers.AdditionalSuggestionWorker;
 import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * Panel containing a list of filename suggestions and controls to interact with the list.
@@ -44,10 +46,11 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
      * 
      * @param aiController for requesting suggestions
      * @param suggestionPublisher for notifying components there are new suggestions
+     * @param formEventPublisher 
      * @param newFilenameFieldController controller for interacting with the new filename field
      */
     public SuggestedFilenameListPanel(AIController aiController, SuggestionPublisher suggestionPublisher,
-            NewFilenameFieldController newFilenameFieldController) {
+            FormEventPublisher formEventPublisher, NewFilenameFieldController newFilenameFieldController) {
         JLabel listLabel = new JLabel("Select suggested filename:");
 
         // Create model for the suggestions
@@ -59,13 +62,16 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
         suggestedFilenameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         suggestedFilenameList.addListSelectionListener(
                 new SuggestionSelectionListener(suggestedFilenameList, newFilenameFieldController));
+        suggestedFilenameList.setCellRenderer(new AlternatingListCellRenderer(suggestedFilenameList));
         suggestedFilenameList.setVisibleRowCount(10);
 
         // Create scroll pane so we can scroll through list of suggestions
         JScrollPane scrollPane = new JScrollPane(suggestedFilenameList);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         // Create buttons
-        moreSuggestionsButton = new JButton(new MoreSuggestionsButtonAction(aiController, suggestionPublisher));
+        moreSuggestionsButton = new JButton(
+                new MoreSuggestionsButtonAction(aiController, suggestionPublisher, formEventPublisher));
         clearSuggestionsButton = new JButton(new ClearSuggestionsButtonAction(listModel));
 
         // Disable fields because no suggestions have been loaded yet
@@ -150,7 +156,7 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
             newFilenameFieldController.setCaretPositionBeforeExtention();
 
             // Delayed clear selection
-            Timer timer = new Timer(500, _ -> listField.clearSelection());
+            Timer timer = new Timer(500, event -> listField.clearSelection());
             timer.setRepeats(false); // Ensure the timer only runs once
             timer.start();
         }
@@ -162,17 +168,20 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
 
         private AIController aiController;
         private SuggestionPublisher suggestionPublisher;
+        private FormEventPublisher formEventPublisher;
 
-        public MoreSuggestionsButtonAction(AIController aiController, SuggestionPublisher suggestionPublisher) {
+        public MoreSuggestionsButtonAction(AIController aiController, SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
             this.aiController = aiController;
             this.suggestionPublisher = suggestionPublisher;
+            this.formEventPublisher = formEventPublisher;
 
             putValue(NAME, "Get more suggestions");
             putValue(SHORT_DESCRIPTION, "Request the LLM to generate more filename suggestions.");
         }
 
         public void actionPerformed(ActionEvent e) {
-            new AdditionalSuggestionWorker(aiController, suggestionPublisher).execute();
+            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_START);
+            new AdditionalSuggestionWorker(aiController, suggestionPublisher, formEventPublisher).execute();
         }
     }
 

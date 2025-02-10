@@ -7,10 +7,13 @@ import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
+import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
+
 /**
  * Panel containing the input field for the new filename.
  */
-public class NewFilenamePanel extends JPanel {
+public class NewFilenamePanel extends JPanel implements FormEventListener {
 
     private static final long serialVersionUID = -8735277668945036089L;
     private JTextField newFilenameField;
@@ -46,4 +49,23 @@ public class NewFilenamePanel extends JPanel {
     public JTextField getNewFilenameField() {
         return newFilenameField;
     }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        newFilenameField.setEnabled(enabled);
+    }
+
+    private void clearNewFilenameField() {
+        newFilenameField.setText("");
+    }
+
+    @Override
+    public void onFormEvent(EFormEvent event) {
+        if (event == EFormEvent.ENABLE || event == EFormEvent.DISABLE) {
+            setEnabled(event == EFormEvent.ENABLE);
+        } else if (event == EFormEvent.CLEAR) {
+            clearNewFilenameField();
+        }
+    }
+
 }

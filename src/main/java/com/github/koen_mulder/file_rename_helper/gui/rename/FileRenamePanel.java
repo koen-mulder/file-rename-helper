@@ -18,8 +18,6 @@ public class FileRenamePanel extends JPanel {
 
     private static final long serialVersionUID = 5393373407385885597L;
 
-    public AIController aiController;
-
     /**
      * Panel for selecting a file, viewing filename suggestions and composing a new filename.
      * 
@@ -30,7 +28,6 @@ public class FileRenamePanel extends JPanel {
      */
     public FileRenamePanel(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
             SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
-        this.aiController = aiController;
 
         // Create action for opening file chooser
         SelectFileButtonAction selectFileButtonAction = new SelectFileButtonAction(aiController, fileSelectionPublisher,
@@ -42,13 +39,14 @@ public class FileRenamePanel extends JPanel {
 
         // Create panel with the input field for the new filename
         NewFilenamePanel newFilenamePanel = new NewFilenamePanel();
-
+        formEventPublisher.addFormEventListener(newFilenamePanel);
+        
         // Create controller for other panels to interact with the new filename input
         NewFilenameFieldController newFilenameFieldController = new NewFilenameFieldController(newFilenamePanel.getNewFilenameField());
 
         // Create panel showing filename suggestions
         SuggestedFilenameListPanel suggestedFilenameListPanel = new SuggestedFilenameListPanel(aiController,
-                suggestionPublisher, newFilenameFieldController);
+                suggestionPublisher, formEventPublisher, newFilenameFieldController);
         
         // Create panel with relevant word and date suggestions
         KeywordButtonPanel importantKeywordPanel = new KeywordButtonPanel(newFilenameFieldController);
@@ -63,6 +61,7 @@ public class FileRenamePanel extends JPanel {
 
         // Create panel for manipulating the new filename
         MiscButtonPanel removeCharactersPanel = new MiscButtonPanel(newFilenameFieldController);
+        formEventPublisher.addFormEventListener(removeCharactersPanel);
 
         // Set layout
         GroupLayout groupLayout = new GroupLayout(this);
