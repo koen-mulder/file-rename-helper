@@ -1,56 +1,50 @@
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
     `java-library`
     `eclipse`
+    id("com.github.johnrengelman.shadow") version libs.versions.shadow.get()
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
-    //testImplementation(libs.junit.jupiter)
-
-    //testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    //api(libs.commons.math3)
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation(libs.guava)
-    
-    // PDF viewer    
-    implementation("com.github.pcorless.icepdf:icepdf-core:7.2.3")
-    implementation("com.github.pcorless.icepdf:icepdf-viewer:7.2.3")
-    implementation("com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0")
-    //implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
-    //implementation("org.apache.pdfbox:jbig2-imageio:3.0.0")
-    
-    // Logging    
-    implementation("org.slf4j:slf4j-api:2.0.16")
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3")
-    
+
+    // PDF viewer
+    implementation(libs.icepdf.core)
+    implementation(libs.icepdf.viewer)
+    implementation(libs.jai.imageio.jpeg2000)
+
+    // Logging
+    implementation(libs.slf4j.api)
+    implementation(libs.log4j.slf4j2.impl)
+
     // JSON for parsing configuration
-    implementation("com.google.code.gson:gson:2.12.1")
-    
+    implementation(libs.gson)
+
     // LangChain for integration with LLM providers
-    implementation("dev.langchain4j:langchain4j:1.0.0-alpha1")
-    implementation("dev.langchain4j:langchain4j-easy-rag:1.0.0-alpha1")
-    //implementation("dev.langchain4j:langchain4j-embedding-store-inmemory:1.0.0-alpha1")
-    // Ollama integration
-    implementation("dev.langchain4j:langchain4j-ollama:1.0.0-alpha1")
+    implementation(libs.langchain4j)
+    implementation(libs.langchain4j.easy.rag)
+    implementation(libs.langchain4j.ollama)
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
-//java {
-//    toolchain {
-//        languageVersion = JavaLanguageVersion.of(23)
-//    }
-//}
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    archiveBaseName.set("file-rename-helper")
+    archiveVersion.set("")
+    archiveClassifier.set("")
+    manifest {
+        attributes(mapOf("Main-Class" to "com.github.koen_mulder.file_rename_helper.application.Application"))
+    }
+    mergeServiceFiles()
+}
 
-//tasks.named<Test>("test") {
-//    // Use JUnit Platform for unit tests.
-//    useJUnitPlatform()
-//}
+tasks.named("build") {
+    dependsOn(tasks.named("shadowJar"))
+}
+
+java {
+    // Use Java version 21 because this is the latest Long Term Support release
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
