@@ -39,6 +39,9 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
     public void clearPanel() {
         // Remove all keyword buttons
         removeAll();
+        
+        revalidate(); // Tell the layout manager to recalculate
+        repaint();    // Repaint the panel
     }
     
     /**
@@ -50,7 +53,9 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
         for (String keyword : keywords) {
             add(new JButton(new KeywordButtonAction(keyword)));
         }
-        validate();
+        
+        revalidate(); // Tell the layout manager to recalculate
+        repaint();    // Repaint the panel
     }
 
     @Override
