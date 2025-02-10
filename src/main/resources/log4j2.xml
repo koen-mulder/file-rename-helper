@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<Configuration status="INFO">
     <Appenders>
         <!-- Console Appender -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level: %msg%n%throwable"/>
+            <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level: (%c{1}) %msg%n%throwable"/>
         </Console>
 
         <!-- File Appender -->
@@ -13,14 +13,10 @@
             </PatternLayout>
         </File>
     </Appenders>
-
     <Loggers>
-        
-        <Logger name="com.github.koen_mulder.file_rename_helper" level="DEBUG">
-          <AppenderRef ref="Console"/>
+        <Logger name="com.github.koen_mulder.file_rename_helper" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
         </Logger>
-    
-        <!-- Root logger (set to INFO level by default) -->
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
