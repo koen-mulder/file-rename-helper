@@ -13,7 +13,7 @@ log4j2 = "2.24.3"
 gson = "2.12.1"
 
 # Interface for LLM management system
-langchain4j = "1.0.0-alpha1"
+langchain4j = "1.0.0-beta1"
 
 # Gradle plugin for making FAT Jars
 shadow = "8.3.6"
