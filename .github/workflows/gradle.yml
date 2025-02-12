@@ -83,6 +83,5 @@ jobs:
           See the commit history for details.
         draft: true   # Set to true if you want to manually review before publishing
         prerelease: false  # Set based on your versioning (e.g., if you have a -rc tag)
-        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the built-in token
