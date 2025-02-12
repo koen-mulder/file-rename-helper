@@ -1,8 +1,14 @@
 plugins {
     `java-library`
     `eclipse`
-    id("com.github.johnrengelman.shadow") version libs.versions.shadow.get()
+    // Plugin for creating FAT Jars
+    id("com.gradleup.shadow") version libs.versions.shadow.get()
+    // Plugion for version numbering
+    id("com.palantir.git-version") version libs.versions.version.get()
 }
+
+val gitVersion: groovy.lang.Closure<String> by extra
+version = gitVersion()
 
 repositories {
     mavenCentral()
@@ -31,7 +37,7 @@ dependencies {
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveBaseName.set("file-rename-helper")
-    archiveVersion.set("")
+    archiveVersion.set(project.version.toString())
     archiveClassifier.set("")
     manifest {
         attributes(mapOf("Main-Class" to "com.github.koen_mulder.file_rename_helper.application.Application"))
