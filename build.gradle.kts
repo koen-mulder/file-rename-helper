@@ -17,6 +17,11 @@ repositories {
 dependencies {
     implementation(libs.guava)
 
+    // Use JUnit Jupiter for testing.
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    
+    
     // PDF viewer
     implementation(libs.icepdf.core)
     implementation(libs.icepdf.viewer)

@@ -1,6 +1,9 @@
 [versions]
 guava = "33.3.1-jre"  # This was already correct
 
+# Unit tests
+junit-jupiter = "5.11.4"
+
 # PDF viewer
 icepdf = "7.2.3"
 jai-imageio = "1.4.0"
@@ -23,6 +26,7 @@ version = "3.1.0"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 
 icepdf-core = { module = "com.github.pcorless.icepdf:icepdf-core", version.ref = "icepdf" }
 icepdf-viewer = { module = "com.github.pcorless.icepdf:icepdf-viewer", version.ref = "icepdf" }
