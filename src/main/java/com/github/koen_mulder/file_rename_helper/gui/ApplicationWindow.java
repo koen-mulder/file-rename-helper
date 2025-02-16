@@ -1,6 +1,7 @@
 package com.github.koen_mulder.file_rename_helper.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -10,7 +11,6 @@ import java.beans.PropertyChangeListener;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
@@ -24,7 +24,7 @@ import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
 import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
-import java.awt.Dimension;
+import com.github.koen_mulder.file_rename_helper.processing.gui.FileProcessingPanel;
 
 public class ApplicationWindow {
 
@@ -49,52 +49,80 @@ public class ApplicationWindow {
         WindowConfigManager configManager = WindowConfigManager.getInstance();
         AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
+        // Window
         frame = new JFrame("File rename helper");
         frame.setBounds(configManager.getWindowBounds());
         frame.setExtendedState(frame.getExtendedState() | configManager.getWindowExtendedState());
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
+        // Status bar
         StatusBarPanel statusBarPanel = new StatusBarPanel();
         statusBarPanel.setPreferredSize(new Dimension(1221, 15));
         statusBarPanel.setMinimumSize(new Dimension(182, 10));
         frame.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
         formEventPublisher.addFormEventListener(statusBarPanel);
+
+        // Panel for file processing
+        FileProcessingPanel processListPanel = new FileProcessingPanel();
+
+        // View and rename split pane
+        JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(aiController, fileSelectionPublisher,
+                suggestionPublisher, formEventPublisher, configManager);
         
+        // Splitter for file processing and file view/renaming
+        JSplitPane processListAndFileSplitPane = new JSplitPane();
+        processListAndFileSplitPane.setDividerLocation(200);
+        processListAndFileSplitPane.setLeftComponent(processListPanel);
+        processListAndFileSplitPane.setRightComponent(viewAndRenameSplitPane);
+
+        // Tabs
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+        
+        tabbedPane.addTab("Rename", null, processListAndFileSplitPane, null);
 
-        JPanel renameTabPanel = new JPanel();
-        tabbedPane.addTab("Rename", null, renameTabPanel, null);
-        renameTabPanel.setLayout(new BorderLayout(0, 0));
+        // Configuration tab
+        ConfigurationPanel configurationPanel = new ConfigurationPanel();
+        tabbedPane.addTab("Configuration", null, configurationPanel, null);
 
-        JSplitPane splitPane = new JSplitPane();
-        splitPane.setDividerLocation(configManager.getSplitPaneDividerLocation());
-        splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                logger.debug("Split pane divider location changed and new location stored in configuration.");
-                configManager.setSplitPaneDividerLocation(splitPane.getDividerLocation());
-            }
-        });
-        renameTabPanel.add(splitPane);
+        initWindowListeners(aiController, configManager, aiConfigManager);
+    }
 
+    private JSplitPane initViewAndRenameSplitPane(AIController aiController,
+            FileSelectionPublisher fileSelectionPublisher, SuggestionPublisher suggestionPublisher,
+            FormEventPublisher formEventPublisher, WindowConfigManager configManager) {
+        
+        JSplitPane viewAndRenameSplitPane = new JSplitPane();
+        
+        // Set divider location from settings
+        viewAndRenameSplitPane.setDividerLocation(configManager.getSplitPaneDividerLocation());
+        // Listen to divider location changes to store in configuration
+        viewAndRenameSplitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,
+                new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        logger.debug("Split pane divider location changed and new location stored in configuration.");
+                        configManager.setSplitPaneDividerLocation(viewAndRenameSplitPane.getDividerLocation());
+                    }
+                });
+
+        // File view panel
         FileViewPanel fileViewPanel = new FileViewPanel(frame);
-        splitPane.setLeftComponent(fileViewPanel);
+        viewAndRenameSplitPane.setLeftComponent(fileViewPanel);
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
         fileSelectionPublisher.addFileSelectionListener(fileViewPanel);
 
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, fileSelectionPublisher, suggestionPublisher, formEventPublisher);
-        splitPane.setRightComponent(fileRenamePanel);
+        // File rename panel
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, fileSelectionPublisher, suggestionPublisher,
+                formEventPublisher);
+        viewAndRenameSplitPane.setRightComponent(fileRenamePanel);
+        
+        return viewAndRenameSplitPane;
+    }
 
-        JPanel configurationTabPanel = new JPanel();
-        tabbedPane.addTab("Configuration", null, configurationTabPanel, null);
-        configurationTabPanel.setLayout(new BorderLayout(0, 0));
-
-        ConfigurationPanel configurationPanel = new ConfigurationPanel();
-
-        configurationTabPanel.add(configurationPanel, BorderLayout.CENTER);
-
+    private void initWindowListeners(AIController aiController, WindowConfigManager configManager,
+            AIConfigManager aiConfigManager) {
         frame.addWindowListener(aiController.getWindowListener());
 
         frame.addWindowListener(new WindowAdapter() {

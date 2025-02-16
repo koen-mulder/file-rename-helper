@@ -1,4 +1,4 @@
-package com.github.koen_mulder.file_rename_helper.gui.rename;
+package com.github.koen_mulder.file_rename_helper.processing.gui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -10,12 +10,8 @@ import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import com.github.koen_mulder.file_rename_helper.controller.AIController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.gui.rename.workers.FilenameSuggestionWorker;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
 
 /**
  * SwingAction for the "Select file" button. Handles opening a file chooser,
@@ -25,13 +21,11 @@ public class SelectFileButtonAction extends AbstractAction {
 
     private static final long serialVersionUID = 7773619212631079877L;
 
-    private AIController aiController;
-    private FileSelectionPublisher fileSelectionPublisher;
-    private SuggestionPublisher suggestionPublisher;
-    private FormEventPublisher formEventPublisher;
     private Component parent;
 
     private JFileChooser fileChooser;
+
+    private FileProcessingModel processModel;
 
     /**
      * SwingAction for the "Select file" button. Handles opening a file chooser,
@@ -43,16 +37,12 @@ public class SelectFileButtonAction extends AbstractAction {
      * @param formEventPublisher for notifying form components of the form state
      * @param parent component for the JDialog
      */
-    public SelectFileButtonAction(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
-            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher, Component parent) {
+    public SelectFileButtonAction(FileProcessingModel processModel, Component parent) {
 
-        this.aiController = aiController;
-        this.fileSelectionPublisher = fileSelectionPublisher;
-        this.suggestionPublisher = suggestionPublisher;
-        this.formEventPublisher = formEventPublisher;
+        this.processModel = processModel;
         this.parent = parent;
 
-        putValue(Action.NAME, "Select File");
+        putValue(Action.NAME, "Add files for processing");
         putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O); // Keyboard shortcut Alt+O
         putValue(Action.SHORT_DESCRIPTION, "Select a file to receive filename suggestions based on file content.");
 
@@ -82,16 +72,7 @@ public class SelectFileButtonAction extends AbstractAction {
         int result = fileChooser.showOpenDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            // Now that the GUI is all in place, we can try opening a PDF
-            fileSelectionPublisher.notifyFileSelectionListeners(selectedFile.getAbsolutePath());
-            // Start showing progress in the progress bar
-            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_START);
-            // Start worker for the slow process of LLM API calls
-            new FilenameSuggestionWorker(aiController, suggestionPublisher, formEventPublisher,
-                    selectedFile.getAbsolutePath()).execute();
-            // Clear forms of previous suggestions
-            formEventPublisher.notifyFormEventListeners(EFormEvent.CLEAR);
-            formEventPublisher.notifyFormEventListeners(EFormEvent.DISABLE);
+            processModel.add(new FileProcessingItem(selectedFile.getAbsolutePath(), selectedFile.getName()));
         }
     }
 }

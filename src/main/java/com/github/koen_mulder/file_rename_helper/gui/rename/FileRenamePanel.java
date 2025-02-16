@@ -29,14 +29,6 @@ public class FileRenamePanel extends JPanel {
     public FileRenamePanel(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
             SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
 
-        // Create action for opening file chooser
-        SelectFileButtonAction selectFileButtonAction = new SelectFileButtonAction(aiController, fileSelectionPublisher,
-                suggestionPublisher, formEventPublisher, this);
-
-        // Create panel displaying the current selected filename
-        FileSelectionPanel fileSelectionPanel = new FileSelectionPanel(selectFileButtonAction);
-        fileSelectionPublisher.addFileSelectionListener(fileSelectionPanel);
-
         // Create panel with the input field for the new filename
         NewFilenamePanel newFilenamePanel = new NewFilenamePanel();
         formEventPublisher.addFormEventListener(newFilenamePanel);
@@ -65,35 +57,33 @@ public class FileRenamePanel extends JPanel {
 
         // Set layout
         GroupLayout groupLayout = new GroupLayout(this);
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup().addContainerGap()
-                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(fileSelectionPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789,
-                                        Short.MAX_VALUE)
-                                .addComponent(suggestedFilenameListPanel, Alignment.TRAILING,
-                                        GroupLayout.PREFERRED_SIZE, 789, Short.MAX_VALUE)
-                                .addComponent(newFilenamePanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789,
-                                        Short.MAX_VALUE)
-                                .addComponent(importantKeywordPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789,
-                                        Short.MAX_VALUE)
-                                .addComponent(replaceCharacterPanel, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-                                .addComponent(removeCharactersPanel, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
-                        .addContainerGap()));
-        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
-                .createSequentialGroup().addContainerGap()
-                .addComponent(fileSelectionPanel, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(suggestedFilenameListPanel, GroupLayout.PREFERRED_SIZE, 248, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(newFilenamePanel, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(replaceCharacterPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                        GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED).addComponent(removeCharactersPanel,
-                        GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(346, Short.MAX_VALUE)));
+        groupLayout.setHorizontalGroup(
+            groupLayout.createParallelGroup(Alignment.LEADING)
+                .addGroup(groupLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(suggestedFilenameListPanel, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 400, Short.MAX_VALUE)
+                        .addComponent(newFilenamePanel, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                        .addComponent(importantKeywordPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                        .addComponent(replaceCharacterPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                        .addComponent(removeCharactersPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                    .addContainerGap())
+        );
+        groupLayout.setVerticalGroup(
+            groupLayout.createParallelGroup(Alignment.LEADING)
+                .addGroup(groupLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(suggestedFilenameListPanel, GroupLayout.PREFERRED_SIZE, 248, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(newFilenamePanel, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(replaceCharacterPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(375, Short.MAX_VALUE))
+        );
 
         setLayout(groupLayout);
     }
