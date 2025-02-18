@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 
 //TODO: Add missing JavaDoc
 //TODO: Make thread safe
-public class FileProcessingModel implements FileProcessingModelPublisher {
+public class FileProcessingModel implements IFileProcessingModelPublisher {
 
-    private final List<FileProcessingModelListener> listeners = Lists.newArrayList();
+    private final List<IFileProcessingModelListener> listeners = Lists.newArrayList();
 
     // List of items that have been processed
     private List<FileProcessingItem> processed = Lists.newArrayList();
@@ -197,12 +197,12 @@ public class FileProcessingModel implements FileProcessingModelPublisher {
     }
 
     @Override
-    public void addFileProcessingModelListener(FileProcessingModelListener listener) {
+    public void addFileProcessingModelListener(IFileProcessingModelListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeFileProcessingModelListener(FileProcessingModelListener listener) {
+    public void removeFileProcessingModelListener(IFileProcessingModelListener listener) {
         listeners.remove(listener);
     }
 
@@ -231,7 +231,7 @@ public class FileProcessingModel implements FileProcessingModelPublisher {
     }
 
     private void fireModelChanged(FileProcessingModelEvent event) {
-        for (FileProcessingModelListener listener : listeners) {
+        for (IFileProcessingModelListener listener : listeners) {
             listener.tableChanged(event);
         }
     }

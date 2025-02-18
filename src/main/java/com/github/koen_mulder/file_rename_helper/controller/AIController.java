@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.EConfigIdentifier;
-import com.github.koen_mulder.file_rename_helper.interfaces.ConfigChangeListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IConfigChangeListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
 import dev.langchain4j.data.document.Document;
@@ -27,7 +27,7 @@ import dev.langchain4j.service.V;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
-public class AIController implements ConfigChangeListener {
+public class AIController implements IConfigChangeListener {
 
     interface RenameAssistant {
 

@@ -24,8 +24,8 @@ import org.apache.commons.compress.utils.Lists;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
@@ -35,7 +35,7 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelE
 /**
  * Panel containing a list of filename suggestions and controls to interact with the list.
  */
-public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, FileProcessingModelListener {
+public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessingModelListener {
 
     private static final long serialVersionUID = -194287030076951038L;
 
@@ -56,7 +56,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
      * @param newFilenameFieldController controller for interacting with the new filename field
      */
     public SuggestedFilenameListPanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
-            FileProcessingModelPublisher fileProcessingModelPublisher,
+            IFileProcessingModelPublisher iFileProcessingModelPublisher,
             NewFilenameFieldController newFilenameFieldController) {
         
         JLabel listLabel = new JLabel("Select suggested filename:");
@@ -79,7 +79,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
 
         // Create buttons
         moreSuggestionsButton = new JButton(
-                new MoreSuggestionsButtonAction(aiController, openFileActionPublisher, fileProcessingModelPublisher));
+                new MoreSuggestionsButtonAction(aiController, openFileActionPublisher, iFileProcessingModelPublisher));
         clearSuggestionsButton = new JButton(new ClearSuggestionsButtonAction(listModel));
 
         // Disable fields because no suggestions have been loaded yet
@@ -209,14 +209,14 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
         private AIController aiController;
         private IOpenFileActionPublisher openFileActionPublisher;
 
-        private FileProcessingModelPublisher fileProcessingModelPublisher;
+        private IFileProcessingModelPublisher iFileProcessingModelPublisher;
 
         public MoreSuggestionsButtonAction(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
-                FileProcessingModelPublisher fileProcessingModelPublisher) {
+                IFileProcessingModelPublisher iFileProcessingModelPublisher) {
             
             this.aiController = aiController;
             this.openFileActionPublisher = openFileActionPublisher;
-            this.fileProcessingModelPublisher = fileProcessingModelPublisher;
+            this.iFileProcessingModelPublisher = iFileProcessingModelPublisher;
 
             putValue(NAME, "Get more suggestions");
             putValue(SHORT_DESCRIPTION, "Request the LLM to generate more filename suggestions.");

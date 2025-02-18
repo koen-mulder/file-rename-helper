@@ -4,12 +4,12 @@ import java.awt.EventQueue;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 
-public class FileProcessingTableModel extends AbstractTableModel implements FileProcessingModelListener {
+public class FileProcessingTableModel extends AbstractTableModel implements IFileProcessingModelListener {
 
     private static final long serialVersionUID = -3670356454612137435L;
 

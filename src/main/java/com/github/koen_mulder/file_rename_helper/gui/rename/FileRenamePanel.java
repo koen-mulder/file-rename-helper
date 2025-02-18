@@ -7,7 +7,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 
 /**
@@ -26,7 +26,7 @@ public class FileRenamePanel extends JPanel {
      * @param formEventPublisher for notifying form components of the form state
      */
     public FileRenamePanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
-            FileProcessingModelPublisher fileProcessingModelPublisher) {
+            IFileProcessingModelPublisher iFileProcessingModelPublisher) {
 
         // Create panel with the input field for the new filename
         NewFilenamePanel newFilenamePanel = new NewFilenamePanel();
@@ -37,14 +37,14 @@ public class FileRenamePanel extends JPanel {
 
         // Create panel showing filename suggestions
         SuggestedFilenameListPanel suggestedFilenameListPanel = new SuggestedFilenameListPanel(aiController,
-                openFileActionPublisher, fileProcessingModelPublisher, newFilenameFieldController);
+                openFileActionPublisher, iFileProcessingModelPublisher, newFilenameFieldController);
         openFileActionPublisher.addOpenFileActionListener(suggestedFilenameListPanel);
-        fileProcessingModelPublisher.addFileProcessingModelListener(suggestedFilenameListPanel);
+        iFileProcessingModelPublisher.addFileProcessingModelListener(suggestedFilenameListPanel);
         
         // Create panel with relevant word and date suggestions
         KeywordButtonPanel importantKeywordPanel = new KeywordButtonPanel(newFilenameFieldController);
         openFileActionPublisher.addOpenFileActionListener(importantKeywordPanel);
-        fileProcessingModelPublisher.addFileProcessingModelListener(importantKeywordPanel);
+        iFileProcessingModelPublisher.addFileProcessingModelListener(importantKeywordPanel);
         
         
         // Create panel for manipulating the new filename

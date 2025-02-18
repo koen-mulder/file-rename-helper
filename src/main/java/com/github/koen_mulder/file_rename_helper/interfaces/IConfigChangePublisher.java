@@ -7,21 +7,21 @@ import com.github.koen_mulder.file_rename_helper.config.EConfigIdentifier;
 
 /**
  * The ConfigChangePublisher interface is implemented by classes that manage 
- * configuration and notify registered {@link ConfigChangeListener}s when a config value is changed.
+ * configuration and notify registered {@link IConfigChangeListener}s when a config value is changed.
  */
-public interface ConfigChangePublisher {
+public interface IConfigChangePublisher {
     /**
      * Adds a listener that will be notified when a config value is changed
      * 
      */
-    void addConfigChangeListener(ConfigChangeListener listener);
+    void addConfigChangeListener(IConfigChangeListener listener);
 
     /**
      * Removes a previously added listener.
      * 
      * @param listener The listener to be removed.
      */
-    void removeConfigChangeListener(ConfigChangeListener listener);
+    void removeConfigChangeListener(IConfigChangeListener listener);
 
     /**
      * Notifies all registered listeners of the config value change event.

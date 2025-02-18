@@ -13,7 +13,7 @@ import org.apache.commons.compress.utils.Lists;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
@@ -21,7 +21,7 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelE
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, FileProcessingModelListener{
+public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessingModelListener{
 
     private static final long serialVersionUID = 7824169572049309584L;
 

@@ -21,7 +21,7 @@ import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.gui.FileProcessingPanel;
 
@@ -35,14 +35,14 @@ public class ApplicationWindow {
     /**
      * Create the application.
      */
-    public ApplicationWindow(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher) {
-        initialize(aiController, openFileActionPublisher, fileProcessingModelPublisher);
+    public ApplicationWindow(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, IFileProcessingModelPublisher iFileProcessingModelPublisher) {
+        initialize(aiController, openFileActionPublisher, iFileProcessingModelPublisher);
     }
 
     /**
      * Initialize the contents of the frame.
      */
-    private void initialize(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher) {
+    private void initialize(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, IFileProcessingModelPublisher iFileProcessingModelPublisher) {
         WindowConfigManager configManager = WindowConfigManager.getInstance();
         AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
@@ -64,7 +64,7 @@ public class ApplicationWindow {
 
         // View and rename split pane
         JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(aiController, openFileActionPublisher,
-                fileProcessingModelPublisher, configManager);
+                iFileProcessingModelPublisher, configManager);
         
         // Splitter for file processing and file view/renaming
         JSplitPane processListAndFileSplitPane = new JSplitPane();
@@ -86,7 +86,7 @@ public class ApplicationWindow {
     }
 
     private JSplitPane initViewAndRenameSplitPane(AIController aiController,
-            IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher,
+            IOpenFileActionPublisher openFileActionPublisher, IFileProcessingModelPublisher iFileProcessingModelPublisher,
             WindowConfigManager configManager) {
         
         JSplitPane viewAndRenameSplitPane = new JSplitPane();
@@ -111,7 +111,7 @@ public class ApplicationWindow {
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
 
         // File rename panel
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, openFileActionPublisher, fileProcessingModelPublisher);
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, openFileActionPublisher, iFileProcessingModelPublisher);
         viewAndRenameSplitPane.setRightComponent(fileRenamePanel);
         
         return viewAndRenameSplitPane;
