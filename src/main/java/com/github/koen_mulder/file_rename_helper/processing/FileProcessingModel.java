@@ -75,6 +75,14 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         throw new IndexOutOfBoundsException(rowIndex);
     }
 
+    public boolean add(List<FileProcessingItem> items) {
+        boolean result = true;
+        for(FileProcessingItem item :items) {
+            result &= add(item);
+        }
+        return result;
+    }
+    
     public boolean add(FileProcessingItem item) {
         // Check for existing items
         if (current != null && current.equals(item)) {
