@@ -1,16 +1,15 @@
 package com.github.koen_mulder.file_rename_helper.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
-
-public class StatusBarPanel extends JPanel implements FormEventListener {
+// TODO: This panel serves no purpose anymore
+public class StatusBarPanel extends JPanel {
 
     private static final long serialVersionUID = 8547601904662234829L;
     
@@ -42,18 +41,5 @@ public class StatusBarPanel extends JPanel implements FormEventListener {
         );
         setLayout(groupLayout);
         
-    }
-    
-    private void showIndeterminateProgress(boolean showProgress) {
-        progressBar.setIndeterminate(showProgress);
-    }
-
-    @Override
-    public void onFormEvent(EFormEvent event) {
-        if (event == EFormEvent.PROGRESS_START) {
-            showIndeterminateProgress(true);
-        } else if (event == EFormEvent.PROGRESS_STOP) {
-            showIndeterminateProgress(false);
-        }
     }
 }

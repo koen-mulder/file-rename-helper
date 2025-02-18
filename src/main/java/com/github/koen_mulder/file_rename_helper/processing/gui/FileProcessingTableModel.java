@@ -1,5 +1,7 @@
 package com.github.koen_mulder.file_rename_helper.processing.gui;
 
+import java.awt.EventQueue;
+
 import javax.swing.table.AbstractTableModel;
 
 import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
@@ -41,14 +43,19 @@ public class FileProcessingTableModel extends AbstractTableModel implements File
 
     @Override
     public void tableChanged(FileProcessingModelEvent e) {
-        if (e.getType() == FileProcessingModelEvent.DELETE) {
-            fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
-        } else if (e.getType() == FileProcessingModelEvent.INSERT) {
-            fireTableRowsInserted(e.getFirstRow(), e.getLastRow());
-        } else if (e.getType() == FileProcessingModelEvent.UPDATE) {
-            fireTableRowsUpdated(e.getFirstRow(), e.getLastRow());
-        } else {
-            fireTableDataChanged();
-        }
+        // Handle model update event in event thread
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                if (e.getType() == FileProcessingModelEvent.DELETE) {
+                    fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
+                } else if (e.getType() == FileProcessingModelEvent.INSERT) {
+                    fireTableRowsInserted(e.getFirstRow(), e.getLastRow());
+                } else if (e.getType() == FileProcessingModelEvent.UPDATE) {
+                    fireTableRowsUpdated(e.getFirstRow(), e.getLastRow());
+                } else {
+                    fireTableDataChanged();
+                }
+            }
+        });
     }
 }

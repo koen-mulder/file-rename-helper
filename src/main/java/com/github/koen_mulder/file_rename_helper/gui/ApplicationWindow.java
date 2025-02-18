@@ -21,9 +21,8 @@ import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.WindowConfigManager;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.gui.rename.FileRenamePanel;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.gui.FileProcessingPanel;
 
 public class ApplicationWindow {
@@ -36,16 +35,14 @@ public class ApplicationWindow {
     /**
      * Create the application.
      */
-    public ApplicationWindow(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
-            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
-        initialize(aiController, fileSelectionPublisher, suggestionPublisher, formEventPublisher);
+    public ApplicationWindow(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher) {
+        initialize(aiController, openFileActionPublisher, fileProcessingModelPublisher);
     }
 
     /**
      * Initialize the contents of the frame.
      */
-    private void initialize(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
-            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
+    private void initialize(AIController aiController, IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher) {
         WindowConfigManager configManager = WindowConfigManager.getInstance();
         AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
@@ -61,14 +58,13 @@ public class ApplicationWindow {
         statusBarPanel.setPreferredSize(new Dimension(1221, 15));
         statusBarPanel.setMinimumSize(new Dimension(182, 10));
         frame.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
-        formEventPublisher.addFormEventListener(statusBarPanel);
 
         // Panel for file processing
-        FileProcessingPanel processListPanel = new FileProcessingPanel();
+        FileProcessingPanel processListPanel = new FileProcessingPanel(aiController, openFileActionPublisher);
 
         // View and rename split pane
-        JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(aiController, fileSelectionPublisher,
-                suggestionPublisher, formEventPublisher, configManager);
+        JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(aiController, openFileActionPublisher,
+                fileProcessingModelPublisher, configManager);
         
         // Splitter for file processing and file view/renaming
         JSplitPane processListAndFileSplitPane = new JSplitPane();
@@ -90,8 +86,8 @@ public class ApplicationWindow {
     }
 
     private JSplitPane initViewAndRenameSplitPane(AIController aiController,
-            FileSelectionPublisher fileSelectionPublisher, SuggestionPublisher suggestionPublisher,
-            FormEventPublisher formEventPublisher, WindowConfigManager configManager) {
+            IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelPublisher fileProcessingModelPublisher,
+            WindowConfigManager configManager) {
         
         JSplitPane viewAndRenameSplitPane = new JSplitPane();
         
@@ -109,13 +105,13 @@ public class ApplicationWindow {
 
         // File view panel
         FileViewPanel fileViewPanel = new FileViewPanel(frame);
+        openFileActionPublisher.addOpenFileActionListener(fileViewPanel);
+        
         viewAndRenameSplitPane.setLeftComponent(fileViewPanel);
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
-        fileSelectionPublisher.addFileSelectionListener(fileViewPanel);
 
         // File rename panel
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, fileSelectionPublisher, suggestionPublisher,
-                formEventPublisher);
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, openFileActionPublisher, fileProcessingModelPublisher);
         viewAndRenameSplitPane.setRightComponent(fileRenamePanel);
         
         return viewAndRenameSplitPane;

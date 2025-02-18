@@ -1,48 +1,44 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename.workers;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.swing.SwingWorker;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
-import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
 
-public class FilenameSuggestionWorker extends SwingWorker<FilenameSuggestions, Integer> {
+public class FilenameSuggestionWorker extends SwingWorker<Void, Void> {
 
     private AIController aiController;
-    private SuggestionPublisher suggestionPublisher;
-    private FormEventPublisher formEventPublisher;
-    private String filePath;
+    private FileProcessingModel processModel;
 
-    public FilenameSuggestionWorker(AIController aiController, SuggestionPublisher suggestionPublisher,
-            FormEventPublisher formEventPublisher, String filePath) {
+    public FilenameSuggestionWorker(AIController aiController, FileProcessingModel processModel) {
         this.aiController = aiController;
-        this.suggestionPublisher = suggestionPublisher;
-        this.formEventPublisher = formEventPublisher;
-        this.filePath = filePath;
+        this.processModel = processModel;
     }
 
     @Override
-    protected FilenameSuggestions doInBackground() throws Exception {
-        return aiController.generatePossibleFileNames(filePath);
+    protected Void doInBackground() throws Exception {
+        while (true) {
+            FileProcessingItem item = processModel.getNext();
+            
+            if (item == null) {
+                // Empty queue wait a bit
+                try {
+                    synchronized(this){
+                        wait(1000);
+                    }
+                } catch (InterruptedException ex) {
+                    System.out.println("Background interrupted");
+                }
+            } else {
+                // Process item
+                aiController.process(item);
+            }
+        }
     }
-
+    
     @Override
     protected void done() {
-        try {
-            FilenameSuggestions result = get();
-            suggestionPublisher.notifySuggestionListeners(result);
-            formEventPublisher.notifyFormEventListeners(EFormEvent.ENABLE);
-            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_STOP);
-        } catch (InterruptedException e) {
-            // TODO: Properly handle exceptions
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO: Properly handle exceptions
-            e.printStackTrace();
-        }
+        // Do nothing - This task runs forever
     }
 }

@@ -71,17 +71,17 @@ public class FileProcessingModel implements FileProcessingModelPublisher {
         throw new IndexOutOfBoundsException(rowIndex);
     }
 
-    public boolean add(FileProcessingItem object) {
+    public boolean add(FileProcessingItem item) {
         // Check for existing items
         for (FileProcessingItem existingItem : backlog) {
-            if (existingItem.getOriginalAbsoluteFilePath().equals(object.getOriginalAbsoluteFilePath())) {
+            if (existingItem.getOriginalAbsoluteFilePath().equals(item.getOriginalAbsoluteFilePath())) {
                 // Do not allow duplicate objects to be added
                 return false;
             }
         }
         
-        if (!backlog.add(object)) {
-            throw new IllegalStateException("New item could not be added to backlog. Item: " + object);
+        if (!backlog.add(item)) {
+            throw new IllegalStateException("New item could not be added to backlog. Item: " + item);
         }
         fireRowInserted(getRowCount()-1);
         return true;
@@ -103,12 +103,13 @@ public class FileProcessingModel implements FileProcessingModelPublisher {
             throw new IllegalStateException(
                     "Cannot re-queue an item that has not been processed yet. Index: " + rowIndex);
         }
-        FileProcessingItem object = processed.remove(rowIndex);
+        FileProcessingItem item = processed.remove(rowIndex);
         fireRowDeleted(rowIndex);
 
-        if (!requeued.add(object)) {
-            throw new IllegalStateException("Item removed from processed but could not be requeued. Item: " + object);
+        if (!requeued.add(item)) {
+            throw new IllegalStateException("Item removed from processed but could not be requeued. Item: " + item);
         }
+        item.setState(EFileProcessingItemState.REQUEUED);
         int newRowIndex = processed.size() + requeued.size() + (current == null ? 0 : 1);
         fireRowInserted(newRowIndex);
         return true;
@@ -123,20 +124,37 @@ public class FileProcessingModel implements FileProcessingModelPublisher {
     public FileProcessingItem getNext() {
         // Bump current processed
         if (current != null) {
+            current.setState(EFileProcessingItemState.PROCESSED);
+            // Move last current to processed
             processed.add(current);
+            current = null;
+            // Fire update to model listeners
+            fireRowUpdated(processed.size() - 1);
+            
         }
 
         if (requeued.size() > 0) {
             current = requeued.remove(0);
+            current.setState(EFileProcessingItemState.PROCESSING);
+            fireRowUpdated(processed.size());
             return current;
         }
 
         if (backlog.size() > 0) {
             current = backlog.remove(0);
+            current.setState(EFileProcessingItemState.PROCESSING);
+            fireRowUpdated(processed.size());
             return current;
         }
 
         return null;
+    }
+    
+    public Integer getCurrentIndex() {
+        if (current == null) {
+            return null;
+        }
+        return processed.size();
     }
 
     public FileProcessingItem remove(int rowIndex) {

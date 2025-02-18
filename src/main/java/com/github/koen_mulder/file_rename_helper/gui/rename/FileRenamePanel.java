@@ -1,15 +1,14 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename;
 
 import javax.swing.GroupLayout;
-import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 
 /**
  * Panel for selecting a file, viewing filename suggestions and composing a new filename. 
@@ -26,34 +25,35 @@ public class FileRenamePanel extends JPanel {
      * @param suggestionPublisher for notifying components there are new suggestions
      * @param formEventPublisher for notifying form components of the form state
      */
-    public FileRenamePanel(AIController aiController, FileSelectionPublisher fileSelectionPublisher,
-            SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
+    public FileRenamePanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
+            FileProcessingModelPublisher fileProcessingModelPublisher) {
 
         // Create panel with the input field for the new filename
         NewFilenamePanel newFilenamePanel = new NewFilenamePanel();
-        formEventPublisher.addFormEventListener(newFilenamePanel);
+        openFileActionPublisher.addOpenFileActionListener(newFilenamePanel);
         
         // Create controller for other panels to interact with the new filename input
         NewFilenameFieldController newFilenameFieldController = new NewFilenameFieldController(newFilenamePanel.getNewFilenameField());
 
         // Create panel showing filename suggestions
         SuggestedFilenameListPanel suggestedFilenameListPanel = new SuggestedFilenameListPanel(aiController,
-                suggestionPublisher, formEventPublisher, newFilenameFieldController);
+                openFileActionPublisher, fileProcessingModelPublisher, newFilenameFieldController);
+        openFileActionPublisher.addOpenFileActionListener(suggestedFilenameListPanel);
+        fileProcessingModelPublisher.addFileProcessingModelListener(suggestedFilenameListPanel);
         
         // Create panel with relevant word and date suggestions
         KeywordButtonPanel importantKeywordPanel = new KeywordButtonPanel(newFilenameFieldController);
-        formEventPublisher.addFormEventListener(importantKeywordPanel);
-        suggestionPublisher.addSuggestionListener(importantKeywordPanel);
-        suggestionPublisher.addSuggestionListener(suggestedFilenameListPanel);
-        formEventPublisher.addFormEventListener(suggestedFilenameListPanel);
+        openFileActionPublisher.addOpenFileActionListener(importantKeywordPanel);
+        fileProcessingModelPublisher.addFileProcessingModelListener(importantKeywordPanel);
+        
         
         // Create panel for manipulating the new filename
         ReplaceCharacterPanel replaceCharacterPanel = new ReplaceCharacterPanel(newFilenameFieldController);
-        formEventPublisher.addFormEventListener(replaceCharacterPanel);
+        openFileActionPublisher.addOpenFileActionListener(replaceCharacterPanel);
 
         // Create panel for manipulating the new filename
         MiscButtonPanel removeCharactersPanel = new MiscButtonPanel(newFilenameFieldController);
-        formEventPublisher.addFormEventListener(removeCharactersPanel);
+        openFileActionPublisher.addOpenFileActionListener(removeCharactersPanel);
 
         // Set layout
         GroupLayout groupLayout = new GroupLayout(this);

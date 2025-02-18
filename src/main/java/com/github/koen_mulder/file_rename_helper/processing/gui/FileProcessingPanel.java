@@ -3,17 +3,25 @@ package com.github.koen_mulder.file_rename_helper.processing.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.github.koen_mulder.file_rename_helper.controller.AIController;
+import com.github.koen_mulder.file_rename_helper.gui.rename.workers.FilenameSuggestionWorker;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
 
@@ -27,7 +35,7 @@ public class FileProcessingPanel extends JPanel {
     
     private JTable processTable;
 
-    public FileProcessingPanel() {
+    public FileProcessingPanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher) {
 
         setPreferredSize(new Dimension(250, 500));
         setMinimumSize(new Dimension(200, 500));
@@ -41,10 +49,33 @@ public class FileProcessingPanel extends JPanel {
         processTable.setModel(new FileProcessingTableModel(processModel));
 //        processTable.setTableHeader(null);
         processTable.getColumnModel().getColumn(0).setCellRenderer(new FileProcessingItemRenderer());
+        
+     // Add a MouseListener to the JTable
+        processTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Check for double-click
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                    // Get the selected row and column
+                    int row = processTable.rowAtPoint(e.getPoint());
+                    int col = processTable.columnAtPoint(e.getPoint());
+
+                    // Check if a valid row and column were clicked (important!)
+                    if (row >= 0 && col >= 0) {
+                        // Get the value at the selected cell
+                        FileProcessingItem fileItem = (FileProcessingItem)processTable.getValueAt(row, 0);
+                        openFileActionPublisher.notifyOpenFileActionListeners(fileItem);
+                    }
+                }
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(processTable);
         scrollPane.revalidate();
 
+        FilenameSuggestionWorker worker = new FilenameSuggestionWorker(aiController, processModel);
+        worker.execute();
+        
         JButton btnNewButton = new JButton(new SelectFileButtonAction(processModel, this));
         
         JButton btnNewButton_1 = new JButton("Start processing");
@@ -107,6 +138,11 @@ public class FileProcessingPanel extends JPanel {
                     break;
                 }
             }
+            
+            // Add some padding before and after a filename
+            ((JComponent) c).setBorder(BorderFactory
+                    .createCompoundBorder(getBorder(), new EmptyBorder(0, 3, 0, 3)));
+            
             return c;
         }
     }

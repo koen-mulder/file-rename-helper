@@ -12,13 +12,13 @@ import javax.swing.border.TitledBorder;
 import org.apache.commons.compress.utils.Lists;
 
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
 /**
  * Panel for replacing special characters in the new filename input field
  */
-public class ReplaceCharacterPanel extends JPanel implements FormEventListener {
+public class ReplaceCharacterPanel extends JPanel implements IOpenFileActionListener {
 
     private static final long serialVersionUID = 181583606542347794L;
 
@@ -47,7 +47,6 @@ public class ReplaceCharacterPanel extends JPanel implements FormEventListener {
             button.setEnabled(false);
             add(button);
         }
-
     }
 
     @Override
@@ -58,10 +57,8 @@ public class ReplaceCharacterPanel extends JPanel implements FormEventListener {
     }
 
     @Override
-    public void onFormEvent(EFormEvent event) {
-        if (event == EFormEvent.ENABLE || event == EFormEvent.DISABLE) {
-            setEnabled(event == EFormEvent.ENABLE);
-        }
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        setEnabled(fileItem == null);
     }
 
     private class ReplaceCharacterButtonAction extends AbstractAction {

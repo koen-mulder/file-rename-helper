@@ -13,18 +13,18 @@ public class FileProcessingModelEvent extends java.util.EventObject {
     /**
      * The type of the event.
      */
-    protected int type;
+    protected final int type;
     /**
      * The first row that has changed.
      */
-    protected int firstRow;
+    protected final int firstRow;
     /**
      * The last row that has changed.
      */
-    protected int lastRow;
+    protected final int lastRow;
     
     public FileProcessingModelEvent(FileProcessingModel source) {
-     // Use Integer.MAX_VALUE instead of getRowCount() in case rows were deleted.
+        // Use Integer.MAX_VALUE instead of getRowCount() in case rows were deleted.
         this(source, 0, Integer.MAX_VALUE, UPDATE);
     }
     
@@ -35,9 +35,15 @@ public class FileProcessingModelEvent extends java.util.EventObject {
         this.type = type;
     }
     
-    public int getFirstRow() { return firstRow; }
+    public int getFirstRow() {
+        return firstRow;
+    }
 
-    public int getLastRow() { return lastRow; }
+    public int getLastRow() {
+        return lastRow;
+    }
 
-    public int getType() { return type; }
+    public int getType() {
+        return type;
+    }
 }

@@ -21,21 +21,19 @@ public class SelectFileButtonAction extends AbstractAction {
 
     private static final long serialVersionUID = 7773619212631079877L;
 
-    private Component parent;
-
     private JFileChooser fileChooser;
 
     private FileProcessingModel processModel;
+    private Component parent;
+
 
     /**
      * SwingAction for the "Select file" button. Handles opening a file chooser,
      * starting a SwingWorker for suggestions and notifying listeners.
-     * 
-     * @param aiController for requesting suggestions
+     * @param parent component for the JDialog
      * @param fileSelectionPublisher for notifying components (like the PDF viewer) that a file is selected
      * @param suggestionPublisher for notifying components there are new suggestions
      * @param formEventPublisher for notifying form components of the form state
-     * @param parent component for the JDialog
      */
     public SelectFileButtonAction(FileProcessingModel processModel, Component parent) {
 

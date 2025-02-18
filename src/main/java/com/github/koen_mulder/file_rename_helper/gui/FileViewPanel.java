@@ -9,9 +9,10 @@ import org.icepdf.ri.common.views.DocumentViewController;
 import org.icepdf.ri.util.FontPropertiesManager;
 import org.icepdf.ri.util.ViewerPropertiesManager;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.FileSelectionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
-public class FileViewPanel extends JPanel implements FileSelectionListener {
+public class FileViewPanel extends JPanel implements IOpenFileActionListener {
 
     private static final long serialVersionUID = 294107391689362780L;
     
@@ -57,9 +58,11 @@ public class FileViewPanel extends JPanel implements FileSelectionListener {
     }
 
     @Override
-    public void onFileSelected(String filePath) {
-        controller.openDocument(filePath);
-        //TODO: Set by user preferred zoom - Current PAGE_FIT_WINDOW_HEIGHT is bugged in IcePDF 
-        controller.setPageFitMode(DocumentViewController.PAGE_FIT_WINDOW_HEIGHT, true);
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        if (fileItem != null) {
+            controller.openDocument(fileItem.getOriginalAbsoluteFilePath());
+            //TODO: Set by user preferred zoom - Current PAGE_FIT_WINDOW_HEIGHT is bugged in IcePDF 
+            controller.setPageFitMode(DocumentViewController.PAGE_FIT_WINDOW_HEIGHT, true);
+        }
     }
 }

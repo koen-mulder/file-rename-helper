@@ -9,6 +9,7 @@ import java.util.List;
 import com.github.koen_mulder.file_rename_helper.config.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.config.EConfigIdentifier;
 import com.github.koen_mulder.file_rename_helper.interfaces.ConfigChangeListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
@@ -165,5 +166,10 @@ public class AIController implements ConfigChangeListener {
         
         initializeModelAndEmbeddingStore();
         initializeRenameAssistant();
+    }
+
+    public void process(FileProcessingItem item) {
+        FilenameSuggestions suggestions = generatePossibleFileNames(item.getOriginalAbsoluteFilePath());
+        item.addSuggestions(suggestions);
     }
 }

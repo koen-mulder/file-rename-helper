@@ -9,20 +9,25 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.compress.utils.Lists;
+
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.FileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements SuggestionListener, FormEventListener{
+public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, FileProcessingModelListener{
 
     private static final long serialVersionUID = 7824169572049309584L;
 
     private NewFilenameFieldController newFilenameFieldController;
+
+    private FileProcessingItem activeFileItem;
 
     /**
      * Panel for insert keyword buttons.
@@ -59,16 +64,24 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
     }
 
     @Override
-    public void onSuggestionsGenerated(FilenameSuggestions suggestions) {
-        addButtons(suggestions.relevantWords());
-        addButtons(suggestions.relevantDates());
+    public void tableChanged(FileProcessingModelEvent e) {
+        // TODO: This should listen to a suggestion listener and not this model listener 
     }
 
     @Override
-    public void onFormEvent(EFormEvent event) {
-        // Clean panel for suggestions based on the new file
-        if (event == EFormEvent.CLEAR) {
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        if (fileItem == null) {
+            // Clear panel by "opening" a null file
+            activeFileItem = fileItem;
             clearPanel();
+        } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
+            activeFileItem = fileItem;
+            clearPanel();
+            List<String> aggregatedSuggestions = Lists.newArrayList();
+            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
+                aggregatedSuggestions.addAll(suggestions.relevantWords());
+            }
+            addButtons(aggregatedSuggestions);
         }
     }
 
