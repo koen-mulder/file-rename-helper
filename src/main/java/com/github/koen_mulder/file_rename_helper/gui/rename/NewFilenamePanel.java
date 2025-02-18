@@ -1,22 +1,23 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
 /**
  * Panel containing the input field for the new filename.
  */
-public class NewFilenamePanel extends JPanel implements FormEventListener {
+public class NewFilenamePanel extends JPanel implements IOpenFileActionListener {
 
     private static final long serialVersionUID = -8735277668945036089L;
     private JTextField newFilenameField;
+    private FileProcessingItem activeFileItem;
 
     
     /**
@@ -32,7 +33,7 @@ public class NewFilenamePanel extends JPanel implements FormEventListener {
         gl_newFilenamePanel.setHorizontalGroup(gl_newFilenamePanel.createParallelGroup(Alignment.LEADING)
                 .addGroup(gl_newFilenamePanel.createSequentialGroup().addComponent(newFilenameLabel)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(newFilenameField, GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE)));
+                        .addComponent(newFilenameField, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
         gl_newFilenamePanel.setVerticalGroup(gl_newFilenamePanel.createParallelGroup(Alignment.LEADING)
                 .addGroup(gl_newFilenamePanel.createSequentialGroup()
                         .addGroup(gl_newFilenamePanel.createParallelGroup(Alignment.BASELINE)
@@ -60,12 +61,18 @@ public class NewFilenamePanel extends JPanel implements FormEventListener {
     }
 
     @Override
-    public void onFormEvent(EFormEvent event) {
-        if (event == EFormEvent.ENABLE || event == EFormEvent.DISABLE) {
-            setEnabled(event == EFormEvent.ENABLE);
-        } else if (event == EFormEvent.CLEAR) {
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        if (fileItem == null) {
+            // Clear panel by "opening" a null file
+            activeFileItem = fileItem;
             clearNewFilenameField();
+            setEnabled(false);
+        } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
+            activeFileItem = fileItem;
+            clearNewFilenameField();
+            setEnabled(true);
         }
+        
     }
 
 }

@@ -14,10 +14,10 @@ import javax.swing.border.TitledBorder;
 import org.apache.commons.compress.utils.Lists;
 
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
-public class MiscButtonPanel extends JPanel implements FormEventListener{
+public class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
 
     private static final long serialVersionUID = 5711654747954407097L;
 
@@ -51,10 +51,8 @@ public class MiscButtonPanel extends JPanel implements FormEventListener{
     }
     
     @Override
-    public void onFormEvent(EFormEvent event) {
-        if (event == EFormEvent.ENABLE || event == EFormEvent.DISABLE) {
-            setEnabled(event == EFormEvent.ENABLE);
-        }
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        setEnabled(fileItem != null);
     }
 
     private class ConsecutiveReplaceButtonAction extends AbstractAction {

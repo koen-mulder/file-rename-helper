@@ -1,6 +1,7 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -13,25 +14,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.github.koen_mulder.file_rename_helper.controller.AIController;
+import org.apache.commons.compress.utils.Lists;
+
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.gui.rename.workers.AdditionalSuggestionWorker;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionPublisher;
-import javax.swing.ScrollPaneConstants;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 
 /**
  * Panel containing a list of filename suggestions and controls to interact with the list.
  */
-public class SuggestedFilenameListPanel extends JPanel implements SuggestionListener, FormEventListener {
+//TODO: Fix javadoc
+public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = -194287030076951038L;
 
@@ -41,6 +42,8 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
 
     private DefaultListModel<String> listModel;
 
+    private FileProcessingItem activeFileItem;
+
     /**
      * Panel containing a list of filename suggestions and controls to interact with the list.
      * 
@@ -49,8 +52,9 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
      * @param formEventPublisher 
      * @param newFilenameFieldController controller for interacting with the new filename field
      */
-    public SuggestedFilenameListPanel(AIController aiController, SuggestionPublisher suggestionPublisher,
-            FormEventPublisher formEventPublisher, NewFilenameFieldController newFilenameFieldController) {
+    public SuggestedFilenameListPanel(FileProcessingModelController fileProcessingModelController,
+            NewFilenameFieldController newFilenameFieldController) {
+        
         JLabel listLabel = new JLabel("Select suggested filename:");
 
         // Create model for the suggestions
@@ -70,8 +74,7 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         // Create buttons
-        moreSuggestionsButton = new JButton(
-                new MoreSuggestionsButtonAction(aiController, suggestionPublisher, formEventPublisher));
+        moreSuggestionsButton = new JButton(new MoreSuggestionsButtonAction(fileProcessingModelController));
         clearSuggestionsButton = new JButton(new ClearSuggestionsButtonAction(listModel));
 
         // Disable fields because no suggestions have been loaded yet
@@ -111,20 +114,46 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
     }
 
     @Override
-    public void onFormEvent(EFormEvent event) {
-        if (event == EFormEvent.DISABLE) {
-            setEnabled(false);
-        } else if (event == EFormEvent.ENABLE) {
-            setEnabled(true);
-        } else if (event == EFormEvent.CLEAR) {
-            clearList();
+    public void onFileProcessed(FileProcessingItem fileItem) {
+        if (activeFileItem == null) {
+            // No active item so no suggestions to add
+            return;
+        }
+
+        if (activeFileItem.equals(fileItem)) {
+
+            // Generate buttons on all suggestions
+            List<String> aggregatedSuggestions = Lists.newArrayList();
+            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
+                aggregatedSuggestions.addAll(suggestions.possibleFilenames());
+            }
+
+            // Clear existing buttons
+            listModel.clear();
+
+            // Add buttons
+            listModel.addAll(aggregatedSuggestions);
         }
     }
-
+    
     @Override
-    public void onSuggestionsGenerated(FilenameSuggestions suggestions) {
-        // Add all suggestions
-        listModel.addAll(suggestions.possibleFilenames());
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        if (fileItem == null) {
+            // Clear panel by "opening" a null file
+            activeFileItem = fileItem;
+            clearList();
+            setEnabled(false);
+        } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
+            activeFileItem = fileItem;
+            clearList();
+            setEnabled(true);
+            
+            List<String> aggregatedSuggestions = Lists.newArrayList();
+            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
+                aggregatedSuggestions.addAll(suggestions.possibleFilenames());
+            }
+            listModel.addAll(aggregatedSuggestions);
+        }
     }
 
     private final class SuggestionSelectionListener implements ListSelectionListener {
@@ -166,22 +195,18 @@ public class SuggestedFilenameListPanel extends JPanel implements SuggestionList
 
         private static final long serialVersionUID = 5890446755560861964L;
 
-        private AIController aiController;
-        private SuggestionPublisher suggestionPublisher;
-        private FormEventPublisher formEventPublisher;
+        private FileProcessingModelController fileProcessingModelController;
 
-        public MoreSuggestionsButtonAction(AIController aiController, SuggestionPublisher suggestionPublisher, FormEventPublisher formEventPublisher) {
-            this.aiController = aiController;
-            this.suggestionPublisher = suggestionPublisher;
-            this.formEventPublisher = formEventPublisher;
+        public MoreSuggestionsButtonAction(FileProcessingModelController fileProcessingModelController) {
+            
+            this.fileProcessingModelController = fileProcessingModelController;
 
             putValue(NAME, "Get more suggestions");
             putValue(SHORT_DESCRIPTION, "Request the LLM to generate more filename suggestions.");
         }
 
         public void actionPerformed(ActionEvent e) {
-            formEventPublisher.notifyFormEventListeners(EFormEvent.PROGRESS_START);
-            new AdditionalSuggestionWorker(aiController, suggestionPublisher, formEventPublisher).execute();
+            fileProcessingModelController.requeue(activeFileItem);
         }
     }
 

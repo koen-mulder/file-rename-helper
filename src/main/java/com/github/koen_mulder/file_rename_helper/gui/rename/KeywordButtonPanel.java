@@ -9,20 +9,24 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.compress.utils.Lists;
+
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.gui.EFormEvent;
-import com.github.koen_mulder.file_rename_helper.interfaces.FormEventListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.SuggestionListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements SuggestionListener, FormEventListener{
+public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = 7824169572049309584L;
 
     private NewFilenameFieldController newFilenameFieldController;
+
+    private FileProcessingItem activeFileItem;
 
     /**
      * Panel for insert keyword buttons.
@@ -49,8 +53,13 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
      * 
      * @param keywords List of keywords to create buttons for
      */
-    public void addButtons(List<String> keywords) {
-        for (String keyword : keywords) {
+    public void addButtons(FileProcessingItem fileItem) {
+        List<String> aggregatedSuggestions = Lists.newArrayList();
+        for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
+            aggregatedSuggestions.addAll(suggestions.relevantWords());
+        }
+        
+        for (String keyword : aggregatedSuggestions) {
             add(new JButton(new KeywordButtonAction(keyword)));
         }
         
@@ -59,16 +68,24 @@ public class KeywordButtonPanel extends JPanel implements SuggestionListener, Fo
     }
 
     @Override
-    public void onSuggestionsGenerated(FilenameSuggestions suggestions) {
-        addButtons(suggestions.relevantWords());
-        addButtons(suggestions.relevantDates());
+    public void onOpenFileAction(FileProcessingItem fileItem) {
+        if (fileItem == null) {
+            // Clear panel by "opening" a null file
+            activeFileItem = fileItem;
+            clearPanel();
+        } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
+            activeFileItem = fileItem;
+            clearPanel();
+            addButtons(fileItem);
+        }
     }
 
     @Override
-    public void onFormEvent(EFormEvent event) {
-        // Clean panel for suggestions based on the new file
-        if (event == EFormEvent.CLEAR) {
+    public void onFileProcessed(FileProcessingItem fileItem) {
+        // Update buttons if the current active file has been reprocessed
+        if (fileItem.equals(activeFileItem)) {
             clearPanel();
+            addButtons(fileItem);
         }
     }
 

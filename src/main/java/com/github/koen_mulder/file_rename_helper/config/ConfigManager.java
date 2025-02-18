@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.ConfigChangeListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.ConfigChangePublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IConfigChangeListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IConfigChangePublisher;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
@@ -24,7 +24,7 @@ import com.google.gson.Gson;
  * thread-safe access to the values.
  * </p>
  */
-abstract class ConfigManager<T> implements ConfigChangePublisher {
+abstract class ConfigManager<T> implements IConfigChangePublisher {
 
     private final Gson gson;
     private String configFilePath;
@@ -32,7 +32,7 @@ abstract class ConfigManager<T> implements ConfigChangePublisher {
 
     protected final T config;
     
-    private ArrayList<ConfigChangeListener> listeners = Lists.newArrayList();
+    private ArrayList<IConfigChangeListener> listeners = Lists.newArrayList();
 
     // Private constructor to prevent instantiation
     protected ConfigManager(String configFilePath, Class<T> classOfT) {
@@ -84,18 +84,18 @@ abstract class ConfigManager<T> implements ConfigChangePublisher {
     }
 
     @Override
-    public void addConfigChangeListener(ConfigChangeListener listener) {
+    public void addConfigChangeListener(IConfigChangeListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeConfigChangeListener(ConfigChangeListener listener) {
+    public void removeConfigChangeListener(IConfigChangeListener listener) {
         listeners.remove(listener);
     }
 
     @Override
     public void notifyConfigChangeListeners(EConfigIdentifier configId) {
-        for (ConfigChangeListener listener : listeners) {
+        for (IConfigChangeListener listener : listeners) {
             listener.onConfigChanged(configId);
         }
     }
