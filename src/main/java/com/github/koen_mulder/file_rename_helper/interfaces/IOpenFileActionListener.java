@@ -5,7 +5,7 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 /**
  * Implementing components want to be able to respond when the Open File (for renaming) Action is performed.
  */
-public interface IOpenFileActionListener {
+public interface IOpenFileActionListener extends java.util.EventListener {
     
     /**
      * This method will be called when a File needs to be opened for manual renaming.

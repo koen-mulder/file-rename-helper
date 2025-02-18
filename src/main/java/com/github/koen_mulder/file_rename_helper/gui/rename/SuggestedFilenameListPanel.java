@@ -21,21 +21,18 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 
 /**
  * Panel containing a list of filename suggestions and controls to interact with the list.
  */
-public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessingModelListener {
+//TODO: Fix javadoc
+public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = -194287030076951038L;
 
@@ -55,8 +52,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
      * @param formEventPublisher 
      * @param newFilenameFieldController controller for interacting with the new filename field
      */
-    public SuggestedFilenameListPanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
-            IFileProcessingModelPublisher iFileProcessingModelPublisher,
+    public SuggestedFilenameListPanel(FileProcessingModelController fileProcessingModelController,
             NewFilenameFieldController newFilenameFieldController) {
         
         JLabel listLabel = new JLabel("Select suggested filename:");
@@ -78,8 +74,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         // Create buttons
-        moreSuggestionsButton = new JButton(
-                new MoreSuggestionsButtonAction(aiController, openFileActionPublisher, iFileProcessingModelPublisher));
+        moreSuggestionsButton = new JButton(new MoreSuggestionsButtonAction(fileProcessingModelController));
         clearSuggestionsButton = new JButton(new ClearSuggestionsButtonAction(listModel));
 
         // Disable fields because no suggestions have been loaded yet
@@ -117,31 +112,26 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
     private void clearList() {
         listModel.clear();
     }
-    
+
     @Override
-    public void tableChanged(FileProcessingModelEvent e) {
+    public void onFileProcessed(FileProcessingItem fileItem) {
         if (activeFileItem == null) {
             // No active item so no suggestions to add
             return;
         }
-        
-        if (e.getType() != FileProcessingModelEvent.UPDATE) {
-            // Event is for an INSERT or DELETE so no suggestions to add
-        }
-        
-        if (e.getFirstRow() != e.getLastRow()) {
-            // Multi row event so not a processing state change
-        }
-        
-        if (e.getSource() instanceof FileProcessingModel) {
-            FileProcessingModel model = (FileProcessingModel)e.getSource();
-            //FIXME: This is a race condition waiting to happen. If a model change happens before this event is processed then the wrong file will become active!!!! Should use another listener for this and not the model change listener.
-            FileProcessingItem item = model.getValueAt(e.getFirstRow());
-            listModel.clear();
+
+        if (activeFileItem.equals(fileItem)) {
+
+            // Generate buttons on all suggestions
             List<String> aggregatedSuggestions = Lists.newArrayList();
-            for (FilenameSuggestions suggestions : item.getSuggestions()) {
+            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
                 aggregatedSuggestions.addAll(suggestions.possibleFilenames());
             }
+
+            // Clear existing buttons
+            listModel.clear();
+
+            // Add buttons
             listModel.addAll(aggregatedSuggestions);
         }
     }
@@ -201,29 +191,22 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
         }
     }
 
-    // TODO: FIX more suggestions!
     private final class MoreSuggestionsButtonAction extends AbstractAction {
 
         private static final long serialVersionUID = 5890446755560861964L;
 
-        private AIController aiController;
-        private IOpenFileActionPublisher openFileActionPublisher;
+        private FileProcessingModelController fileProcessingModelController;
 
-        private IFileProcessingModelPublisher iFileProcessingModelPublisher;
-
-        public MoreSuggestionsButtonAction(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
-                IFileProcessingModelPublisher iFileProcessingModelPublisher) {
+        public MoreSuggestionsButtonAction(FileProcessingModelController fileProcessingModelController) {
             
-            this.aiController = aiController;
-            this.openFileActionPublisher = openFileActionPublisher;
-            this.iFileProcessingModelPublisher = iFileProcessingModelPublisher;
+            this.fileProcessingModelController = fileProcessingModelController;
 
             putValue(NAME, "Get more suggestions");
             putValue(SHORT_DESCRIPTION, "Request the LLM to generate more filename suggestions.");
         }
 
         public void actionPerformed(ActionEvent e) {
-//            new AdditionalSuggestionWorker(aiController, suggestionPublisher, formEventPublisher).execute();
+            fileProcessingModelController.requeue(activeFileItem);
         }
     }
 

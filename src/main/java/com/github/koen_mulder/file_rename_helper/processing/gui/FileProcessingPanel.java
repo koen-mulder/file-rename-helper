@@ -15,15 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.EmptyBorder;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.gui.rename.workers.FilenameSuggestionWorker;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 
 public class FileProcessingPanel extends JPanel {
 
@@ -35,7 +35,7 @@ public class FileProcessingPanel extends JPanel {
     
     private JTable processTable;
 
-    public FileProcessingPanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher) {
+    public FileProcessingPanel(AIController aiController, FileProcessingModelController fileProcessingModelController, IOpenFileActionPublisher openFileActionPublisher) {
 
         setPreferredSize(new Dimension(250, 500));
         setMinimumSize(new Dimension(200, 500));
@@ -45,8 +45,7 @@ public class FileProcessingPanel extends JPanel {
         processTable.setShowGrid(false);
         processTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         processTable.setFillsViewportHeight(true);
-        FileProcessingModel processModel = new FileProcessingModel();
-        processTable.setModel(new FileProcessingTableModel(processModel));
+        processTable.setModel(new FileProcessingTableModel(fileProcessingModelController));
 //        processTable.setTableHeader(null);
         processTable.getColumnModel().getColumn(0).setCellRenderer(new FileProcessingItemRenderer());
         
@@ -73,10 +72,10 @@ public class FileProcessingPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(processTable);
         scrollPane.revalidate();
 
-        FilenameSuggestionWorker worker = new FilenameSuggestionWorker(aiController, processModel);
+        FilenameSuggestionWorker worker = new FilenameSuggestionWorker(aiController, fileProcessingModelController);
         worker.execute();
         
-        JButton btnNewButton = new JButton(new SelectFileButtonAction(processModel, this));
+        JButton btnNewButton = new JButton(new SelectFileButtonAction(fileProcessingModelController, this));
         
         JButton btnNewButton_1 = new JButton("Start processing");
         

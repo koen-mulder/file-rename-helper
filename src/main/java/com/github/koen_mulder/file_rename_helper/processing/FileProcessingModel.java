@@ -1,17 +1,21 @@
 package com.github.koen_mulder.file_rename_helper.processing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 
 //TODO: Add missing JavaDoc
 //TODO: Make thread safe
-public class FileProcessingModel implements IFileProcessingModelPublisher {
+public class FileProcessingModel implements IFileProcessingModelPublisher, IFileProcessedPublisher {
 
-    private final List<IFileProcessingModelListener> listeners = Lists.newArrayList();
+    private final List<IFileProcessingModelListener> modelListeners = Lists.newArrayList();
+    private final List<IFileProcessedListener> processedListeners = Lists.newArrayList();
 
     // List of items that have been processed
     private List<FileProcessingItem> processed = Lists.newArrayList();
@@ -73,8 +77,24 @@ public class FileProcessingModel implements IFileProcessingModelPublisher {
 
     public boolean add(FileProcessingItem item) {
         // Check for existing items
+        if (current != null && current.equals(item)) {
+            // Do not allow duplicate objects to be added
+            return false;
+        }
+        for (FileProcessingItem existingItem : processed) {
+            if (existingItem.equals(item)) {
+                // Do not allow duplicate objects to be added
+                return false;
+            }
+        }
+        for (FileProcessingItem existingItem : requeued) {
+            if (existingItem.equals(item)) {
+                // Do not allow duplicate objects to be added
+                return false;
+            }
+        }
         for (FileProcessingItem existingItem : backlog) {
-            if (existingItem.getOriginalAbsoluteFilePath().equals(item.getOriginalAbsoluteFilePath())) {
+            if (existingItem.equals(item)) {
                 // Do not allow duplicate objects to be added
                 return false;
             }
@@ -106,15 +126,23 @@ public class FileProcessingModel implements IFileProcessingModelPublisher {
         FileProcessingItem item = processed.remove(rowIndex);
         fireRowDeleted(rowIndex);
 
+        item.setState(EFileProcessingItemState.REQUEUED);
+        int newRowIndex = processed.size() + requeued.size() + (current == null ? 0 : 1);
         if (!requeued.add(item)) {
             throw new IllegalStateException("Item removed from processed but could not be requeued. Item: " + item);
         }
-        item.setState(EFileProcessingItemState.REQUEUED);
-        int newRowIndex = processed.size() + requeued.size() + (current == null ? 0 : 1);
         fireRowInserted(newRowIndex);
         return true;
     }
 
+    public boolean requeue(FileProcessingItem item) {
+        int index = getIndexOf(item);
+        if (index == -1) {
+            throw new IllegalStateException("Trying to requeue an item that does not exist: " + item);
+        }
+        return requeue(index);
+    }
+    
     /**
      * Bumps the item previously processed to the processed list, sets a new item to
      * be processed and returns that item.
@@ -127,10 +155,11 @@ public class FileProcessingModel implements IFileProcessingModelPublisher {
             current.setState(EFileProcessingItemState.PROCESSED);
             // Move last current to processed
             processed.add(current);
-            current = null;
             // Fire update to model listeners
             fireRowUpdated(processed.size() - 1);
-            
+            notifyFileProcessedListeners(current);
+            // Clear current
+            current = null;
         }
 
         if (requeued.size() > 0) {
@@ -196,14 +225,65 @@ public class FileProcessingModel implements IFileProcessingModelPublisher {
         throw new IndexOutOfBoundsException(relativeIndex);
     }
 
+    public List<FileProcessingItem> getAllValues() {
+        List<FileProcessingItem> combinedList = new ArrayList<>();
+        combinedList.addAll(processed);
+        if (current != null) {
+            combinedList.add(current);
+        }
+        combinedList.addAll(requeued);
+        combinedList.addAll(backlog);
+        
+        return combinedList;
+    }
+
+    /**
+     * Returns the index of the first occurrence of the specified elementin this
+     * list, or -1 if this list does not contain the element.
+     * 
+     * @param item element to search for
+     * @return the index of the first occurrence of the specified element in this
+     *         list, or -1 if this list does not contain the element
+     */
+    public Integer getIndexOf(FileProcessingItem item) {
+        
+        // Search processed items
+        Integer index = processed.indexOf(item);
+        
+        if (index != -1) {
+            return index;
+        }
+        
+        // Check current item
+        if (current.equals(item)) {
+            return processed.size();
+        }
+        
+        // Search processed items
+        index = requeued.indexOf(item);
+        
+        if (index != -1) {
+            return processed.size() + (current == null ? 0 : 1) + index;
+        }
+        
+        // Search processed items
+        index = backlog.indexOf(item);
+        
+        if (index != -1) {
+            return processed.size() + requeued.size() + (current == null ? 0 : 1) + index;
+        }
+        
+        return -1;
+    }
+
     @Override
     public void addFileProcessingModelListener(IFileProcessingModelListener listener) {
-        listeners.add(listener);
+        modelListeners.add(listener);
     }
 
     @Override
     public void removeFileProcessingModelListener(IFileProcessingModelListener listener) {
-        listeners.remove(listener);
+        modelListeners.remove(listener);
     }
 
     private void fireRowDeleted(int row) {
@@ -230,9 +310,27 @@ public class FileProcessingModel implements IFileProcessingModelPublisher {
         fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow, FileProcessingModelEvent.INSERT));
     }
 
-    private void fireModelChanged(FileProcessingModelEvent event) {
-        for (IFileProcessingModelListener listener : listeners) {
-            listener.tableChanged(event);
+    @Override
+    public void fireModelChanged(FileProcessingModelEvent event) {
+        for (IFileProcessingModelListener listener : modelListeners) {
+            listener.onTableChanged(event);
+        }
+    }
+
+    @Override
+    public void addFileProcessedListener(IFileProcessedListener listener) {
+        processedListeners.add(listener);
+    }
+
+    @Override
+    public void removeFileProcessedListener(IFileProcessedListener listener) {
+        processedListeners.remove(listener);
+    }
+
+    @Override
+    public void notifyFileProcessedListeners(FileProcessingItem fileItem) {
+        for (IFileProcessedListener listener : processedListeners) {
+            listener.onFileProcessed(fileItem);
         }
     }
 }

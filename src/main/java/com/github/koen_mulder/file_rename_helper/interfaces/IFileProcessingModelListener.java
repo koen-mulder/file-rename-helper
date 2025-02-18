@@ -10,6 +10,6 @@ public interface IFileProcessingModelListener extends java.util.EventListener {
      *
      * @param e a {@code FileProcessingModelEvent} to notify listener that a model has changed
      */
-    public void tableChanged(FileProcessingModelEvent e);
+    public void onTableChanged(FileProcessingModelEvent e);
     
 }

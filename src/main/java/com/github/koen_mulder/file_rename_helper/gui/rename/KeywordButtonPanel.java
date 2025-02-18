@@ -13,15 +13,14 @@ import org.apache.commons.compress.utils.Lists;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessingModelListener{
+public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = 7824169572049309584L;
 
@@ -54,18 +53,18 @@ public class KeywordButtonPanel extends JPanel implements IOpenFileActionListene
      * 
      * @param keywords List of keywords to create buttons for
      */
-    public void addButtons(List<String> keywords) {
-        for (String keyword : keywords) {
+    public void addButtons(FileProcessingItem fileItem) {
+        List<String> aggregatedSuggestions = Lists.newArrayList();
+        for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
+            aggregatedSuggestions.addAll(suggestions.relevantWords());
+        }
+        
+        for (String keyword : aggregatedSuggestions) {
             add(new JButton(new KeywordButtonAction(keyword)));
         }
         
         revalidate(); // Tell the layout manager to recalculate
         repaint();    // Repaint the panel
-    }
-
-    @Override
-    public void tableChanged(FileProcessingModelEvent e) {
-        // TODO: This should listen to a suggestion listener and not this model listener 
     }
 
     @Override
@@ -77,11 +76,16 @@ public class KeywordButtonPanel extends JPanel implements IOpenFileActionListene
         } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
             activeFileItem = fileItem;
             clearPanel();
-            List<String> aggregatedSuggestions = Lists.newArrayList();
-            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
-                aggregatedSuggestions.addAll(suggestions.relevantWords());
-            }
-            addButtons(aggregatedSuggestions);
+            addButtons(fileItem);
+        }
+    }
+
+    @Override
+    public void onFileProcessed(FileProcessingItem fileItem) {
+        // Update buttons if the current active file has been reprocessed
+        if (fileItem.equals(activeFileItem)) {
+            clearPanel();
+            addButtons(fileItem);
         }
     }
 

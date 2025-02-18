@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
 import com.github.koen_mulder.file_rename_helper.controller.OpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.gui.ApplicationWindow;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 
 
 public class Application {
@@ -33,7 +33,7 @@ public class Application {
         // Setup controllers
         AIController aiController = new AIController();
         OpenFileActionPublisher openFileActionPublisher = new OpenFileActionPublisher();
-        FileProcessingModel fileProcessingModel = new FileProcessingModel();
+        FileProcessingModelController fileProcessingModelController = new FileProcessingModelController();
         
         // Set the look and feel to the system default
         try {
@@ -47,7 +47,7 @@ public class Application {
             public void run() {
                 try {
                     ApplicationWindow window = new ApplicationWindow(aiController, openFileActionPublisher,
-                            fileProcessingModel);
+                            fileProcessingModelController);
                     window.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

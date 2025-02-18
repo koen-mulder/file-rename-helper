@@ -23,12 +23,12 @@ public class FileProcessingModelEvent extends java.util.EventObject {
      */
     protected final int lastRow;
     
-    public FileProcessingModelEvent(FileProcessingModel source) {
+    public FileProcessingModelEvent(Object source) {
         // Use Integer.MAX_VALUE instead of getRowCount() in case rows were deleted.
         this(source, 0, Integer.MAX_VALUE, UPDATE);
     }
     
-    public FileProcessingModelEvent(FileProcessingModel source, int firstRow, int lastRow, int type) {
+    public FileProcessingModelEvent(Object source, int firstRow, int lastRow, int type) {
         super(source);
         this.firstRow = firstRow;
         this.lastRow = lastRow;

@@ -11,19 +11,20 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 
 /**
  * SwingAction for the "Select file" button. Handles opening a file chooser,
  * starting a SwingWorker for suggestions and notifying listeners.
  */
+//TODO: Fix Javadoc
 public class SelectFileButtonAction extends AbstractAction {
 
     private static final long serialVersionUID = 7773619212631079877L;
 
     private JFileChooser fileChooser;
 
-    private FileProcessingModel processModel;
+    private FileProcessingModelController fileProcessingModelController;
     private Component parent;
 
 
@@ -35,9 +36,9 @@ public class SelectFileButtonAction extends AbstractAction {
      * @param suggestionPublisher for notifying components there are new suggestions
      * @param formEventPublisher for notifying form components of the form state
      */
-    public SelectFileButtonAction(FileProcessingModel processModel, Component parent) {
+    public SelectFileButtonAction(FileProcessingModelController fileProcessingModelController, Component parent) {
 
-        this.processModel = processModel;
+        this.fileProcessingModelController = fileProcessingModelController;
         this.parent = parent;
 
         putValue(Action.NAME, "Add files for processing");
@@ -70,7 +71,8 @@ public class SelectFileButtonAction extends AbstractAction {
         int result = fileChooser.showOpenDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            processModel.add(new FileProcessingItem(selectedFile.getAbsolutePath(), selectedFile.getName()));
+            fileProcessingModelController
+                    .add(new FileProcessingItem(selectedFile.getAbsolutePath(), selectedFile.getName()));
         }
     }
 }
