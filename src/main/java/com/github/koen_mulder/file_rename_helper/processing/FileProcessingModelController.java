@@ -1,7 +1,8 @@
 package com.github.koen_mulder.file_rename_helper.processing;
 
-import java.awt.EventQueue;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.compress.utils.Lists;
 
@@ -42,8 +43,8 @@ public class FileProcessingModelController implements IFileProcessingModelPublis
         return model.getNext();
     }
 
-    public boolean add(FileProcessingItem fileProcessingItem) {
-        return model.add(fileProcessingItem);
+    public boolean add(List<FileProcessingItem> items) {
+        return model.add(items);
     }
     
     public boolean requeue(int rowIndex) {
@@ -71,7 +72,7 @@ public class FileProcessingModelController implements IFileProcessingModelPublis
                 event.getType());
         for (IFileProcessingModelListener listener : modelListeners) {
             // Handle model update event in event thread
-            EventQueue.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     listener.onTableChanged(newEvent);
                 }
@@ -98,7 +99,7 @@ public class FileProcessingModelController implements IFileProcessingModelPublis
     public void notifyFileProcessedListeners(FileProcessingItem fileItem) {
         for (IFileProcessedListener listener : processedListeners) {
             // Handle event in event thread
-            EventQueue.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     listener.onFileProcessed(fileItem);
                 }
