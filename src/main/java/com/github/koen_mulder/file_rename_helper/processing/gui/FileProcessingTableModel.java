@@ -1,8 +1,8 @@
 package com.github.koen_mulder.file_rename_helper.processing.gui;
 
-import java.awt.EventQueue;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.compress.utils.Lists;
@@ -72,7 +72,7 @@ public class FileProcessingTableModel extends AbstractTableModel {
         }
         
         // Handle model update event in event thread
-        EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 fireTableRowsDeleted(firstRow, lastRow);
             }
@@ -85,7 +85,7 @@ public class FileProcessingTableModel extends AbstractTableModel {
         }
         
         // Handle model update event in event thread
-       EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
            public void run() {
                fireTableRowsUpdated(firstRow, lastRow);
            }
@@ -98,7 +98,7 @@ public class FileProcessingTableModel extends AbstractTableModel {
         }
         
         // Handle model update event in event thread
-       EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
            public void run() {
                fireTableRowsInserted(firstRow, lastRow);
            }

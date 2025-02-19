@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,6 +13,7 @@ import javax.swing.filechooser.FileFilter;
 
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
+import com.google.common.collect.Lists;
 
 /**
  * SwingAction for the "Select file" button. Handles opening a file chooser,
@@ -50,7 +52,7 @@ public class SelectFileButtonAction extends AbstractAction {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setAcceptAllFileFilterUsed(false);
         // Allow only processing one file at a time
-        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setMultiSelectionEnabled(true);
         // Temporary set current directory to test files
         fileChooser.setCurrentDirectory(new File("E:\\tools\\rename-pdf-files\\test-files\\unorganised"));
         // Filter to only show PDF files
@@ -68,11 +70,18 @@ public class SelectFileButtonAction extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        // Remove selection
+        fileChooser.setSelectedFile(new File(""));
+        fileChooser.setSelectedFiles(new File[]{ new File("") });
+
         int result = fileChooser.showOpenDialog(parent);
         if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            fileProcessingModelController
-                    .add(new FileProcessingItem(selectedFile.getAbsolutePath(), selectedFile.getName()));
+            File[] selectedFiles = fileChooser.getSelectedFiles();
+            List<FileProcessingItem> items = Lists.newArrayList();
+            for (File file : selectedFiles) {
+                items.add(new FileProcessingItem(file.getAbsolutePath(), file.getName()));
+            }
+            fileProcessingModelController.add(items);
         }
     }
 }
