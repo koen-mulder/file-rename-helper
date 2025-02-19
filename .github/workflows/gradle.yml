@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Only read access is needed for building and testing
-      checks: write   # WRITE access to check runs
       pull-requests: read # Needed to comment on PRs if using a reporting action
 
     steps:
@@ -33,15 +32,14 @@ jobs:
     - name: Build and Run Tests with Gradle Wrapper
       run: ./gradlew build
 
-    # Test reporting action
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
         files: |
-          test-results/**/*.xml
-          test-results/**/*.trx
-          test-results/**/*.json
+          **/build/test-results/**/*.xml
+          **/build/test-results/**/*.trx
+          **/build/test-results/**/*.json
 
   dependency-submission:
     runs-on: ubuntu-latest
