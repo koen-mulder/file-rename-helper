@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Only read access is needed for building and testing
+      checks: write   # WRITE access to check runs
       pull-requests: read # Needed to comment on PRs if using a reporting action
 
     steps:
