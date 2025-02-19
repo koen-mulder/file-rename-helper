@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class for {@link FileProcessingModel}.
  */
-class ProcessModelTest {
+class FileProcessingModelTest {
 
     @Test
     void testGetRowCount() {
