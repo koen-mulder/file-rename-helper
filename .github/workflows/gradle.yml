@@ -15,7 +15,7 @@ jobs:
       contents: read  # Only read access is needed for building and testing
       checks: write   # WRITE access to check runs
       issues: write
-      pull-requests: read # Needed to comment on PRs if using a reporting action
+      pull-requests: write # Needed to comment on PRs if using a reporting action
 
     steps:
     - uses: actions/checkout@v4
@@ -42,6 +42,7 @@ jobs:
           **/build/test-results/**/*.xml
           **/build/test-results/**/*.trx
           **/build/test-results/**/*.json
+        comment_title: "Test Results" # Add a comment title
 
   dependency-submission:
     runs-on: ubuntu-latest
