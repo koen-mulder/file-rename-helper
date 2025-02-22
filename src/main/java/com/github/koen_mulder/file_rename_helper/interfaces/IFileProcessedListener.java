@@ -8,9 +8,11 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 public interface IFileProcessedListener extends java.util.EventListener {
 
     /**
-     * This notification tells listeners when a file has been processed and suggestions have been generated.
+     * This notification tells listeners when a file has been processed and suggestions have been
+     * generated.
      *
-     * @param fileItem a {@code FileProcessingItem} to notify listener that suggestions have been generated
+     * @param fileItem a {@code FileProcessingItem} to notify listener that suggestions have been
+     *                 generated
      */
     public void onFileProcessed(FileProcessingItem fileItem);
 }

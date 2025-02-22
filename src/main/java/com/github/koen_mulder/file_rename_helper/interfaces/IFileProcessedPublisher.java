@@ -24,7 +24,8 @@ public interface IFileProcessedPublisher {
     /**
      * Notifies all registered listeners that a file has been processed for suggestions.
      * 
-     * @param fileItem containing file information and naming suggestions for the file that has been processed.
+     * @param fileItem containing file information and naming suggestions for the file that has been
+     *                 processed.
      */
     void notifyFileProcessedListeners(FileProcessingItem fileItem);
 }
