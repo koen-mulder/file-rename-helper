@@ -82,10 +82,27 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     /**
+     * Adds a list of items to the backlog of the model.
+     * 
+     * @param items List of items to be added
+     * @return {@code true} if the items were all added, false if one or more of the items is
+     *         duplicate
+     * @throws IllegalStateException if some property of this element prevents any of the items from
+     *                               being added to this list
+     */
+    public boolean add(List<FileProcessingItem> items) {
+        boolean result = true;
+        for(FileProcessingItem item :items) {
+            result &= add(item);
+        }
+        return result;
+    }
+    
+    /**
      * Adds a new row to the backlog of the model.
      * 
      * @param item item to be added
-     * @return {@code true} if the item was added
+     * @return {@code true} if the item was added, false if the item is duplicate
      * @throws IllegalStateException if some property of this element prevents it from being added
      *                               to this list
      */
@@ -130,7 +147,7 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      * @return {@code true} if this model changed as a result of the call})
      * @throws NullPointerException  if the specified element is null
      * @throws IllegalStateException if the element is not in the processed list or if some property
-     *                               of this element prevents it from being
+     *                               of this element prevents it from being re-queued
      */
     public boolean requeue(int rowIndex) {
         if (rowIndex > processed.size() - 1) {
@@ -158,6 +175,7 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      * @throws NullPointerException  if the specified element is null
      * @throws IllegalStateException if the element does not exists, is not in the processed list or
      *                               if some property of this element prevents it from being
+     *                               re-queued
      */
     public boolean requeue(FileProcessingItem item) {
         int index = getIndexOf(item);

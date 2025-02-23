@@ -1,7 +1,8 @@
 package com.github.koen_mulder.file_rename_helper.processing;
 
-import java.awt.EventQueue;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.compress.utils.Lists;
 
@@ -73,16 +74,16 @@ public class FileProcessingModelController
     }
 
     /**
-     * Adds a new row to the backlog of the model.
+     * Adds a list of items to the backlog of the model.
      * 
-     * @param item item to be added
-     * @return {@code true} if the item was added
-     * @throws IllegalStateException if some property of this element prevents it from being added
-     *                               to this list
-     * @see FileProcessingModel#add(FileProcessingItem)
+     * @param items List of items to be added
+     * @return {@code true} if the items were all added, false if one or more of the items is
+     *         duplicate
+     * @throws IllegalStateException if some property of this element prevents any of the items from
+     *                               being added to this list
      */
-    public boolean add(FileProcessingItem fileProcessingItem) {
-        return model.add(fileProcessingItem);
+    public boolean add(List<FileProcessingItem> items) {
+        return model.add(items);
     }
 
     /**
@@ -131,7 +132,7 @@ public class FileProcessingModelController
                 event.getLastRow(), event.getType());
         for (IFileProcessingModelListener listener : modelListeners) {
             // Handle model update event in event thread
-            EventQueue.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     listener.onTableChanged(newEvent);
                 }
@@ -153,7 +154,7 @@ public class FileProcessingModelController
     public void notifyFileProcessedListeners(FileProcessingItem fileItem) {
         for (IFileProcessedListener listener : processedListeners) {
             // Handle event in event thread
-            EventQueue.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     listener.onFileProcessed(fileItem);
                 }

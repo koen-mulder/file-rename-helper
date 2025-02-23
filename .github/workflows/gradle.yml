@@ -9,14 +9,17 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:  # Combined build and test job
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read  # Only read access is needed for building and testing
+      checks: write   # WRITE access to check runs
+      issues: write
+      pull-requests: write # Needed to comment on PRs if using a reporting action
 
     steps:
     - uses: actions/checkout@v4
-      with:  # Add this 'with' block
+      with:
         fetch-depth: 0  # Fetch all history for all tags and branches
 
     - name: Set up JDK 21
@@ -28,8 +31,18 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-    - name: Build with Gradle Wrapper
+    - name: Build and Run Tests with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          **/build/test-results/**/*.xml
+          **/build/test-results/**/*.trx
+          **/build/test-results/**/*.json
+        comment_title: "Test Results" # Add a comment title
 
   dependency-submission:
     runs-on: ubuntu-latest
@@ -51,7 +64,7 @@ jobs:
       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
   create-release:
-    needs: build
+    needs: build-and-test # Use the combined job
     runs-on: ubuntu-latest
     permissions:
       contents: write # Needs write access to create releases
@@ -59,7 +72,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0 # Fetch all history for all tags and branches.
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
