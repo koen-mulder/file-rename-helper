@@ -2,6 +2,13 @@ package com.github.koen_mulder.file_rename_helper.controller;
 
 import javax.swing.JTextField;
 
+/**
+ * Controller for the new filename field.
+ * 
+ * This class is responsible for handling operations on the new filename field. It helps us avoid
+ * passing a GUI component around the codebase. It allows us to add extra functionality to basic
+ * JTextField operations, like removing extra whitespace.
+ */
 public class NewFilenameFieldController {
 
     private JTextField newFilenameField;
@@ -27,7 +34,7 @@ public class NewFilenameFieldController {
     }
 
     public void setText(String content) {
-        newFilenameField.setText(content);
+        newFilenameField.setText(content.strip());
     }
 
     public void setCaretPositionBeforeExtention() {

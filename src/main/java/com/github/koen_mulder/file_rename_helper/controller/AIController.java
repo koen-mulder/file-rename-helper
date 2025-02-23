@@ -27,7 +27,10 @@ import dev.langchain4j.service.V;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
-public class AIController implements IConfigChangeListener {
+// TODO: Add logging
+// TODO: Config changes should have an effect on the model
+// TODO: Assistant message windows chat memory should be persisted for each file
+public class AIController  {
 
     interface RenameAssistant {
 
@@ -56,8 +59,6 @@ public class AIController implements IConfigChangeListener {
     
 
     public AIController() {
-        aiConfigManager.addConfigChangeListener(this);
-        
         filenameSuggestionsPrompt = aiConfigManager.getFilenamePrompt();
         additionalFilenameSuggestionsPrompt = aiConfigManager.getAdditionalFilenamePrompt();
         
@@ -66,6 +67,35 @@ public class AIController implements IConfigChangeListener {
         embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
         
         initializeModelAndEmbeddingStore();
+        
+        aiConfigManager.addConfigChangeListener(new IConfigChangeListener() {
+            
+            @Override
+            public void onConfigChanged(EConfigIdentifier configId) {
+                switch (configId) {
+                case EConfigIdentifier.FILENAME_PROMPT:
+                    filenameSuggestionsPrompt = aiConfigManager.getFilenamePrompt();
+                    break;
+                    case EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT:
+                        additionalFilenameSuggestionsPrompt = aiConfigManager.getAdditionalFilenamePrompt();
+                        break;
+                case EConfigIdentifier.MODEL_NAME:
+                    modelName = aiConfigManager.getModelName();
+                    break;
+                case EConfigIdentifier.OLLAMA_ENDPOINT:
+                    ollamaEndpoint = aiConfigManager.getOllamaEndpoint();
+                    break;
+                case EConfigIdentifier.EMBEDDING_STORE_FILE_PATH:
+                    embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
+                    break;
+                default:
+                    break;
+                }
+                
+                initializeModelAndEmbeddingStore();
+                initializeRenameAssistant();
+            }
+        });
     }
 
     private void initializeModelAndEmbeddingStore() {
@@ -140,32 +170,6 @@ public class AIController implements IConfigChangeListener {
     
     private void saveEmbeddingStore(String filePath) {
         embeddingStore.serializeToFile(filePath);
-    }
-
-    @Override
-    public void onConfigChanged(EConfigIdentifier configId) {
-        switch (configId) {
-        case EConfigIdentifier.FILENAME_PROMPT:
-            filenameSuggestionsPrompt = aiConfigManager.getFilenamePrompt();
-            break;
-            case EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT:
-                additionalFilenameSuggestionsPrompt = aiConfigManager.getAdditionalFilenamePrompt();
-                break;
-        case EConfigIdentifier.MODEL_NAME:
-            modelName = aiConfigManager.getModelName();
-            break;
-        case EConfigIdentifier.OLLAMA_ENDPOINT:
-            ollamaEndpoint = aiConfigManager.getOllamaEndpoint();
-            break;
-        case EConfigIdentifier.EMBEDDING_STORE_FILE_PATH:
-            embeddingStoreFile = aiConfigManager.getEmbeddingStoreFile();
-            break;
-        default:
-            break;
-        }
-        
-        initializeModelAndEmbeddingStore();
-        initializeRenameAssistant();
     }
 
     public void process(FileProcessingItem item) {

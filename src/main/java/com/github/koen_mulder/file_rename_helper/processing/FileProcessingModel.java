@@ -10,7 +10,11 @@ import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublis
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
 
-//TODO: Add missing JavaDoc
+/**
+ * Model for the processing of files. This model keeps track of the items that have been processed,
+ * the item that is currently being processed, the items that are re-queued for processing (high
+ * priority) and the items in the backlog (normal priority).
+ */
 //TODO: Make thread safe
 public class FileProcessingModel implements IFileProcessingModelPublisher, IFileProcessedPublisher {
 
@@ -37,10 +41,12 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     /**
-     * Returns the value for the cell at <code>columnIndex</code>.
+     * Returns the value at <code>rowIndex</code>.
      *
      * @param rowIndex the row whose value is to be queried
-     * @return the value Object at the specified cell
+     * @return the value Object at the specified row
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *                                   ({@code index < 0 || index >= getRowCount()})
      */
     public FileProcessingItem getValueAt(int rowIndex) {
         int relativeIndex = rowIndex;
@@ -75,6 +81,15 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         throw new IndexOutOfBoundsException(rowIndex);
     }
 
+    /**
+     * Adds a list of items to the backlog of the model.
+     * 
+     * @param items List of items to be added
+     * @return {@code true} if the items were all added, false if one or more of the items is
+     *         duplicate
+     * @throws IllegalStateException if some property of this element prevents any of the items from
+     *                               being added to this list
+     */
     public boolean add(List<FileProcessingItem> items) {
         boolean result = true;
         for(FileProcessingItem item :items) {
@@ -83,6 +98,14 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         return result;
     }
     
+    /**
+     * Adds a new row to the backlog of the model.
+     * 
+     * @param item item to be added
+     * @return {@code true} if the item was added, false if the item is duplicate
+     * @throws IllegalStateException if some property of this element prevents it from being added
+     *                               to this list
+     */
     public boolean add(FileProcessingItem item) {
         // Check for existing items
         if (current != null && current.equals(item)) {
@@ -107,24 +130,24 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
                 return false;
             }
         }
-        
+
         if (!backlog.add(item)) {
-            throw new IllegalStateException("New item could not be added to backlog. Item: " + item);
+            throw new IllegalStateException(
+                    "New item could not be added to backlog. Item: " + item);
         }
-        fireRowInserted(getRowCount()-1);
+        fireRowInserted(getRowCount() - 1);
         return true;
     }
 
     /**
-     * Appends the element at the specified position in the processed list to the
-     * end of the re-queue list.
+     * Appends the element at the specified position in the processed list to the end of the
+     * re-queue list.
      *
      * @param index the index of the element to be re-queued
      * @return {@code true} if this model changed as a result of the call})
-     * 
-     * @throws NullPointerException     if the specified element is null
-     * @throws IllegalArgumentException if some property of this element prevents it
-     *                                  from being re-queued
+     * @throws NullPointerException  if the specified element is null
+     * @throws IllegalStateException if the element is not in the processed list or if some property
+     *                               of this element prevents it from being re-queued
      */
     public boolean requeue(int rowIndex) {
         if (rowIndex > processed.size() - 1) {
@@ -137,23 +160,35 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         item.setState(EFileProcessingItemState.REQUEUED);
         int newRowIndex = processed.size() + requeued.size() + (current == null ? 0 : 1);
         if (!requeued.add(item)) {
-            throw new IllegalStateException("Item removed from processed but could not be requeued. Item: " + item);
+            throw new IllegalStateException(
+                    "Item removed from processed but could not be requeued. Item: " + item);
         }
         fireRowInserted(newRowIndex);
         return true;
     }
 
+    /**
+     * Remove the item from the processed list and add it to the end of the re-queue list.
+     *
+     * @param item the element to be re-queued
+     * @return {@code true} if this model changed as a result of the call})
+     * @throws NullPointerException  if the specified element is null
+     * @throws IllegalStateException if the element does not exists, is not in the processed list or
+     *                               if some property of this element prevents it from being
+     *                               re-queued
+     */
     public boolean requeue(FileProcessingItem item) {
         int index = getIndexOf(item);
         if (index == -1) {
-            throw new IllegalStateException("Trying to requeue an item that does not exist: " + item);
+            throw new IllegalStateException(
+                    "Trying to requeue an item that does not exist: " + item);
         }
         return requeue(index);
     }
-    
+
     /**
-     * Bumps the item previously processed to the processed list, sets a new item to
-     * be processed and returns that item.
+     * Bumps the item previously processed to the processed list, sets a new item to be processed
+     * and returns that item.
      * 
      * @return item to be processed
      */
@@ -186,7 +221,12 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
 
         return null;
     }
-    
+
+    /**
+     * Returns the index of the item currently being processed.
+     * 
+     * @return the index of the item currently being processed
+     */
     public Integer getCurrentIndex() {
         if (current == null) {
             return null;
@@ -194,6 +234,14 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         return processed.size();
     }
 
+    /**
+     * Removes the element at the specified rowIndex.
+     * 
+     * @param rowIndex the index of the element to be removed
+     * @return the element previously at the specified position
+     * @throws IllegalStateException if the element is currently being processed
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
     public FileProcessingItem remove(int rowIndex) {
         int relativeIndex = rowIndex;
 
@@ -208,7 +256,8 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
 
         if (current != null) {
             if (relativeIndex == 0) {
-                throw new IllegalStateException("Cannot remove the item currently being processed. Index: " + rowIndex);
+                throw new IllegalStateException(
+                        "Cannot remove the item currently being processed. Index: " + rowIndex);
             }
 
             // Adjust relative index
@@ -233,6 +282,9 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         throw new IndexOutOfBoundsException(relativeIndex);
     }
 
+    /**
+     * @return Returns all values in the model.
+     */
     public List<FileProcessingItem> getAllValues() {
         List<FileProcessingItem> combinedList = new ArrayList<>();
         combinedList.addAll(processed);
@@ -241,49 +293,54 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         }
         combinedList.addAll(requeued);
         combinedList.addAll(backlog);
-        
+
         return combinedList;
     }
 
     /**
-     * Returns the index of the first occurrence of the specified elementin this
-     * list, or -1 if this list does not contain the element.
+     * Returns the index of the first occurrence of the specified element in this list, or -1 if
+     * this list does not contain the element.
      * 
      * @param item element to search for
-     * @return the index of the first occurrence of the specified element in this
-     *         list, or -1 if this list does not contain the element
+     * @return the index of the first occurrence of the specified element in this list, or -1 if
+     *         this list does not contain the element
      */
     public Integer getIndexOf(FileProcessingItem item) {
-        
+
         // Search processed items
         Integer index = processed.indexOf(item);
-        
+
         if (index != -1) {
             return index;
         }
-        
+
         // Check current item
         if (current.equals(item)) {
             return processed.size();
         }
-        
+
         // Search processed items
         index = requeued.indexOf(item);
-        
+
         if (index != -1) {
             return processed.size() + (current == null ? 0 : 1) + index;
         }
-        
+
         // Search processed items
         index = backlog.indexOf(item);
-        
+
         if (index != -1) {
             return processed.size() + requeued.size() + (current == null ? 0 : 1) + index;
         }
-        
+
         return -1;
     }
 
+    /**
+     * Note: Only the {@link FileProcessingModelController} should listen to this model. If you need
+     * to listen to changes in the model, listen to the {@link FileProcessingModelController}
+     * instead.
+     */
     @Override
     public void addFileProcessingModelListener(IFileProcessingModelListener listener) {
         modelListeners.add(listener);
@@ -299,7 +356,8 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     private void fireRowsDeleted(int firstRow, int lastRow) {
-        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow, FileProcessingModelEvent.DELETE));
+        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow,
+                FileProcessingModelEvent.DELETE));
     }
 
     private void fireRowUpdated(int row) {
@@ -307,7 +365,8 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     private void fireRowsUpdated(int firstRow, int lastRow) {
-        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow, FileProcessingModelEvent.UPDATE));
+        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow,
+                FileProcessingModelEvent.UPDATE));
     }
 
     private void fireRowInserted(int row) {
@@ -315,7 +374,8 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     private void fireRowsInserted(int firstRow, int lastRow) {
-        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow, FileProcessingModelEvent.INSERT));
+        fireModelChanged(new FileProcessingModelEvent(this, firstRow, lastRow,
+                FileProcessingModelEvent.INSERT));
     }
 
     @Override
@@ -325,6 +385,11 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         }
     }
 
+    /**
+     * Note: Only the {@link FileProcessingModelController} should listen to this model. If you need
+     * to listen to changes in the model, listen to the {@link FileProcessingModelController}
+     * instead.
+     */
     @Override
     public void addFileProcessedListener(IFileProcessedListener listener) {
         processedListeners.add(listener);
