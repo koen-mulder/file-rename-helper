@@ -1,8 +1,11 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename;
 
+import java.awt.BorderLayout;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.github.koen_mulder.file_rename_helper.controller.AIController;
@@ -54,8 +57,11 @@ public class FileRenamePanel extends JPanel {
         MiscButtonPanel removeCharactersPanel = new MiscButtonPanel(newFilenameFieldController);
         openFileActionPublisher.addOpenFileActionListener(removeCharactersPanel);
 
+        // Content panel
+        JPanel contentPanel = new JPanel();
+        
         // Set layout
-        GroupLayout groupLayout = new GroupLayout(this);
+        GroupLayout groupLayout = new GroupLayout(contentPanel);
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup()
@@ -76,14 +82,21 @@ public class FileRenamePanel extends JPanel {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(newFilenamePanel, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(replaceCharacterPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(375, Short.MAX_VALUE))
+                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        setLayout(groupLayout);
+        contentPanel.setLayout(groupLayout);
+        
+        // Add content panel to scroll pane
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
     }
 }

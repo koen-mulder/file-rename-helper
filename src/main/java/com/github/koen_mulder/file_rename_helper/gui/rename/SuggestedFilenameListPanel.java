@@ -82,20 +82,27 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
 
         // Set layout
         GroupLayout gl_suggestedFilenamePanel = new GroupLayout(this);
-        gl_suggestedFilenamePanel.setHorizontalGroup(gl_suggestedFilenamePanel.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_suggestedFilenamePanel.createSequentialGroup().addComponent(listLabel).addContainerGap(735,
-                        Short.MAX_VALUE))
-                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
-                .addGroup(gl_suggestedFilenamePanel.createSequentialGroup().addComponent(moreSuggestionsButton)
-                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(clearSuggestionsButton).addGap(189)));
-        gl_suggestedFilenamePanel.setVerticalGroup(gl_suggestedFilenamePanel.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_suggestedFilenamePanel.createSequentialGroup().addComponent(listLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(gl_suggestedFilenamePanel.createParallelGroup(Alignment.BASELINE)
-                                .addComponent(moreSuggestionsButton).addComponent(clearSuggestionsButton))
-                        .addContainerGap(56, Short.MAX_VALUE)));
+        gl_suggestedFilenamePanel.setHorizontalGroup(
+            gl_suggestedFilenamePanel.createParallelGroup(Alignment.LEADING)
+                .addComponent(listLabel)
+                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                .addGroup(gl_suggestedFilenamePanel.createSequentialGroup()
+                    .addComponent(moreSuggestionsButton)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(clearSuggestionsButton))
+        );
+        gl_suggestedFilenamePanel.setVerticalGroup(
+            gl_suggestedFilenamePanel.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_suggestedFilenamePanel.createSequentialGroup()
+                    .addComponent(listLabel)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_suggestedFilenamePanel.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(moreSuggestionsButton)
+                        .addComponent(clearSuggestionsButton))
+                    .addGap(5))
+        );
         setLayout(gl_suggestedFilenamePanel);
     }
 
