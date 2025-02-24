@@ -1,6 +1,5 @@
 package com.github.koen_mulder.file_rename_helper.gui.rename;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import javax.swing.border.TitledBorder;
 import org.apache.commons.compress.utils.Lists;
 
 import com.github.koen_mulder.file_rename_helper.controller.NewFilenameFieldController;
+import com.github.koen_mulder.file_rename_helper.gui.WrapLayout;
 import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 
@@ -31,7 +31,7 @@ public class ReplaceCharacterPanel extends JPanel implements IOpenFileActionList
      */
     public ReplaceCharacterPanel(NewFilenameFieldController newFilenameFieldController) {
 
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setLayout(new WrapLayout(WrapLayout.LEFT));
         setBorder(new TitledBorder("Replace"));
 
         buttons = Lists.newArrayList();
@@ -58,7 +58,7 @@ public class ReplaceCharacterPanel extends JPanel implements IOpenFileActionList
 
     @Override
     public void onOpenFileAction(FileProcessingItem fileItem) {
-        setEnabled(fileItem == null);
+        setEnabled(fileItem != null);
     }
 
     private class ReplaceCharacterButtonAction extends AbstractAction {
