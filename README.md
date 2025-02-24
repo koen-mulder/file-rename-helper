@@ -4,6 +4,19 @@
 
 GUI application for renaming and moving (primarily PDF) files, leveraging AI to provide intelligent renaming suggestions based on file content.
 
+## Table of Contents
+
+*   [Overview](#overview)
+*   [Features](#features)
+*   [Getting Started](#getting-started)
+*   [Project Status & Roadmap](#project-status-roadmap)
+*   [Contributing](#contributing)
+*   [License](#license)
+*   [Project Decisions](#project-decisions)
+*   [Tasks and Known Issues](#tasks-and-known-issues)
+
+---
+
 ## Overview
 
 This project provides a user-friendly interface to simplify the often tedious process of renaming and organizing files.  By analyzing the content of files (especially PDFs), the application offers AI-powered recommendations for new filenames, making it easier to manage large collections of documents.

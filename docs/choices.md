@@ -2,6 +2,16 @@
 
 Here I am logging some basic choices and the reasoning behind them.
 
+### Table of Contents
+
+*   [Programming Language](#programming-language)
+*   [IDE/Editor](#ide-editor)
+*   [PDF Viewer](#pdf-viewer)
+*   [Version Numbering](#version-numbering)
+*   [Swing/JavaFX](#swing-javafx)
+
+---
+
 ### Programming language
 
 I've chosen to use Java for this project to refresh my knowledge of the language.
