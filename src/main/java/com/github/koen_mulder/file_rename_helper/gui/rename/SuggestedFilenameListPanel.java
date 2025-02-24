@@ -37,7 +37,6 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
     private static final long serialVersionUID = -194287030076951038L;
 
     private JButton moreSuggestionsButton;
-    private JButton clearSuggestionsButton;
     private JList<String> suggestedFilenameList;
 
     private DefaultListModel<String> listModel;
@@ -75,7 +74,6 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
 
         // Create buttons
         moreSuggestionsButton = new JButton(new MoreSuggestionsButtonAction(fileProcessingModelController));
-        clearSuggestionsButton = new JButton(new ClearSuggestionsButtonAction(listModel));
 
         // Disable fields because no suggestions have been loaded yet
         setEnabled(false);
@@ -87,9 +85,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
                 .addComponent(listLabel)
                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
                 .addGroup(gl_suggestedFilenamePanel.createSequentialGroup()
-                    .addComponent(moreSuggestionsButton)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(clearSuggestionsButton))
+                    .addComponent(moreSuggestionsButton))
         );
         gl_suggestedFilenamePanel.setVerticalGroup(
             gl_suggestedFilenamePanel.createParallelGroup(Alignment.LEADING)
@@ -98,9 +94,7 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(gl_suggestedFilenamePanel.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(moreSuggestionsButton)
-                        .addComponent(clearSuggestionsButton))
+                    .addComponent(moreSuggestionsButton)
                     .addGap(5))
         );
         setLayout(gl_suggestedFilenamePanel);
@@ -110,7 +104,6 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
     public void setEnabled(boolean enabled) {
         suggestedFilenameList.setEnabled(enabled);
         moreSuggestionsButton.setEnabled(enabled);
-        clearSuggestionsButton.setEnabled(enabled);
     }
 
     /**
@@ -214,24 +207,6 @@ public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActio
 
         public void actionPerformed(ActionEvent e) {
             fileProcessingModelController.requeue(activeFileItem);
-        }
-    }
-
-    private final class ClearSuggestionsButtonAction extends AbstractAction {
-
-        private static final long serialVersionUID = 5890446755560861964L;
-
-        private DefaultListModel<String> listModel;
-
-        public ClearSuggestionsButtonAction(DefaultListModel<String> listModel) {
-
-            this.listModel = listModel;
-            putValue(NAME, "Clear suggestion list");
-            putValue(SHORT_DESCRIPTION, "Clear the list of filename suggestions.");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            listModel.clear();
         }
     }
 }
