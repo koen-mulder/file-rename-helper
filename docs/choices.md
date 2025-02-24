@@ -2,23 +2,33 @@
 
 Here I am logging some basic choices and the reasoning behind them.
 
-## Programming language
+### Table of Contents
+
+*   [Programming Language](#programming-language)
+*   [IDE/Editor](#ide-editor)
+*   [PDF Viewer](#pdf-viewer)
+*   [Version Numbering](#version-numbering)
+*   [Swing/JavaFX](#swing-javafx)
+
+---
+
+### Programming language
 
 I've chosen to use Java for this project to refresh my knowledge of the language.
 
-## IDE/Editor
+### IDE/Editor
 
 The project should be compatible with any IDE or editor. Personally, I'm using Eclipse because I’m familiar with it, it’s free, and it's more than just an editor. It also has GitHub Copilot integration, and I want to see if that tool is useful for me.
 
-## PDF viewer
+### PDF viewer
 
 Won't use Apache PDFBox (3.0.4) was very slow loading PDF files. Using IcePDF because it is faster.
 
-## Version numbering
+### Version numbering
 
 I'll be following Semantic Versioning 2.0.0 just because it is a widely used versioning scheme. See [https://semver.org/](https://semver.org/) for more information.
 
-## Swing/JavaFX
+### Swing/JavaFX
 
 I initially choose Swing because I have some experience with it and it is part of the JDK. I read that JavaFX was taken out of the JDK so I understood that as "don't use it". But it was actually for several interconnected reasons, primarily revolving around modularity, maintainability, and the evolution of the Java platform.
 
