@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
@@ -38,14 +39,19 @@ public class KeywordButtonPanel extends JPanel implements IOpenFileActionListene
         this.newFilenameFieldController = newFilenameFieldController;
         setLayout(new WrapLayout(WrapLayout.LEFT));
         setBorder(new TitledBorder("Insert important keywords"));
+        
+        addPlaceholderLabel();
+    }
+
+    private void addPlaceholderLabel() {
+        JLabel noKeywordsLabel = new JLabel("Select a processed file to view suggested keywords.");
+        noKeywordsLabel.setEnabled(false);
+        add(noKeywordsLabel);
     }
     
     public void clearPanel() {
         // Remove all keyword buttons
         removeAll();
-        
-        revalidate(); // Tell the layout manager to recalculate
-        repaint();    // Repaint the panel
     }
     
     /**
@@ -62,9 +68,6 @@ public class KeywordButtonPanel extends JPanel implements IOpenFileActionListene
         for (String keyword : aggregatedSuggestions) {
             add(new JButton(new KeywordButtonAction(keyword)));
         }
-        
-        revalidate(); // Tell the layout manager to recalculate
-        repaint();    // Repaint the panel
     }
 
     @Override
@@ -73,11 +76,15 @@ public class KeywordButtonPanel extends JPanel implements IOpenFileActionListene
             // Clear panel by "opening" a null file
             activeFileItem = fileItem;
             clearPanel();
+            addPlaceholderLabel();
         } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
             activeFileItem = fileItem;
             clearPanel();
             addButtons(fileItem);
         }
+
+        revalidate(); // Tell the layout manager to recalculate
+        repaint();    // Repaint the panel
     }
 
     @Override
