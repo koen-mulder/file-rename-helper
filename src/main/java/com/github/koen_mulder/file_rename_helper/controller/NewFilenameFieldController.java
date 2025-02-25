@@ -43,4 +43,8 @@ public class NewFilenameFieldController {
             newFilenameField.setCaretPosition(extensionIndex);
         }
     }
+
+    public String getNewFilename() {
+        return newFilenameField.getText();
+    }
 }

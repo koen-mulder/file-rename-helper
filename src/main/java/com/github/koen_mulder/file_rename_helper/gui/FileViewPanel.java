@@ -60,7 +60,7 @@ public class FileViewPanel extends JPanel implements IOpenFileActionListener {
     @Override
     public void onOpenFileAction(FileProcessingItem fileItem) {
         if (fileItem != null) {
-            controller.openDocument(fileItem.getOriginalAbsoluteFilePath());
+            controller.openDocument(fileItem.getTemporaryFilePath().toFile().getAbsolutePath());
             //TODO: Set by user preferred zoom - Current PAGE_FIT_WINDOW_HEIGHT is bugged in IcePDF 
             controller.setPageFitMode(DocumentViewController.PAGE_FIT_WINDOW_HEIGHT, true);
         }
