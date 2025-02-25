@@ -25,11 +25,10 @@ This project provides a user-friendly interface to simplify the often tedious pr
 
 *   **AI-Powered Suggestions:**
     * Get filename recommendations based on the content of your files.
-    * Get file path recommendations based on file content.
 *   **Background suggestion generation:**  Generate suggestions in the background so you will not have to wait for suggestions between each file.
 
 ## Getting Started
-You can download the latest Proof Of Concept release here: [v0.0.1-POC.1](https://github.com/koen-mulder/file-rename-helper/releases/tag/v0.0.1-POC.1). That page also contains instructions on how to run the application.
+You can download the latest release here: [v0.0.2](https://github.com/koen-mulder/file-rename-helper/releases/tag/v0.0.2). That page also contains instructions on how to run the application.
 
 *(Currently, the project is under active development. Instructions on compiling and running the application will follow later):*
 
@@ -39,15 +38,13 @@ You can download the latest Proof Of Concept release here: [v0.0.1-POC.1](https:
 
 - [x]  **Suggestion of relevant words and dates:** Using the chosen LLM to suggest relevant dates from the document. This is useful if you would like to add the send date of a letter to the filename.
 - [x]  **Background suggestion generation:** Added functionality for selecting multiple files and passing them to the LLM for suggestions in the background.
+- [x] **Saving renamed files:** Rather crucial for a file rename helper. This will be in the next release.
 
 **Next Up:**
-
-- [ ] **Saving renamed files:** Rather crucial for a file rename helper. This will be in the next release.
 - [ ] **Suggesting file paths:** Suggest file locations using a list of preferred categories, a base destination path and a path format.
 - [ ] **Keep chat message log for a file:** Because of the background processing, there is a separation between initial processing of a file and requesting more suggestions. Because of this the chatlog with the LLM is not kept. This should be changed.
 - [ ] **Use Retrieval-Augmented Generation (RAG) for suggestions:** Use existing files and recent processed files to help suggesting file names and paths.
 - [ ] **Test other LLMs:** Make a list of OpenSource LLM's that work with this application.
-
 
 ## Contributing
 
