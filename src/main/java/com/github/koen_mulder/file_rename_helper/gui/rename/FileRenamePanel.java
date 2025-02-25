@@ -18,6 +18,8 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
  */
 public class FileRenamePanel extends JPanel {
 
+    private static final int PREFERRED_COMPONENT_WIDTH = 400;
+    
     private static final long serialVersionUID = 5393373407385885597L;
 
     /**
@@ -57,6 +59,10 @@ public class FileRenamePanel extends JPanel {
         MiscButtonPanel removeCharactersPanel = new MiscButtonPanel(newFilenameFieldController);
         openFileActionPublisher.addOpenFileActionListener(removeCharactersPanel);
 
+        // Create panel with the rename button
+        RenameFileButtonPanel renameButtonPanel = new RenameFileButtonPanel(newFilenameFieldController);
+        openFileActionPublisher.addOpenFileActionListener(renameButtonPanel);
+
         // Content panel
         JPanel contentPanel = new JPanel();
         
@@ -64,14 +70,15 @@ public class FileRenamePanel extends JPanel {
         GroupLayout groupLayout = new GroupLayout(contentPanel);
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
+                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(suggestedFilenameListPanel, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 400, Short.MAX_VALUE)
-                        .addComponent(newFilenamePanel, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                        .addComponent(importantKeywordPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                        .addComponent(replaceCharacterPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                        .addComponent(removeCharactersPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                    .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(suggestedFilenameListPanel, GroupLayout.PREFERRED_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
+                        .addComponent(newFilenamePanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
+                        .addComponent(importantKeywordPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
+                        .addComponent(replaceCharacterPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
+                        .addComponent(removeCharactersPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
+                        .addComponent(renameButtonPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE))
                     .addContainerGap())
         );
         groupLayout.setVerticalGroup(
@@ -86,9 +93,11 @@ public class FileRenamePanel extends JPanel {
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(replaceCharacterPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(renameButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
-
+        
         contentPanel.setLayout(groupLayout);
         
         // Add content panel to scroll pane

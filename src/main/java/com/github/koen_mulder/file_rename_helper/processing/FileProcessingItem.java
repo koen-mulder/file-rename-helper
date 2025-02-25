@@ -1,5 +1,6 @@
 package com.github.koen_mulder.file_rename_helper.processing;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,6 +45,10 @@ public class FileProcessingItem {
     
     public List<FilenameSuggestions> getSuggestions() {
         return suggestions;
+    }
+    
+    public Path getTemporaryFilePath() {
+        return Path.of("file-rename-helper-temp_" + originalFileName);
     }
     
     /**
