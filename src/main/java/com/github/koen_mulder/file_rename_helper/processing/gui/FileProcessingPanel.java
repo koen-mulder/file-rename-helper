@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -139,20 +138,14 @@ public class FileProcessingPanel extends JPanel {
         worker.execute();
         
         JButton btnNewButton = new JButton(new SelectFileButtonAction(fileProcessingModelController, this));
-        
-        JButton btnNewButton_1 = new JButton("Start processing");
-        
-        JButton btnNewButton_1_1 = new JButton("Remove selection");
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(
-            groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+            groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                        .addComponent(btnNewButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                        .addComponent(btnNewButton_1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                        .addComponent(btnNewButton_1_1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                        .addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(btnNewButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE))
                     .addContainerGap())
         );
         groupLayout.setVerticalGroup(
@@ -161,11 +154,7 @@ public class FileProcessingPanel extends JPanel {
                     .addContainerGap()
                     .addComponent(btnNewButton)
                     .addGap(8)
-                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(btnNewButton_1_1)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(btnNewButton_1)
+                    .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                     .addContainerGap())
         );
         
