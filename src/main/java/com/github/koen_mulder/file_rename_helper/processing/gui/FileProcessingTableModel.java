@@ -30,7 +30,7 @@ public class FileProcessingTableModel extends AbstractTableModel {
                 int lastRow = e.getLastRow();
                 
                 if (lastRow == Integer.MAX_VALUE) {
-                    lastRow = items.size();
+                    lastRow = items.size()-1;
                 }
                 
                 if (e.getType() == FileProcessingModelEvent.DELETE) {
