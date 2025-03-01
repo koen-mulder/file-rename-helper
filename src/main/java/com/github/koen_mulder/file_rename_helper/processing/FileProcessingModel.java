@@ -1,5 +1,4 @@
 package com.github.koen_mulder.file_rename_helper.processing;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +8,11 @@ import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListen
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublisher;
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
+import com.google.common.base.Preconditions;
 
 /**
  * Model for the processing of files. This model keeps track of the items that have been processed,
- * the item that is currently being processed, the items that are re-queued for processing (high
+ * the item that is currently being processed, the items that are requeued for processing (high
  * priority) and the items in the backlog (normal priority).
  */
 //TODO: Make thread safe
@@ -49,6 +49,11 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      *                                   ({@code index < 0 || index >= getRowCount()})
      */
     public FileProcessingItem getValueAt(int rowIndex) {
+        // Check for out of bounds
+        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+            throw new IndexOutOfBoundsException(rowIndex);
+        }
+        
         int relativeIndex = rowIndex;
 
         if (relativeIndex <= processed.size() - 1) {
@@ -74,11 +79,10 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         // Adjust relative index
         relativeIndex -= requeued.size();
 
-        if (relativeIndex <= backlog.size() - 1) {
-            return backlog.get(relativeIndex);
-        }
-
-        throw new IndexOutOfBoundsException(rowIndex);
+        return Preconditions.checkNotNull(backlog.get(relativeIndex), String.format(
+                "Could not find item (at index: %d). Model state must have changed after index out"
+                        + " of bounds check.",
+                rowIndex));
     }
 
     /**
@@ -87,8 +91,12 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      * @param items List of items to be added
      * @return {@code true} if the items were all added, false if one or more of the items is
      *         duplicate
-     * @throws IllegalStateException if some property of this element prevents any of the items from
-     *                               being added to this list
+     * @return {@code true} if the items were all added, {code false} if one or more of the items
+     *         are duplicate
+     * @throws IllegalArgumentException if any of the items {@code item} were {@code null}, had a
+     *                                  {@code state} other than
+     *                                  {@code EFileProcessingItemState.NEW}
+     * @throws IllegalStateException    if any item could not be added
      */
     public boolean add(List<FileProcessingItem> items) {
         boolean result = true;
@@ -102,13 +110,24 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      * Adds a new row to the backlog of the model.
      * 
      * @param item item to be added
-     * @return {@code true} if the item was added, false if the item is duplicate
-     * @throws IllegalStateException if some property of this element prevents it from being added
-     *                               to this list
+     * @return {@code true} if the item was added, {code false} if the item is duplicate
+     * @throws IllegalArgumentException if {@code item} is {@code null}, has a {@code state} other
+     *                                  than {@code EFileProcessingItemState.NEW}
+     * @throws IllegalStateException    if the item could not be added
      */
     public boolean add(FileProcessingItem item) {
+        // Check for null input
+        if (item == null) {
+            throw new IllegalArgumentException("Cannot add a null item to the model.");
+        }
+        
+        if (item.getState() != EFileProcessingItemState.NEW) {
+            throw new IllegalArgumentException(
+                    "Cannot add an item that is not new to the model. Item: " + item);
+        }
+
         // Check for existing items
-        if (current != null && current.equals(item)) {
+        if (item.equals(current)) {
             // Do not allow duplicate objects to be added
             return false;
         }
@@ -131,11 +150,17 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
             }
         }
 
-        if (!backlog.add(item)) {
-            throw new IllegalStateException(
-                    "New item could not be added to backlog. Item: " + item);
-        }
+        // Add item to backlog
+        Preconditions.checkState(backlog.add(item),
+                "Failed to add item to the list. This is unexpected.");
+        
+        // Set state to backlog
+        item.setState(EFileProcessingItemState.BACKLOG);
+        
+        // Fire update to model listeners
         fireRowInserted(getRowCount() - 1);
+        
+        // Return success
         return true;
     }
 
@@ -143,26 +168,40 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      * Appends the element at the specified position in the processed list to the end of the
      * re-queue list.
      *
-     * @param index the index of the element to be re-queued
-     * @return {@code true} if this model changed as a result of the call})
-     * @throws NullPointerException  if the specified element is null
-     * @throws IllegalStateException if the element is not in the processed list or if some property
-     *                               of this element prevents it from being re-queued
+     * @param index the index of the element to be requeued
+     * @return {@code true} if this model changed as a result of the call
+     * @throws IllegalArgumentException  if the element is not in the processed list
+     * @throws IllegalStateException     if the item could not be requeued
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *                                   ({@code index < 0 || index >= getRowCount()})
      */
     public boolean requeue(int rowIndex) {
+        // Check for out of bounds
+        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+            throw new IndexOutOfBoundsException(rowIndex);
+        }
+        
+        // Check if index is in processed list
         if (rowIndex > processed.size() - 1) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                     "Cannot re-queue an item that has not been processed yet. Index: " + rowIndex);
         }
+        
+        // Remove item from processed list
         FileProcessingItem item = processed.remove(rowIndex);
+        // Fire update to model listeners
         fireRowDeleted(rowIndex);
 
+        // Set state to re-queued
         item.setState(EFileProcessingItemState.REQUEUED);
+        // Calculate new index for event
         int newRowIndex = processed.size() + requeued.size() + (current == null ? 0 : 1);
-        if (!requeued.add(item)) {
-            throw new IllegalStateException(
-                    "Item removed from processed but could not be requeued. Item: " + item);
-        }
+        
+        // Add item to re-queue list
+        Preconditions.checkState(requeued.add(item),
+                "Failed to add item to the list. This is unexpected.");
+
+        // Fire update to model listeners
         fireRowInserted(newRowIndex);
         return true;
     }
@@ -170,19 +209,24 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     /**
      * Remove the item from the processed list and add it to the end of the re-queue list.
      *
-     * @param item the element to be re-queued
+     * @param item the element to be requeued
      * @return {@code true} if this model changed as a result of the call})
-     * @throws NullPointerException  if the specified element is null
-     * @throws IllegalStateException if the element does not exists, is not in the processed list or
-     *                               if some property of this element prevents it from being
-     *                               re-queued
+     * @throws IllegalArgumentException if item is {@code null}, the element does not exist in the
+     *                                  processed list
+     * @throws IllegalStateException    if the item could not be requeued
      */
     public boolean requeue(FileProcessingItem item) {
+        // Check for null input
+        if (item == null) {
+            throw new IllegalArgumentException("Cannot requeue a null item.");
+        }
+        // Find index of item
         int index = getIndexOf(item);
         if (index == -1) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                     "Trying to requeue an item that does not exist: " + item);
         }
+        // Requeue item
         return requeue(index);
     }
 
@@ -223,26 +267,20 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
     }
 
     /**
-     * Returns the index of the item currently being processed.
-     * 
-     * @return the index of the item currently being processed
-     */
-    public Integer getCurrentIndex() {
-        if (current == null) {
-            return null;
-        }
-        return processed.size();
-    }
-
-    /**
      * Removes the element at the specified rowIndex.
      * 
      * @param rowIndex the index of the element to be removed
      * @return the element previously at the specified position
-     * @throws IllegalStateException if the element is currently being processed
+     * @throws IllegalArgumentException if the element is currently being processed
      * @throws IndexOutOfBoundsException if the index is out of range
+     *                                   ({@code index < 0 || index >= getRowCount()})
      */
     public FileProcessingItem remove(int rowIndex) {
+        // Check for out of bounds
+        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+            throw new IndexOutOfBoundsException(rowIndex);
+        }
+        
         int relativeIndex = rowIndex;
 
         if (relativeIndex <= processed.size() - 1) {
@@ -256,7 +294,7 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
 
         if (current != null) {
             if (relativeIndex == 0) {
-                throw new IllegalStateException(
+                throw new IllegalArgumentException(
                         "Cannot remove the item currently being processed. Index: " + rowIndex);
             }
 
@@ -273,13 +311,10 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         // Adjust relative index
         relativeIndex -= requeued.size();
 
-        if (relativeIndex <= backlog.size() - 1) {
-            FileProcessingItem removed = backlog.remove(relativeIndex);
-            fireRowDeleted(rowIndex);
-            return removed;
-        }
-
-        throw new IndexOutOfBoundsException(relativeIndex);
+        // Remove item from backlog
+        FileProcessingItem removed = backlog.remove(relativeIndex);
+        fireRowDeleted(rowIndex);
+        return removed;
     }
 
     /**
@@ -306,7 +341,11 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
      *         this list does not contain the element
      */
     public Integer getIndexOf(FileProcessingItem item) {
-
+        // Check for null input
+        if (item == null) {
+            throw new IllegalArgumentException("Cannot get the index of a null item.");
+        }
+        
         // Search processed items
         Integer index = processed.indexOf(item);
 
@@ -315,7 +354,7 @@ public class FileProcessingModel implements IFileProcessingModelPublisher, IFile
         }
 
         // Check current item
-        if (current.equals(item)) {
+        if (item.equals(current)) {
             return processed.size();
         }
 

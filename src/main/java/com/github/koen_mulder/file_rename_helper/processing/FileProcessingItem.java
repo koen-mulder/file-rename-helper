@@ -20,7 +20,7 @@ public class FileProcessingItem {
         originalAbsoluteFilePath = absoluteFilePath;
         originalFileName = fileName;
         
-        setState(EFileProcessingItemState.BACKLOG);
+        setState(EFileProcessingItemState.NEW);
     }
 
     public String getOriginalAbsoluteFilePath() {
@@ -76,4 +76,8 @@ public class FileProcessingItem {
         return Objects.hash(originalAbsoluteFilePath);
     }
     
+    @Override
+    public String toString() {
+        return String.format("%s (%s, %s)", originalFileName, state, originalAbsoluteFilePath);
+    }
 }

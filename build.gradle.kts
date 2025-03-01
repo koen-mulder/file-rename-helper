@@ -20,7 +20,8 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit.jupiter)
     
     // PDF viewer
     implementation(libs.icepdf.core)
