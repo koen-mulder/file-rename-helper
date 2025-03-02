@@ -51,6 +51,8 @@ public class FileProcessingModelController
      *
      * @param rowIndex the row whose value is to be queried
      * @return the value Object at the specified row
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *                                   ({@code index < 0 || index >= getRowCount()})
      * @see FileProcessingModel#getValueAt(int)
      */
     public FileProcessingItem getValueAt(int rowIndex) {
@@ -58,7 +60,7 @@ public class FileProcessingModelController
     }
 
     /**
-     * @return all values in the model.
+     * @return Returns all values in the model.
      * @see FileProcessingModel#getAllValues()
      */
     public List<FileProcessingItem> getAllValues() {
