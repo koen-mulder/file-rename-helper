@@ -1,6 +1,7 @@
 # File Rename Helper
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/docs/LICENSE.md)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](#)
 
 GUI application for renaming and moving (primarily PDF) files, leveraging AI to provide intelligent renaming suggestions based on file content.
 

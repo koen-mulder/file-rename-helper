@@ -51,13 +51,17 @@ public class FileProcessingModelController
      *
      * @param rowIndex the row whose value is to be queried
      * @return the value Object at the specified row
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *                                   ({@code index < 0 || index >= getRowCount()})
+     * @see FileProcessingModel#getValueAt(int)
      */
     public FileProcessingItem getValueAt(int rowIndex) {
         return model.getValueAt(rowIndex);
     }
 
     /**
-     * @return all values in the model
+     * @return Returns all values in the model.
+     * @see FileProcessingModel#getAllValues()
      */
     public List<FileProcessingItem> getAllValues() {
         return model.getAllValues();
@@ -68,6 +72,7 @@ public class FileProcessingModelController
      * and returns that item.
      * 
      * @return item to be processed
+     * @see FileProcessingModel#getNext()
      */
     public FileProcessingItem getNext() {
         return model.getNext();
@@ -79,36 +84,26 @@ public class FileProcessingModelController
      * @param items List of items to be added
      * @return {@code true} if the items were all added, false if one or more of the items is
      *         duplicate
-     * @throws IllegalStateException if some property of this element prevents any of the items from
-     *                               being added to this list
+     * @return {@code true} if the items were all added, {code false} if one or more of the items
+     *         are duplicate
+     * @throws IllegalArgumentException if any of the items {@code item} were {@code null}, had a
+     *                                  {@code state} other than
+     *                                  {@code EFileProcessingItemState.NEW}
+     * @throws IllegalStateException    if any item could not be added
+     * @see FileProcessingModel#add(List)
      */
     public boolean add(List<FileProcessingItem> items) {
         return model.add(items);
     }
 
     /**
-     * Appends the element at the specified position in the processed list to the end of the
-     * re-queue list.
-     *
-     * @param index the index of the element to be re-queued
-     * @return {@code true} if this model changed as a result of the call})
-     * @throws NullPointerException  if the specified element is null
-     * @throws IllegalStateException if the element is not in the processed list or if some property
-     *                               of this element prevents it from being
-     * @see FileProcessingModel#requeue(int)
-     */
-    public boolean requeue(int rowIndex) {
-        return model.requeue(0);
-    }
-
-    /**
      * Remove the item from the processed list and add it to the end of the re-queue list.
      *
-     * @param item the element to be re-queued
+     * @param item the element to be requeued
      * @return {@code true} if this model changed as a result of the call})
-     * @throws NullPointerException  if the specified element is null
-     * @throws IllegalStateException if the element does not exists, is not in the processed list or
-     *                               if some property of this element prevents it from being
+     * @throws IllegalArgumentException if item is {@code null}, the element does not exist in the
+     *                                  processed list
+     * @throws IllegalStateException    if the item could not be requeued
      * @see FileProcessingModel#requeue(FileProcessingItem)
      */
     public boolean requeue(FileProcessingItem activeFileItem) {

@@ -13,5 +13,7 @@ public enum EFileProcessingItemState {
     // File was processed but needs to be re-processed (for more suggestions)
     REQUEUED,
     // File is in the backlog and has not been processed yet
-    BACKLOG;
+    BACKLOG,
+    // File is new and has not been added to the backlog yet
+    NEW;
 }
