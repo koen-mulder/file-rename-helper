@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelPublisher;
 import com.google.common.base.Preconditions;
 
 /**

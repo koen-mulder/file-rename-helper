@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.controller.AIController.FilenameSuggestions;
+import com.github.koen_mulder.file_rename_helper.suggestions.AIController.FilenameSuggestions;
 
 public class FileProcessingItem {
 

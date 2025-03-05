@@ -7,10 +7,10 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
 
 public class FileProcessingTableModel extends AbstractTableModel {
 
