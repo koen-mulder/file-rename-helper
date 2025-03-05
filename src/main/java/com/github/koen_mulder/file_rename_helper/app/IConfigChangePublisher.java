@@ -3,8 +3,6 @@
  */
 package com.github.koen_mulder.file_rename_helper.app;
 
-import com.github.koen_mulder.file_rename_helper.suggestions.EConfigIdentifier;
-
 /**
  * The ConfigChangePublisher interface is implemented by classes that manage 
  * configuration and notify registered {@link IConfigChangeListener}s when a config value is changed.

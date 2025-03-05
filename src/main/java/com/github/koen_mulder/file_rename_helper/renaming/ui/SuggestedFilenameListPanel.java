@@ -32,7 +32,7 @@ import com.github.koen_mulder.file_rename_helper.suggestions.AIController.Filena
  * Panel containing a list of filename suggestions and controls to interact with the list.
  */
 //TODO: Fix javadoc
-public class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
+class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = -194287030076951038L;
 

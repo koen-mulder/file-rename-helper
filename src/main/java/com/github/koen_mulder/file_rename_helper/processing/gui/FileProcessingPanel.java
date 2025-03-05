@@ -32,7 +32,6 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
-import com.github.koen_mulder.file_rename_helper.suggestions.FilenameSuggestionWorker;
 
 public class FileProcessingPanel extends JPanel {
 

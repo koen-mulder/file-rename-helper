@@ -6,6 +6,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.List;
 
+import com.github.koen_mulder.file_rename_helper.app.EConfigIdentifier;
 import com.github.koen_mulder.file_rename_helper.app.IConfigChangeListener;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 

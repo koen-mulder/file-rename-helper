@@ -26,7 +26,7 @@ import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldContro
  * Panel containing a button to rename the active file.
  */
 @SuppressWarnings("serial") // Same-version serialisation only
-public class RenameFileButtonPanel extends JPanel implements IOpenFileActionListener {
+class RenameFileButtonPanel extends JPanel implements IOpenFileActionListener {
 
     private FileProcessingItem activeFileItem;
     private JButton renameFileButton;

@@ -1,10 +1,9 @@
 package com.github.koen_mulder.file_rename_helper.processing.api;
 
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModel;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 
 /**
- * Implementing classes listen to changes in the {@link FileProcessingModel}.
+ * Implementing classes listen to changes in the FileProcessingModel.
  */
 public interface IFileProcessingModelListener extends java.util.EventListener {
 

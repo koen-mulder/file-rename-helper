@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AlternatingListCellRenderer extends DefaultListCellRenderer {
+class AlternatingListCellRenderer extends DefaultListCellRenderer {
 
     private static final long serialVersionUID = -6775438500856647701L;
 

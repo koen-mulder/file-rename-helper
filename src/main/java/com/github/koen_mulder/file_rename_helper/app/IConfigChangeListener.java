@@ -3,8 +3,6 @@
  */
 package com.github.koen_mulder.file_rename_helper.app;
 
-import com.github.koen_mulder.file_rename_helper.suggestions.EConfigIdentifier;
-
 /**
  * The ConfigChangeListener interface is implemented by components that need to
  * react to config change events of a {@link IConfigChangePublisher}.

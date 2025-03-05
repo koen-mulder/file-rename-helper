@@ -25,7 +25,7 @@ import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 import com.github.koen_mulder.file_rename_helper.suggestions.ConfigurationPanel;
 import com.github.koen_mulder.file_rename_helper.viewing.FileViewPanel;
 
-public class ApplicationWindow {
+class ApplicationWindow {
 
     // Create a logger instance
     private static final Logger logger = LoggerFactory.getLogger(ApplicationWindow.class);

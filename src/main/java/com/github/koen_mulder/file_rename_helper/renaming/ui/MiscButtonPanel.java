@@ -17,7 +17,7 @@ import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionL
 import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
 import com.github.koen_mulder.file_rename_helper.shared.WrapLayout;
 
-public class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
+class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
 
     private static final long serialVersionUID = 5711654747954407097L;
 

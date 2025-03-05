@@ -21,7 +21,7 @@ import com.github.koen_mulder.file_rename_helper.suggestions.AIController.Filena
 /**
  * Panel for insert keyword buttons.
  */
-public class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
+class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
 
     private static final long serialVersionUID = 7824169572049309584L;
 

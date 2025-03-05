@@ -3,20 +3,12 @@ package com.github.koen_mulder.file_rename_helper.app;
 import java.awt.Rectangle;
 
 /**
- * ConfigManager is a Singleton class responsible for managing the application's
- * configuration. The configuration values are maintained in a thread-safe
- * manner, ensuring that updates and retrievals can occur safely from multiple
- * threads.
+ * Config manager for the window configuration.
  * 
- * <p>
- * This class follows the Singleton design pattern, meaning that only one
- * instance of the ConfigManager is created and used throughout the application.
- * The instance is eagerly initialized when the class is loaded. The
- * configuration items are stored as atomic references, which provide
- * thread-safe access to the values.
- * </p>
+ * @see ConfigManager
+ * @extends ConfigManager
  */
-public class WindowConfigManager extends ConfigManager<WindowConfig> {
+class WindowConfigManager extends ConfigManager<WindowConfig> {
     
     // Eagerly initialize the Singleton instance
     private static final WindowConfigManager instance = new WindowConfigManager();

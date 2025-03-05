@@ -1,6 +1,6 @@
 package com.github.koen_mulder.file_rename_helper.suggestions;
 
-public class AIConfig {
+class AIConfig {
 
     private String modelName = "llama3.2:3b";
     private String ollamaEndpoint = "http://localhost:11434";

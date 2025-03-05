@@ -1,9 +1,10 @@
-package com.github.koen_mulder.file_rename_helper.suggestions;
+package com.github.koen_mulder.file_rename_helper.processing.gui;
 
 import javax.swing.SwingWorker;
 
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
+import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 
 public class FilenameSuggestionWorker extends SwingWorker<Void, Void> {
 

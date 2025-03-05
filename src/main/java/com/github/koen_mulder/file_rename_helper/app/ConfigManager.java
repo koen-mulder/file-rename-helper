@@ -5,23 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.github.koen_mulder.file_rename_helper.suggestions.EConfigIdentifier;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 /**
- * ConfigManager is a Singleton class responsible for managing the application's
- * configuration. The configuration values are maintained in a thread-safe
- * manner, ensuring that updates and retrievals can occur safely from multiple
- * threads.
- * 
- * <p>
- * This class follows the Singleton design pattern, meaning that only one
- * instance of the ConfigManager is created and used throughout the application.
- * The instance is eagerly initialized when the class is loaded. The
- * configuration items are stored as atomic references, which provide
- * thread-safe access to the values.
- * </p>
+ * ConfigManager is a Singleton class responsible for managing the application's configuration. It
+ * provides methods to load and save configuration, as well as subscribe to configuration change
+ * events. The class is abstract and must be extended to provide the specific configuration fields.
  */
 public abstract class ConfigManager<T> implements IConfigChangePublisher {
 

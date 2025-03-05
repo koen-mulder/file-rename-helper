@@ -1,6 +1,7 @@
 package com.github.koen_mulder.file_rename_helper.suggestions;
 
 import com.github.koen_mulder.file_rename_helper.app.ConfigManager;
+import com.github.koen_mulder.file_rename_helper.app.EConfigIdentifier;
 
 public class AIConfigManager extends ConfigManager<AIConfig> {
     

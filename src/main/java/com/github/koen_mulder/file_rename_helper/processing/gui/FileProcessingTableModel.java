@@ -12,7 +12,7 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
 
-public class FileProcessingTableModel extends AbstractTableModel {
+class FileProcessingTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = -3670356454612137435L;
 
