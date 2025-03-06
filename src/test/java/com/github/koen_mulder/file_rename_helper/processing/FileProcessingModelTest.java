@@ -15,8 +15,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
 import com.google.common.collect.Lists;
 
 /**

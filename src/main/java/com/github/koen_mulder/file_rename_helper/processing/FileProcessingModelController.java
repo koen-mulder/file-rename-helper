@@ -6,10 +6,10 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelPublisher;
 
 /**
  * Controller class separating the {@link FileProcessingModel} from the rest of the application.

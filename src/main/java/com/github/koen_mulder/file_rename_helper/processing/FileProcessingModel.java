@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessedPublisher;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedPublisher;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelPublisher;
 import com.google.common.base.Preconditions;
 
 /**
@@ -16,7 +16,7 @@ import com.google.common.base.Preconditions;
  * priority) and the items in the backlog (normal priority).
  */
 //TODO: Make thread safe
-public class FileProcessingModel implements IFileProcessingModelPublisher, IFileProcessedPublisher {
+class FileProcessingModel implements IFileProcessingModelPublisher, IFileProcessedPublisher {
 
     private final List<IFileProcessingModelListener> modelListeners = Lists.newArrayList();
     private final List<IFileProcessedListener> processedListeners = Lists.newArrayList();

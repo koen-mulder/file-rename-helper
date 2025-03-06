@@ -18,11 +18,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.github.koen_mulder.file_rename_helper.interfaces.IFileProcessingModelListener;
 import com.github.koen_mulder.file_rename_helper.processing.EFileProcessingItemState;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
+import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
 
 public class FileProcessingTableModelTest {
 

@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
  * starting a SwingWorker for suggestions and notifying listeners.
  */
 //TODO: Fix Javadoc
-public class SelectFileButtonAction extends AbstractAction {
+class SelectFileButtonAction extends AbstractAction {
 
     private static final long serialVersionUID = 7773619212631079877L;
 

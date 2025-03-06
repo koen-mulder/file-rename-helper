@@ -27,12 +27,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.koen_mulder.file_rename_helper.application.Application;
-import com.github.koen_mulder.file_rename_helper.controller.AIController;
-import com.github.koen_mulder.file_rename_helper.gui.rename.workers.FilenameSuggestionWorker;
-import com.github.koen_mulder.file_rename_helper.interfaces.IOpenFileActionPublisher;
+import com.github.koen_mulder.file_rename_helper.app.Application;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
+import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
+import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 
 public class FileProcessingPanel extends JPanel {
 
