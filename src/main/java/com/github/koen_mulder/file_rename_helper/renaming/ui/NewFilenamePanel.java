@@ -13,13 +13,12 @@ import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionL
 /**
  * Panel containing the input field for the new filename.
  */
+@SuppressWarnings("serial") // Same-version serialization only
 class NewFilenamePanel extends JPanel implements IOpenFileActionListener {
 
-    private static final long serialVersionUID = -8735277668945036089L;
     private JTextField newFilenameField;
     private FileProcessingItem activeFileItem;
 
-    
     /**
      * Panel containing the input field for the new filename.
      */

@@ -9,10 +9,9 @@ import javax.swing.SwingUtilities;
  *  This code was made available by Rob Camick at:
  *  https://github.com/tips4java/tips4java/blob/main/source/WrapLayout.java
  */
+@SuppressWarnings("serial") // Same-version serialization only
 public class WrapLayout extends FlowLayout
 {
-	private Dimension preferredLayoutSize;
-
 	/**
 	* Constructs a new <code>WrapLayout</code> with a left
 	* alignment and a default 5-unit horizontal and vertical gap.

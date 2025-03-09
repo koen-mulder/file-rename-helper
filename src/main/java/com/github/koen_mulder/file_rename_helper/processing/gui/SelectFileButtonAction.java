@@ -16,27 +16,22 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
 import com.google.common.collect.Lists;
 
 /**
- * SwingAction for the "Select file" button. Handles opening a file chooser,
- * starting a SwingWorker for suggestions and notifying listeners.
+ * SwingAction for the "Select file" button. Handles opening a file chooser and adding the selected
+ * files to the processing queue.
  */
-//TODO: Fix Javadoc
+@SuppressWarnings("serial") // Same-version serialization only
 class SelectFileButtonAction extends AbstractAction {
-
-    private static final long serialVersionUID = 7773619212631079877L;
 
     private JFileChooser fileChooser;
 
     private FileProcessingModelController fileProcessingModelController;
     private Component parent;
 
-
     /**
-     * SwingAction for the "Select file" button. Handles opening a file chooser,
-     * starting a SwingWorker for suggestions and notifying listeners.
-     * @param parent component for the JDialog
-     * @param fileSelectionPublisher for notifying components (like the PDF viewer) that a file is selected
-     * @param suggestionPublisher for notifying components there are new suggestions
-     * @param formEventPublisher for notifying form components of the form state
+     * SwingAction for the "Select file" button. Handles opening a file chooser and adding the selected
+     * files to the processing queue.
+     * @param fileProcessingModelController the controller for the file processing model
+     * @param parent the parent component for the file chooser
      */
     public SelectFileButtonAction(FileProcessingModelController fileProcessingModelController, Component parent) {
 

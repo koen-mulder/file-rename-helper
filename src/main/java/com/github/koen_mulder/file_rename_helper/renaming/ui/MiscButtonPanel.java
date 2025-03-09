@@ -17,9 +17,11 @@ import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionL
 import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
 import com.github.koen_mulder.file_rename_helper.shared.WrapLayout;
 
+/**
+ * Panel for miscellaneous functions that can be applied to the new filename input field
+ */
+@SuppressWarnings("serial") // Same-version serialization only
 class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
-
-    private static final long serialVersionUID = 5711654747954407097L;
 
     private List<JButton> buttons;
 
@@ -57,8 +59,6 @@ class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
 
     private class ConsecutiveReplaceButtonAction extends AbstractAction {
 
-        private static final long serialVersionUID = -5004018547334595184L;
-        
         private NewFilenameFieldController newFilenameFieldController;
         private String patternString;
 
@@ -91,8 +91,6 @@ class MiscButtonPanel extends JPanel implements IOpenFileActionListener{
     
     private class AddWhiteSpaceButtonAction extends AbstractAction {
 
-        private static final long serialVersionUID = -5004018547334595184L;
-        
         private NewFilenameFieldController newFilenameFieldController;
 
         public AddWhiteSpaceButtonAction(NewFilenameFieldController newFilenameFieldController) {
