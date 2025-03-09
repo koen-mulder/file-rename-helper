@@ -33,12 +33,14 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 
+/**
+ * Panel displaying the files that are being processed.
+ */
+@SuppressWarnings("serial") // Same-version serialization only
 public class FileProcessingPanel extends JPanel {
 
     // Create a logger instance
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
-    
-    private static final long serialVersionUID = 7059171924511879920L;
     
     private static final Color RENAMED_COLOR = new Color(237, 237, 235);
     private static final Color PROCESSED_COLOR = new Color(220, 255, 220);
@@ -161,7 +163,6 @@ public class FileProcessingPanel extends JPanel {
         setLayout(groupLayout);
     }
     
-    @SuppressWarnings("serial") // Same-version serialization only
     class FileProcessingItemRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
