@@ -1,7 +1,6 @@
 package com.github.koen_mulder.file_rename_helper.renaming.ui;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -19,22 +18,17 @@ import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.compress.utils.Lists;
-
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.suggestions.AIController.FilenameSuggestions;
 
 /**
  * Panel containing a list of filename suggestions and controls to interact with the list.
  */
-//TODO: Fix javadoc
+@SuppressWarnings("serial") // Same-version serialization only
 class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
-
-    private static final long serialVersionUID = -194287030076951038L;
 
     private JButton moreSuggestionsButton;
     private JList<String> suggestedFilenameList;
@@ -121,21 +115,19 @@ class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListen
         }
 
         if (activeFileItem.equals(fileItem)) {
-
-            // Generate buttons on all suggestions
-            List<String> aggregatedSuggestions = Lists.newArrayList();
-            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
-                aggregatedSuggestions.addAll(suggestions.possibleFilenames());
-            }
-
-            // Clear existing buttons
-            listModel.clear();
-
-            // Add buttons
-            listModel.addAll(aggregatedSuggestions);
+            addFilenameSuggestions(fileItem);
         }
     }
     
+    private void addFilenameSuggestions(FileProcessingItem fileItem) {
+        // Clear existing buttons
+        clearList();
+
+        // Add buttons
+        listModel.addAll(fileItem.getFilenameSuggestions());
+
+    }
+
     @Override
     public void onOpenFileAction(FileProcessingItem fileItem) {
         if (fileItem == null) {
@@ -145,14 +137,9 @@ class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListen
             setEnabled(false);
         } else if (activeFileItem == null || !activeFileItem.equals(fileItem)) {
             activeFileItem = fileItem;
-            clearList();
             setEnabled(true);
             
-            List<String> aggregatedSuggestions = Lists.newArrayList();
-            for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
-                aggregatedSuggestions.addAll(suggestions.possibleFilenames());
-            }
-            listModel.addAll(aggregatedSuggestions);
+            addFilenameSuggestions(fileItem);
         }
     }
 
@@ -192,8 +179,6 @@ class SuggestedFilenameListPanel extends JPanel implements IOpenFileActionListen
     }
 
     private final class MoreSuggestionsButtonAction extends AbstractAction {
-
-        private static final long serialVersionUID = 5890446755560861964L;
 
         private FileProcessingModelController fileProcessingModelController;
 

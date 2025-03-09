@@ -6,14 +6,24 @@ import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.github.koen_mulder.file_rename_helper.suggestions.AIController.FilenameSuggestions;
+import com.github.koen_mulder.file_rename_helper.suggestions.Suggestions;
 
+/**
+ * Represents a file that is being processed by the application.
+ */
 public class FileProcessingItem {
 
+    // File information
     private final String originalAbsoluteFilePath;
     private final String originalFileName;
     
-    private final List<FilenameSuggestions> suggestions = Lists.newArrayList();
+    // Suggestions for renaming the file
+    private final List<String> filenameSuggestions = Lists.newArrayList();
+    private final List<String> filepathSuggestions = Lists.newArrayList();
+    private final List<String> keywordSuggestions = Lists.newArrayList();
+    private final List<String> dateSuggestions = Lists.newArrayList();
+
+    // Processing state of the file
     private EFileProcessingItemState state;
     
     public FileProcessingItem(String absoluteFilePath, String fileName) {
@@ -39,12 +49,37 @@ public class FileProcessingItem {
         this.state = state;
     }
 
-    public void addSuggestions(FilenameSuggestions suggestions) {
-        this.suggestions.add(suggestions);
+    
+    public void addFilenameSuggestions(Suggestions suggestions) {
+        filenameSuggestions.addAll(suggestions.suggestions());
     }
     
-    public List<FilenameSuggestions> getSuggestions() {
-        return suggestions;
+    public List<String> getFilenameSuggestions() {
+        return filenameSuggestions;
+    }
+    
+    public void addFilepathSuggestions(Suggestions suggestions) {
+        filepathSuggestions.addAll(suggestions.suggestions());
+    }
+    
+    public List<String> getFilepathSuggestions() {
+        return filepathSuggestions;
+    }
+    
+    public void addKeywordSuggestions(Suggestions suggestions) {
+        keywordSuggestions.addAll(suggestions.suggestions());
+    }
+    
+    public List<String> getKeywordSuggestions() {
+        return keywordSuggestions;
+    }
+    
+    public void addDateSuggestions(Suggestions suggestions) {
+        dateSuggestions.addAll(suggestions.suggestions());
+    }
+    
+    public List<String> getDateSuggestions() {
+        return dateSuggestions;
     }
     
     public Path getTemporaryFilePath() {

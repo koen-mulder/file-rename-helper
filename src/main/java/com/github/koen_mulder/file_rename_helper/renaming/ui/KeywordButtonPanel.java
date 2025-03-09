@@ -16,14 +16,12 @@ import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedLi
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
 import com.github.koen_mulder.file_rename_helper.shared.WrapLayout;
-import com.github.koen_mulder.file_rename_helper.suggestions.AIController.FilenameSuggestions;
 
 /**
- * Panel for insert keyword buttons.
+ * Panel containing buttons for inserting keywords and date suggestions into the new filename field. 
  */
+@SuppressWarnings("serial") // Same-version serialization only
 class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFileProcessedListener {
-
-    private static final long serialVersionUID = 7824169572049309584L;
 
     private NewFilenameFieldController newFilenameFieldController;
 
@@ -32,7 +30,8 @@ class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFil
     /**
      * Panel for insert keyword buttons.
      * 
-     * @param newFilenameFieldController the keyword should be inserted in once the keyword button is pressed.
+     * @param newFilenameFieldController the keyword should be inserted in once the keyword button
+     *                                   is pressed.
      */
     public KeywordButtonPanel(NewFilenameFieldController newFilenameFieldController) {
         
@@ -61,10 +60,10 @@ class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFil
      */
     public void addButtons(FileProcessingItem fileItem) {
         List<String> aggregatedSuggestions = Lists.newArrayList();
-        for (FilenameSuggestions suggestions : fileItem.getSuggestions()) {
-            aggregatedSuggestions.addAll(suggestions.relevantWords());
-        }
+        aggregatedSuggestions.addAll(fileItem.getKeywordSuggestions());
+        aggregatedSuggestions.addAll(fileItem.getDateSuggestions());
         
+        // Create a button for each keyword
         for (String keyword : aggregatedSuggestions) {
             add(new JButton(new KeywordButtonAction(keyword)));
         }
@@ -100,8 +99,6 @@ class KeywordButtonPanel extends JPanel implements IOpenFileActionListener, IFil
      * Action for buttons that insert a keyword in the new filename field.
      */
     private class KeywordButtonAction extends AbstractAction {
-        
-        private static final long serialVersionUID = 8005245950554081086L;
         
         private String keyword;
         

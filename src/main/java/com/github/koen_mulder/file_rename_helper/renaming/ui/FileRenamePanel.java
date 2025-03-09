@@ -11,17 +11,15 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
-import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 
 /**
  * Panel for selecting a file, viewing filename suggestions and composing a new filename. 
  */
+@SuppressWarnings("serial") // Same-version serialization only
 public class FileRenamePanel extends JPanel {
 
     private static final int PREFERRED_COMPONENT_WIDTH = 400;
     
-    private static final long serialVersionUID = 5393373407385885597L;
-
     /**
      * Panel for selecting a file, viewing filename suggestions and composing a new filename.
      * 
@@ -30,7 +28,7 @@ public class FileRenamePanel extends JPanel {
      * @param suggestionPublisher for notifying components there are new suggestions
      * @param formEventPublisher for notifying form components of the form state
      */
-    public FileRenamePanel(AIController aiController, IOpenFileActionPublisher openFileActionPublisher,
+    public FileRenamePanel(IOpenFileActionPublisher openFileActionPublisher,
             FileProcessingModelController fileProcessingModelController) {
 
         // Create panel with the input field for the new filename

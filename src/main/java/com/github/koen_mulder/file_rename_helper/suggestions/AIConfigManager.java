@@ -3,6 +3,9 @@ package com.github.koen_mulder.file_rename_helper.suggestions;
 import com.github.koen_mulder.file_rename_helper.app.ConfigManager;
 import com.github.koen_mulder.file_rename_helper.app.EConfigIdentifier;
 
+/**
+ * Config manager for AI-related settings.
+ */
 public class AIConfigManager extends ConfigManager<AIConfig> {
     
     // Eagerly initialize the Singleton instance
@@ -81,6 +84,90 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
             config.setAdditionalFilenamePrompt(prompt);
             setConfigChanged();
             notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT);
+        }
+    }
+
+    public String getKeywordsPrompt() {
+        return config.getKeywordsPrompt();
+    }
+    
+    public void setKeywordsPrompt(String prompt) {
+        if (!config.getKeywordsPrompt().equals(prompt)) {
+            config.setKeywordsPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.KEYWORDS_PROMPT);
+        }
+    }
+
+    public String getAdditionalKeywordsPrompt() {
+        return config.getAdditionalKeywordsPrompt();
+    }
+    
+    public void setAdditionalKeywordsPrompt(String prompt) {
+        if (!config.getAdditionalKeywordsPrompt().equals(prompt)) {
+            config.setAdditionalKeywordsPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_KEYWORDS_PROMPT);
+        }
+    }
+
+    public String getDatesPrompt() {
+        return config.getDatesPrompt();
+    }
+    
+    public void setDatesPrompt(String prompt) {
+        if (!config.getDatesPrompt().equals(prompt)) {
+            config.setDatesPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.DATES_PROMPT);
+        }
+    }
+
+    public String getAdditionalDatesPrompt() {
+        return config.getAdditionalDatesPrompt();
+    }
+    
+    public void setAdditionalDatesPrompt(String prompt) {
+        if (!config.getAdditionalDatesPrompt().equals(prompt)) {
+            config.setAdditionalDatesPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_DATES_PROMPT);
+        }
+    }
+
+    public String getFilepathPrompt() {
+        return config.getFilepathPrompt();
+    }
+    
+    public void setFilepathPrompt(String prompt) {
+        if (!config.getFilepathPrompt().equals(prompt)) {
+            config.setFilepathPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.FILEPATH_PROMPT);
+        }
+    }
+
+    public String getAdditionalFilepathPrompt() {
+        return config.getAdditionalFilepathPrompt();
+    }
+    
+    public void setAdditionalFilepathPrompt(String prompt) {
+        if (!config.getAdditionalFilepathPrompt().equals(prompt)) {
+            config.setAdditionalFilepathPrompt(prompt);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_FILEPATH_PROMPT);
+        }
+    }
+
+    public String getSystemMessage() {
+        return config.getSystemMessage();
+    }
+    
+    public void setSystemMessage(String message) {
+        if (!config.getSystemMessage().equals(message)) {
+            config.setSystemMessage(message);
+            setConfigChanged();
+            notifyConfigChangeListeners(EConfigIdentifier.SYSTEM_MESSAGE);
         }
     }
 

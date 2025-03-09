@@ -25,6 +25,9 @@ import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 import com.github.koen_mulder.file_rename_helper.suggestions.ConfigurationPanel;
 import com.github.koen_mulder.file_rename_helper.viewing.FileViewPanel;
 
+/**
+ * Main application window.
+ */
 class ApplicationWindow {
 
     // Create a logger instance
@@ -60,7 +63,7 @@ class ApplicationWindow {
                 openFileActionPublisher);
 
         // View and rename split pane
-        JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(aiController, openFileActionPublisher,
+        JSplitPane viewAndRenameSplitPane = initViewAndRenameSplitPane(openFileActionPublisher,
                 fileProcessingModelController, configManager);
         
         // Splitter for file processing and file view/renaming
@@ -82,8 +85,8 @@ class ApplicationWindow {
         initWindowListeners(aiController, configManager, aiConfigManager);
     }
 
-    private JSplitPane initViewAndRenameSplitPane(AIController aiController,
-            IOpenFileActionPublisher openFileActionPublisher, FileProcessingModelController fileProcessingModelController,
+    private JSplitPane initViewAndRenameSplitPane(IOpenFileActionPublisher openFileActionPublisher,
+            FileProcessingModelController fileProcessingModelController,
             WindowConfigManager configManager) {
         
         JSplitPane viewAndRenameSplitPane = new JSplitPane();
@@ -108,7 +111,7 @@ class ApplicationWindow {
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
 
         // File rename panel
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(aiController, openFileActionPublisher, fileProcessingModelController);
+        FileRenamePanel fileRenamePanel = new FileRenamePanel(openFileActionPublisher, fileProcessingModelController);
         viewAndRenameSplitPane.setRightComponent(fileRenamePanel);
         
         return viewAndRenameSplitPane;
@@ -116,7 +119,6 @@ class ApplicationWindow {
 
     private void initWindowListeners(AIController aiController, WindowConfigManager configManager,
             AIConfigManager aiConfigManager) {
-        frame.addWindowListener(aiController.getWindowListener());
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
