@@ -8,9 +8,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+@SuppressWarnings("serial") // Same-version serialization only
 class AlternatingListCellRenderer extends DefaultListCellRenderer {
-
-    private static final long serialVersionUID = -6775438500856647701L;
 
     private static final Color LIGHT_GRAY = new Color(0xFC, 0xFC, 0xFC);
     private static final Color HOVER_COLOR = new Color(0xE3, 0xEC, 0xFF);

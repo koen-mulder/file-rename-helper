@@ -12,9 +12,8 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelEvent;
 import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessingModelListener;
 
+@SuppressWarnings("serial") // Same-version serialization only
 class FileProcessingTableModel extends AbstractTableModel {
-
-    private static final long serialVersionUID = -3670356454612137435L;
 
     private final List<FileProcessingItem> items = Lists.newArrayList();
     

@@ -18,9 +18,8 @@ import com.github.koen_mulder.file_rename_helper.shared.WrapLayout;
 /**
  * Panel for replacing special characters in the new filename input field
  */
+@SuppressWarnings("serial") // Same-version serialization only
 class ReplaceCharacterPanel extends JPanel implements IOpenFileActionListener {
-
-    private static final long serialVersionUID = 181583606542347794L;
 
     private List<JButton> buttons;
 
@@ -62,8 +61,6 @@ class ReplaceCharacterPanel extends JPanel implements IOpenFileActionListener {
     }
 
     private class ReplaceCharacterButtonAction extends AbstractAction {
-
-        private static final long serialVersionUID = 6958961519876494377L;
 
         private NewFilenameFieldController newFilenameFieldController;
 

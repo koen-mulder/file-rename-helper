@@ -12,10 +12,9 @@ import org.icepdf.ri.util.ViewerPropertiesManager;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionListener;
 
+@SuppressWarnings("serial") // Same-version serialization only
 public class FileViewPanel extends JPanel implements IOpenFileActionListener {
 
-    private static final long serialVersionUID = 294107391689362780L;
-    
     private SwingController controller;
 
     public FileViewPanel(JFrame applicationFrame) {
