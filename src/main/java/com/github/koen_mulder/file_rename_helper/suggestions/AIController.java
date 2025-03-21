@@ -2,10 +2,10 @@ package com.github.koen_mulder.file_rename_helper.suggestions;
 
 public class AIController  {
 
-    private OllamaSuggestionService aiService;
+    private IAISuggestionService aiService;
 
     public AIController() {
-        aiService = new OllamaSuggestionService();
+        aiService = AISuggestionServiceFactory.getService();
     }
     
     public IAISuggestionService getAiService() {
