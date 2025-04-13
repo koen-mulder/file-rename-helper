@@ -40,7 +40,7 @@ class FileProcessingModelTest {
     
     @Test
     void getRowCount_oneItemAdded_shouldReturnOne() {
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
         
         // Item in backlog
         assertEquals(1, model.getRowCount());
@@ -57,10 +57,10 @@ class FileProcessingModelTest {
     
     @Test
     void getRowCount_withItemsInAllPositions_shouldReturnCorrectAmount() {
-        model.add(new FileProcessingItem("item 1", "item 1"));
-        model.add(new FileProcessingItem("item 2", "item 2"));
-        model.add(new FileProcessingItem("item 3", "item 3"));
-        model.add(new FileProcessingItem("item 4", "item 4"));
+        model.add(new FileProcessingItem("item 1", "item 1", List.of()));
+        model.add(new FileProcessingItem("item 2", "item 2", List.of()));
+        model.add(new FileProcessingItem("item 3", "item 3", List.of()));
+        model.add(new FileProcessingItem("item 4", "item 4", List.of()));
         
         // State [processed = (), current = (), requeued = (), backlog = (1, 2, 3, 4)]
         assertEquals(4, model.getRowCount()); // Items in model
@@ -89,7 +89,7 @@ class FileProcessingModelTest {
     
     @Test
     void getValueAt_validIndexInBacklog_shouldReturnCorrectItem() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         assertEquals(item, model.getValueAt(0));
@@ -97,7 +97,7 @@ class FileProcessingModelTest {
     
     @Test
     void getValueAt_validIndexInCurrent_shouldReturnCorrectItem() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         model.getNext(); // Move item to current
         
@@ -106,7 +106,7 @@ class FileProcessingModelTest {
     
     @Test
     void getValueAt_validIndexInProcessed_shouldReturnCorrectItem() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         model.getNext(); // Move item to current
         model.getNext(); // Move item to processed
@@ -116,7 +116,7 @@ class FileProcessingModelTest {
     
     @Test
     void getValueAt_validIndexInRequeued_shouldReturnCorrectItem() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         model.getNext(); // Move item to current
         model.getNext(); // Move item to processed
@@ -127,13 +127,13 @@ class FileProcessingModelTest {
     
     @Test
     void getValueAt_validIndex_withItemsInAllPositions_shouldReturnCorrectItem() {
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
-        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3");
+        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3", List.of());
         model.add(item3);
-        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4");
+        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4", List.of());
         model.add(item4);
 
         model.getNext(); // Move next item to current
@@ -164,7 +164,7 @@ class FileProcessingModelTest {
     
     @Test
     void add_singleItem() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         assertEquals(item, model.getValueAt(0)); // Item is added
@@ -174,11 +174,11 @@ class FileProcessingModelTest {
     @Test
     void add_duplicateItem_whenItemIsInBacklog_shouldReturnFalse() {
         // Create non-duplicate item to test all branches
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         
         // Create duplicate item
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
-        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
+        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2", List.of());
         
         // Add items
         model.add(item1); // Add item 1 to backlog
@@ -190,8 +190,8 @@ class FileProcessingModelTest {
     
     @Test
     void add_duplicateItem_whenItemIsInCurrent_shouldReturnFalse() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
-        FileProcessingItem itemDuplicate = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
+        FileProcessingItem itemDuplicate = new FileProcessingItem("item", "item", List.of());
         
         model.add(item); // Add item to backlog
         model.getNext(); // Move item to current
@@ -203,11 +203,11 @@ class FileProcessingModelTest {
     @Test
     void add_duplicateItem_whenItemIsInProcessed_shouldReturnFalse() {
         // Create non-duplicate item to test all branches
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         
         // Create duplicate item
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
-        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
+        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2", List.of());
         
         // Add items
         model.add(item1); // Add item 1 to backlog
@@ -225,11 +225,11 @@ class FileProcessingModelTest {
     @Test
     void add_duplicateItem_whenItemIsInRequeued_shouldReturnFalse() {
         // Create non-duplicate item to test all branches
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         
         // Create duplicate item
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
-        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
+        FileProcessingItem item2duplicate = new FileProcessingItem("item 2", "item 2", List.of());
         
         // Add items
         model.add(item1); // Add item 1 to backlog
@@ -261,7 +261,7 @@ class FileProcessingModelTest {
     
     @Test
     void add_invalidItem_withStateProcessed_shouldThrowIllegalArgumentException() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         item.setState(EFileProcessingItemState.PROCESSED);
 
         IllegalArgumentException thrown = assertThrowsExactly(IllegalArgumentException.class,
@@ -273,7 +273,7 @@ class FileProcessingModelTest {
     
     @Test
     void add_invalidItem_withStateCurrent_shouldThrowIllegalArgumentException() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         item.setState(EFileProcessingItemState.PROCESSING);
 
         IllegalArgumentException thrown = assertThrowsExactly(IllegalArgumentException.class,
@@ -285,7 +285,7 @@ class FileProcessingModelTest {
     
     @Test
     void add_invalidItem_withStateRequeued_shouldThrowIllegalArgumentException() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         item.setState(EFileProcessingItemState.REQUEUED);
 
         IllegalArgumentException thrown = assertThrowsExactly(IllegalArgumentException.class,
@@ -297,7 +297,7 @@ class FileProcessingModelTest {
     
     @Test
     void add_invalidItem_withStateBacklog_shouldThrowIllegalArgumentException() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         item.setState(EFileProcessingItemState.BACKLOG);
 
         IllegalArgumentException thrown = assertThrowsExactly(IllegalArgumentException.class,
@@ -320,7 +320,7 @@ class FileProcessingModelTest {
                 .forClass(FileProcessingModelEvent.class);
 
         // Add an item to the model
-        model.add(new FileProcessingItem("item 1", "item 1"));
+        model.add(new FileProcessingItem("item 1", "item 1", List.of()));
 
         // Verify that the listener was called with the correct event
         Mockito.verify(listener).onTableChanged(captor.capture());
@@ -330,7 +330,7 @@ class FileProcessingModelTest {
         assertEquals(0, firstEvent.getLastRow());
         
         // Add a second item to the model
-        model.add(new FileProcessingItem("item 2", "item 2"));
+        model.add(new FileProcessingItem("item 2", "item 2", List.of()));
         
         // Verify that the listener was called with the correct event and not with index 0 again
         Mockito.verify(listener, Mockito.times(2)).onTableChanged(captor.capture());
@@ -346,8 +346,8 @@ class FileProcessingModelTest {
     
     @Test
     void addMultiple_validItems_shouldAddToBacklog() {
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         List<FileProcessingItem> items = Lists.newArrayList(item1, item2);
 
         assertTrue(model.add(items));
@@ -356,8 +356,8 @@ class FileProcessingModelTest {
     
     @Test
     void addMultiple_withDuplicate_shouldReturnFalse() {
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
-        FileProcessingItem item2 = new FileProcessingItem("item 1", "item 1"); // Duplicate
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
+        FileProcessingItem item2 = new FileProcessingItem("item 1", "item 1", List.of()); // Duplicate
         List<FileProcessingItem> items = Lists.newArrayList(item1, item2);
 
         assertFalse(model.add(items)); // Should return false because of the duplicate
@@ -382,8 +382,8 @@ class FileProcessingModelTest {
                 .forClass(FileProcessingModelEvent.class);
 
         // Add an item to the model
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         
         List<FileProcessingItem> items = Lists.newArrayList(item1, item2);
         model.add(items);
@@ -411,7 +411,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_validIndexInProcessed_shouldMoveItemToRequeued() {
         // Add item
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
         
         // Process item
         model.getNext(); // Move item to current
@@ -424,7 +424,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_itemNotProcessedFromBacklog_shouldThrowIllegalArgumentException() {
         // Add item
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
 
         // Requeue item that has not been processed
         IllegalArgumentException thrown = assertThrowsExactly(IllegalArgumentException.class,
@@ -438,7 +438,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_itemNotProcessedFromCurrent_shouldThrowIllegalArgumentException() {
         // Add item
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
         
         // Process item
         model.getNext(); // Move item to current
@@ -455,7 +455,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_itemAlreadyRequeued_shouldThrowIllegalArgumentException() {
         // Add item
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
         
         // Process item
         model.getNext(); // Move item to current
@@ -485,7 +485,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_validIndex_shouldFireCorrectModelEvents() {
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Process item
@@ -528,7 +528,7 @@ class FileProcessingModelTest {
     @Test
     void requeue_validItemInProcessed_shouldMoveItemToRequeued() {
         // Add item
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Process item
@@ -542,8 +542,8 @@ class FileProcessingModelTest {
     @Test
     void requeue_invalidItemNotInModel_shouldThrowIllegalArgumentException() {
         // Create items
-        FileProcessingItem item = new FileProcessingItem("item", "item");
-        FileProcessingItem itemNotInModel = new FileProcessingItem("not in model", "not in model");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
+        FileProcessingItem itemNotInModel = new FileProcessingItem("not in model", "not in model", List.of());
 
         // Add item
         model.add(item);
@@ -584,7 +584,7 @@ class FileProcessingModelTest {
     
     @Test
     void getNext_oneItemAdded_shouldReturnItemWithCorrectState() {
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         FileProcessingItem nextItem = model.getNext();
@@ -594,11 +594,11 @@ class FileProcessingModelTest {
     
     @Test
     void getNext_withRequeuedAndBacklogItems_shouldReturnCorrectItem() {
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
-        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3");
+        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3", List.of());
         model.add(item3);
 
         // State [processed = (), current = (), requeued = (), backlog = (1, 2, 3)]
@@ -619,7 +619,7 @@ class FileProcessingModelTest {
     @Test
     void getNext_withOneItemAdded_shouldFireCorrectModelEvent() {
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Create mock listener
@@ -646,9 +646,9 @@ class FileProcessingModelTest {
     @Test
     void getNext_calledTwice_shouldFireCorrectModelEvents() {
         // Add an item to the model
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
         
         // Create mock listener
@@ -692,9 +692,9 @@ class FileProcessingModelTest {
     @Test
     void getNext_withItemInCurrentAndRequeue_shouldFireCorrectModelEvents() {
         // Add items to the model
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
         
         
@@ -737,7 +737,7 @@ class FileProcessingModelTest {
     @Test
     void getNext_withItemInCurrent_shouldFireFileProcessedEvent() {
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Create mock listener
@@ -770,11 +770,11 @@ class FileProcessingModelTest {
     @Test
     void remove_validIndexInBacklog_shouldRemoveItem() {
         // Add item to be processed while removing anther item from backlog to test all branches
-        model.add(new FileProcessingItem("current item", "current item"));
+        model.add(new FileProcessingItem("current item", "current item", List.of()));
         model.getNext();
         
         // Add item to backlog to be removed
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         assertEquals(item, model.remove(1));
@@ -784,7 +784,7 @@ class FileProcessingModelTest {
     @Test
     void remove_currentItem_shouldThrowIllegalArgumentException() {
         // Add item to the model
-        model.add(new FileProcessingItem("item", "item"));
+        model.add(new FileProcessingItem("item", "item", List.of()));
         
         // Move item to current
         model.getNext();
@@ -799,7 +799,7 @@ class FileProcessingModelTest {
     @Test
     void remove_processedItem_shouldRemoveItem() {
         // Add item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         model.getNext(); // Move item to current
@@ -814,7 +814,7 @@ class FileProcessingModelTest {
     @Test
     void remove_requeuedItem_shouldRemoveItem() {
         // Add item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         model.getNext(); // Move item to current
@@ -829,7 +829,7 @@ class FileProcessingModelTest {
     @Test
     void remove_validIndex_shouldFireCorrectModelEvent() {
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Create mock listener
@@ -864,13 +864,13 @@ class FileProcessingModelTest {
     
     @Test
     void getAllValues_withItemsInAllPositions_shouldReturnCorrectItems() {
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
-        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3");
+        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3", List.of());
         model.add(item3);
-        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4");
+        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4", List.of());
         model.add(item4);
 
         // State [processed = (), current = (), requeued = (), backlog = (1, 2, 3, 4)]
@@ -899,7 +899,7 @@ class FileProcessingModelTest {
     
     @Test
     void getIndexOf_emptyModel_shouldReturnMinusOne() {
-        assertEquals(-1, model.getIndexOf(new FileProcessingItem("item", "item")));
+        assertEquals(-1, model.getIndexOf(new FileProcessingItem("item", "item", List.of())));
     }
     
     @Test
@@ -913,24 +913,24 @@ class FileProcessingModelTest {
     @Test
     void getIndexOf_itemNotInModel_shouldReturnMinusOne() {
         // Add item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
-        assertEquals(-1, model.getIndexOf(new FileProcessingItem("not in model", "not in model")));
+        assertEquals(-1, model.getIndexOf(new FileProcessingItem("not in model", "not in model", List.of())));
     }
     
     @Test
     void getIndexOf_withItemInEachState_shouldReturnCorrectIndex() {
         // Add items to the model
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
-        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3");
+        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3", List.of());
         model.add(item3);
-        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4");
+        FileProcessingItem item4 = new FileProcessingItem("item 4", "item 4", List.of());
         model.add(item4);
-        FileProcessingItem item5 = new FileProcessingItem("item 5", "item 5");
+        FileProcessingItem item5 = new FileProcessingItem("item 5", "item 5", List.of());
         model.add(item5);
         
         // State [processed = (), current = (), requeued = (), backlog = (1, 2, 3, 4, 5)]
@@ -961,11 +961,11 @@ class FileProcessingModelTest {
     @Test
     void getIndexOf_requeuedItem_withNoCurrent_shouldReturnCorrectIndex() {
         // Add items to the model
-        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1");
+        FileProcessingItem item1 = new FileProcessingItem("item 1", "item 1", List.of());
         model.add(item1);
-        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2");
+        FileProcessingItem item2 = new FileProcessingItem("item 2", "item 2", List.of());
         model.add(item2);
-        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3");
+        FileProcessingItem item3 = new FileProcessingItem("item 3", "item 3", List.of());
         model.add(item3);
         
         // State [processed = (), current = (), requeued = (), backlog = (1, 2, 3)]
@@ -1006,7 +1006,7 @@ class FileProcessingModelTest {
         model.removeFileProcessingModelListener(listener);
         
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Verify that the listener was not called
@@ -1025,7 +1025,7 @@ class FileProcessingModelTest {
         model.removeFileProcessedListener(listener);
         
         // Add an item to the model
-        FileProcessingItem item = new FileProcessingItem("item", "item");
+        FileProcessingItem item = new FileProcessingItem("item", "item", List.of());
         model.add(item);
         
         // Verify that the listener was not called

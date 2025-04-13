@@ -22,13 +22,18 @@ public class FileProcessingItem {
     private final List<String> filepathSuggestions = Lists.newArrayList();
     private final List<String> keywordSuggestions = Lists.newArrayList();
     private final List<String> dateSuggestions = Lists.newArrayList();
+    
+    // Static information from the file content
+    private final List<String> usedKeywords;
 
     // Processing state of the file
     private EFileProcessingItemState state;
     
-    public FileProcessingItem(String absoluteFilePath, String fileName) {
+    public FileProcessingItem(String absoluteFilePath, String fileName, List<String> usedKeywords) {
         originalAbsoluteFilePath = absoluteFilePath;
         originalFileName = fileName;
+        
+        this.usedKeywords = usedKeywords;
         
         setState(EFileProcessingItemState.NEW);
     }
@@ -40,6 +45,14 @@ public class FileProcessingItem {
     public String getOriginalFileName() {
         return originalFileName;
     }
+    
+    public String getOriginalFileNameWithoutExtension() {
+        return originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+    }
+    
+    public String getOriginalFileExtension() {
+        return originalFileName.substring(originalFileName.lastIndexOf('.'));
+    }
 
     public EFileProcessingItemState getState() {
         return state;
@@ -49,7 +62,6 @@ public class FileProcessingItem {
         this.state = state;
     }
 
-    
     public void addFilenameSuggestions(Suggestions suggestions) {
         filenameSuggestions.addAll(suggestions.suggestions());
     }
@@ -84,6 +96,10 @@ public class FileProcessingItem {
     
     public Path getTemporaryFilePath() {
         return Path.of("file-rename-helper-temp_" + originalFileName);
+    }
+
+    public List<String> getUsedKeywords() {
+        return usedKeywords;
     }
     
     /**

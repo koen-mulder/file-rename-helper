@@ -81,12 +81,7 @@ public class AutocompleteTextField extends JTextField {
     }
 
     private void setupPopup() {
-        autocompletePopup = new JPopupMenu();
-        autocompletePopup.setFocusable(false);
-        autocompletePopup.setOpaque(false);
-
         autocompleteListModel = new DefaultListModel<>();
-        autocompleteListModel.addAll(autocompleteService.getSuggestions());
 
         autocompleteList = new JList<AutocompleteItem>(autocompleteListModel);
         autocompleteList.setFocusable(false);
@@ -94,11 +89,17 @@ public class AutocompleteTextField extends JTextField {
         autocompleteList.setCellRenderer(cellRenderer);
         autocompleteList.setRequestFocusEnabled(false);
         autocompleteList.setFont(autocompleteList.getFont().deriveFont(Font.PLAIN));
-        
         autocompleteList.addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) { if (e.getClickCount() == 1) acceptSelectedAutocomplete(); }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1)
+                    acceptSelectedAutocomplete();
+            }
         });
 
+        autocompletePopup = new JPopupMenu();
+        autocompletePopup.setFocusable(false);
+        autocompletePopup.setOpaque(false);
         autocompletePopup.setLayout(new BorderLayout());
         autocompletePopup.add(autocompleteList, BorderLayout.CENTER);
     }
@@ -109,7 +110,7 @@ public class AutocompleteTextField extends JTextField {
             public void focusGained(java.awt.event.FocusEvent e) {
                 showSuggestionPopup();
             }
-            
+
             @Override
             public void focusLost(FocusEvent e) {
                 Component oppositeComponent = e.getOppositeComponent();
@@ -117,14 +118,12 @@ public class AutocompleteTextField extends JTextField {
                 if (oppositeComponent != null) {
                     Window popupWindow = SwingUtilities.getWindowAncestor(autocompletePopup);
                     if (popupWindow != null) {
-                        focusToPopup = (oppositeComponent == popupWindow || SwingUtilities.isDescendingFrom(oppositeComponent, popupWindow));
+                        focusToPopup = (oppositeComponent == popupWindow
+                                || SwingUtilities.isDescendingFrom(oppositeComponent, popupWindow));
                     }
                 }
                 if (!focusToPopup) {
                     hideSuggestionPopup();
-//                    Timer timer = new Timer(150, ae -> hideSuggestionPopup());
-//                    timer.setRepeats(false);
-//                    timer.start();
                 }
             }
         });
@@ -142,6 +141,19 @@ public class AutocompleteTextField extends JTextField {
                 if (getCaretPosition() == getSelectionStart()
                         && getSelectionStart() != getSelectionEnd()) {
                     acceptNextCharacter();
+                    // Use invokeLater to ensure UI updates happen correctly after document changes
+                    SwingUtilities.invokeLater(() -> {
+                        filter.setActive(false);
+                        try {
+                            String leadingText = getText().substring(0, getCaretPosition());
+                            String trailingText = getText().substring(getCaretPosition());
+
+                            handlePopupCompletion(leadingText, trailingText);
+                        } finally {
+                            // Crucial: Reset the flag after processing is done
+                            SwingUtilities.invokeLater(() -> filter.setActive(true));
+                        }
+                    });
                 } else {
                     executeDefaultAction(DefaultEditorKit.forwardAction, actionMap, e);
                 }
@@ -157,6 +169,19 @@ public class AutocompleteTextField extends JTextField {
                 if (getCaretPosition() == getSelectionStart()
                         && getSelectionStart() != getSelectionEnd()) {
                     acceptNextWord();
+                    // Use invokeLater to ensure UI updates happen correctly after document changes
+                    SwingUtilities.invokeLater(() -> {
+                        filter.setActive(false);
+                        try {
+                            String leadingText = getText().substring(0, getCaretPosition());
+                            String trailingText = getText().substring(getCaretPosition());
+
+                            handlePopupCompletion(leadingText, trailingText);
+                        } finally {
+                            // Crucial: Reset the flag after processing is done
+                            SwingUtilities.invokeLater(() -> filter.setActive(true));
+                        }
+                    });
                 } else {
                     executeDefaultAction(DefaultEditorKit.nextWordAction, actionMap, e);
                 }
@@ -172,6 +197,19 @@ public class AutocompleteTextField extends JTextField {
                 if (getCaretPosition() == getSelectionStart()
                         && getSelectionStart() != getSelectionEnd()) {
                     acceptFullSuggestion();
+                 // Use invokeLater to ensure UI updates happen correctly after document changes
+                    SwingUtilities.invokeLater(() -> {
+                        filter.setActive(false);
+                        try {
+                            String leadingText = getText().substring(0, getCaretPosition());
+                            String trailingText = getText().substring(getCaretPosition());
+
+                            handlePopupCompletion(leadingText, trailingText);
+                        } finally {
+                            // Crucial: Reset the flag after processing is done
+                            SwingUtilities.invokeLater(() -> filter.setActive(true));
+                        }
+                    });
                 } else {
                     transferFocus();
                 }
@@ -285,105 +323,105 @@ public class AutocompleteTextField extends JTextField {
                 if (autocompletePopup.isShowing()) {
                     acceptSelectedAutocomplete();
                 } else {
-                    executeDefaultAction(DefaultEditorKit.insertBreakAction, actionMap, e);
+                    fireActionPerformed();
                 }
             }
         });
-
-        // Alt + 0: Accept first suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_0_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_0_ACTION_KEY, new AbstractAction() {
+        
+        // Ctrl + 1: Accept first suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_1_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_1_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(0);
             }
         });
         
-        // Alt + 1: Accept first suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_1_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_1_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 2: Accept second suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_2_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_2_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(1);
             }
         });
         
-        // Alt + 2: Accept second suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_2_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_2_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 3: Accept third suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_3_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_3_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(2);
             }
         });
         
-        // Alt + 3: Accept third suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_3_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_3_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 4: Accept fourth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_4_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_4_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(3);
             }
         });
         
-        // Alt + 4: Accept fourth suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_4_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_4_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 5: Accept fifth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_5_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_5_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(4);
             }
         });
         
-        // Alt + 5: Accept fifth suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_5_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_5_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 6: Accept sixth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_6_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_6_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(5);
             }
         });
         
-        // Alt + 6: Accept sixth suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_6_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_6_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 7: Accept seventh suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_7_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_7_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(6);
             }
         });
         
-        // Alt + 7: Accept seventh suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_7_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_7_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 8: Accept eighth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_8_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_8_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(7);
             }
         });
         
-        // Alt + 8: Accept eighth suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_8_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_8_ACTION_KEY, new AbstractAction() {
+        // Ctrl + 9: Accept ninth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_9_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_9_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(8);
             }
         });
-        
-        // Alt + 9: Accept ninth suggestion
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_DOWN_MASK),
-                ACCEPT_SUGGESTION_9_ACTION_KEY);
-        actionMap.put(ACCEPT_SUGGESTION_9_ACTION_KEY, new AbstractAction() {
+
+        // Ctrl + 0: Accept tenth suggestion
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK),
+                ACCEPT_SUGGESTION_0_ACTION_KEY);
+        actionMap.put(ACCEPT_SUGGESTION_0_ACTION_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 acceptSuggestion(9);
@@ -407,8 +445,7 @@ public class AutocompleteTextField extends JTextField {
     }
 
     protected void removeSuggestion() {
-        // Use invokeLater to ensure UI updates happen correctly after document
-        // changes
+        // Use invokeLater to ensure UI updates happen correctly after document changes
         SwingUtilities.invokeLater(() -> {
             filter.setActive(false);
             try {
@@ -461,8 +498,7 @@ public class AutocompleteTextField extends JTextField {
             AutocompleteItem selectedItem = autocompleteListModel
                     .getElementAt(selectedIndex);
 
-            // Use invokeLater to ensure UI updates happen correctly after document
-            // changes
+            // Use invokeLater to ensure UI updates happen correctly after document changes
             SwingUtilities.invokeLater(() -> {
                 filter.setActive(false);
                 try {
@@ -498,13 +534,32 @@ public class AutocompleteTextField extends JTextField {
     }
 
     private void showSuggestionPopup() {
+        autocompleteList.setVisibleRowCount(autocompleteListModel.getSize());
         autocompletePopup.pack();
-        autocompletePopup.setPopupSize(getWidth(), autocompletePopup.getPreferredSize().height);
+        autocompletePopup.setPopupSize(getWidth(), autocompleteList.getPreferredSize().height + 6);
+        autocompletePopup.validate();
+        autocompletePopup.repaint();
         autocompletePopup.show(this, 0, getHeight());
     }
 
     private void hideSuggestionPopup() {
         autocompletePopup.setVisible(false);
+    }
+
+    public void setDictionary(AutocompleteDictionary dictionary) {
+        autocompleteService.setDictionary(dictionary);
+        if (getText().isEmpty()) {
+            autocompleteListModel.clear();
+            autocompleteListModel.addAll(autocompleteService.getSuggestions());
+            if (autocompletePopup.isShowing()) {
+                showSuggestionPopup();
+            }
+        }
+    }
+
+    public void clearDictionary() {
+        autocompleteService.clearDictionary();
+        autocompleteListModel.clear();        
     }
 
 }

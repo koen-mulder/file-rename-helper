@@ -1,4 +1,4 @@
-package com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filename;
+package com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filepath;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.Comple
 import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.SuggestionItem;
 import com.google.common.collect.Lists;
 
-public class FilenameCompletionService implements AutocompleteService {
+public class FilepathCompletionService implements AutocompleteService {
 
     private static final int MAX_SUGGESTIONS = 10;
 
     private AutocompleteDictionary dictionary = null;
 
-    public FilenameCompletionService() {
+    public FilepathCompletionService() {
     }
 
     @Override
@@ -24,27 +24,7 @@ public class FilenameCompletionService implements AutocompleteService {
         }
 
         List<String> suggestions = Lists.newArrayList();
-        List<String> words = List.of(leadingText.toLowerCase().split(" "));
-
-        // Check if it has a partial word
-        boolean hasPartialWord = leadingText.lastIndexOf(' ') != leadingText.length() - 1;
-        // Check if it has a previous word
-        boolean hasPreviousWord = (words.size() == 1 && !hasPartialWord) || (words.size() > 1);
-
-        // Get completions for the last partial word
-        if (hasPartialWord) {
-            suggestions.addAll(getMatchingSuggestions(words.getLast()));
-        }
-
-        // Get completions for the previous word (and the partial word if it exists)
-        if (hasPreviousWord) {
-            String searchText = words.get(words.size() - (hasPartialWord ? 2 : 1)) + " ";
-            if (hasPartialWord) {
-                searchText += words.getLast();
-            }
-
-            suggestions.addAll(getMatchingSuggestions(searchText));
-        }
+        suggestions.addAll(getMatchingSuggestions(leadingText.toLowerCase()));
 
         String suggestion = suggestions.isEmpty() ? "" : suggestions.getFirst();
 
@@ -61,31 +41,10 @@ public class FilenameCompletionService implements AutocompleteService {
         }
 
         List<CompletionItem> suggestions = Lists.newArrayList();
-        List<String> words = List.of(leadingText.toLowerCase().split(" "));
 
-        // Check if it has a partial word
-        boolean hasPartialWord = leadingText.lastIndexOf(' ') != leadingText.length() - 1;
-        // Check if it has a previous word
-        boolean hasPreviousWord = (words.size() == 1 && !hasPartialWord) || (words.size() > 1);
-
-        // Get completions for the last partial word
-        if (hasPartialWord) {
-            suggestions.addAll(getMatchingSuggestions(words.getLast()).stream()
+        suggestions.addAll(getMatchingSuggestions(leadingText).stream()
                     .map(completion -> new CompletionItem(leadingText, completion, trailingText))
                     .toList());
-        }
-
-        // Get completions for the previous word (and the partial word if it exists)
-        if (hasPreviousWord) {
-            String searchText = words.get(words.size() - (hasPartialWord ? 2 : 1)) + " ";
-            if (hasPartialWord) {
-                searchText += words.getLast();
-            }
-
-            suggestions.addAll(getMatchingSuggestions(searchText).stream()
-                    .map(completion -> new CompletionItem(leadingText, completion, trailingText))
-                    .toList());
-        }
 
         // Remove duplicates and limit the number of suggestions
         suggestions = suggestions.stream().distinct().limit(MAX_SUGGESTIONS).toList();

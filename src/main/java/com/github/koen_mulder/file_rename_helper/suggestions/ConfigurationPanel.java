@@ -61,6 +61,7 @@ public class ConfigurationPanel extends JPanel {
         applyChangesButton.setAction(applyConfigChangesAction);
         
         JScrollPane scrollPane = new JScrollPane();
+        scrollPane.getVerticalScrollBar().setUnitIncrement(7);
 
         GroupLayout gl_configurationPanel = new GroupLayout(this);
         gl_configurationPanel.setHorizontalGroup(
@@ -69,17 +70,18 @@ public class ConfigurationPanel extends JPanel {
                     .addGap(47)
                     .addComponent(applyChangesButton)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(saveChangesButton))
-                .addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+                    .addComponent(saveChangesButton)
+                    .addContainerGap())
+                .addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
         );
         gl_configurationPanel.setVerticalGroup(
-            gl_configurationPanel.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, gl_configurationPanel.createSequentialGroup()
+            gl_configurationPanel.createParallelGroup(Alignment.TRAILING)
+                .addGroup(gl_configurationPanel.createSequentialGroup()
                     .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(gl_configurationPanel.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(saveChangesButton)
-                        .addComponent(applyChangesButton))
+                        .addComponent(applyChangesButton)
+                        .addComponent(saveChangesButton))
                     .addContainerGap())
         );
         
@@ -158,54 +160,72 @@ public class ConfigurationPanel extends JPanel {
                 JLabel systemMessageLabel = new JLabel("System message:");
                 JScrollPane systemMessageScrollPane = new JScrollPane();
                 systemMessageField = new JTextArea(aiConfigManager.getSystemMessage());
+                systemMessageField.setWrapStyleWord(true);
+                systemMessageField.setLineWrap(true);
                 systemMessageScrollPane.setViewportView(systemMessageField);
                 
                 // Filename prompt configuration
                 JLabel filenamePromptLabel = new JLabel("Filename prompt:");
                 JScrollPane filenamePromptScrollPane = new JScrollPane();
                 filenamePromptField = new JTextArea(aiConfigManager.getFilenamePrompt());
+                filenamePromptField.setLineWrap(true);
+                filenamePromptField.setWrapStyleWord(true);
                 filenamePromptScrollPane.setViewportView(filenamePromptField);
                 
                 // Filename additional prompt configuration
                 JLabel additionalFilenamePromptLabel = new JLabel("Additional filename prompt:");
                 JScrollPane additionalFilenamePromptScrollPane = new JScrollPane();
                 additionalFilenamePromptField = new JTextArea(aiConfigManager.getAdditionalFilenamePrompt());
+                additionalFilenamePromptField.setLineWrap(true);
+                additionalFilenamePromptField.setWrapStyleWord(true);
                 additionalFilenamePromptScrollPane.setViewportView(additionalFilenamePromptField);
                 
                 // Keywords prompt configuration
                 JLabel keywordsPromptLabel = new JLabel("Keywords prompt:");
                 JScrollPane keywordsPromptScrollPane = new JScrollPane();
                 keywordsPromptField = new JTextArea(aiConfigManager.getKeywordsPrompt());
+                keywordsPromptField.setLineWrap(true);
+                keywordsPromptField.setWrapStyleWord(true);
                 keywordsPromptScrollPane.setViewportView(keywordsPromptField);
                 
                 // Additional keywords prompt configuration
                 JLabel additionalKeywordsPromptLabel = new JLabel("Additional keywords prompt:");
                 JScrollPane additionalKeywordsPromptScrollPane = new JScrollPane();
                 additionalKeywordsPromptField = new JTextArea(aiConfigManager.getAdditionalKeywordsPrompt());
+                additionalKeywordsPromptField.setLineWrap(true);
+                additionalKeywordsPromptField.setWrapStyleWord(true);
                 additionalKeywordsPromptScrollPane.setViewportView(additionalKeywordsPromptField);
                 
                 // Dates prompt configuration
                 JLabel datesPromptLabel = new JLabel("Dates prompt:");
                 JScrollPane datesPromptScrollPane = new JScrollPane();
                 datesPromptField = new JTextArea(aiConfigManager.getDatesPrompt());
+                datesPromptField.setLineWrap(true);
+                datesPromptField.setWrapStyleWord(true);
                 datesPromptScrollPane.setViewportView(datesPromptField);
                 
                 // Additional dates prompt configuration
                 JLabel additionalDatesPromptLabel = new JLabel("Additional dates prompt:");
                 JScrollPane additionalDatesPromptScrollPane = new JScrollPane();
                 additionalDatesPromptField = new JTextArea(aiConfigManager.getAdditionalDatesPrompt());
+                additionalDatesPromptField.setLineWrap(true);
+                additionalDatesPromptField.setWrapStyleWord(true);
                 additionalDatesPromptScrollPane.setViewportView(additionalDatesPromptField);
                 
                 // Filepath prompt configuration
                 JLabel filepathPromptLabel = new JLabel("Filepath prompt:");
                 JScrollPane filepathPromptScrollPane = new JScrollPane();
                 filepathPromptField = new JTextArea(aiConfigManager.getFilepathPrompt());
+                filepathPromptField.setLineWrap(true);
+                filepathPromptField.setWrapStyleWord(true);
                 filepathPromptScrollPane.setViewportView(filepathPromptField);
                 
                 // Additional filepath prompt configuration
                 JLabel additionalFilepathPromptLabel = new JLabel("Additional filepath prompt:");
                 JScrollPane additionalFilepathPromptScrollPane = new JScrollPane();
                 additionalFilepathPromptField = new JTextArea(aiConfigManager.getAdditionalFilepathPrompt());
+                additionalFilepathPromptField.setLineWrap(true);
+                additionalFilepathPromptField.setWrapStyleWord(true);
                 additionalFilepathPromptScrollPane.setViewportView(additionalFilepathPromptField);
                 
                    GroupLayout gl_panel = new GroupLayout(panel);

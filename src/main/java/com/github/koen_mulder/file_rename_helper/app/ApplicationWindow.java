@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
 import com.github.koen_mulder.file_rename_helper.processing.gui.FileProcessingPanel;
+import com.github.koen_mulder.file_rename_helper.renaming.FileRenameController;
 import com.github.koen_mulder.file_rename_helper.renaming.ui.FileRenamePanel;
 import com.github.koen_mulder.file_rename_helper.suggestions.AIConfigManager;
 import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
@@ -111,8 +112,11 @@ class ApplicationWindow {
         fileViewPanel.setLayout(new BoxLayout(fileViewPanel, BoxLayout.X_AXIS));
 
         // File rename panel
-        FileRenamePanel fileRenamePanel = new FileRenamePanel(openFileActionPublisher, fileProcessingModelController);
+        FileRenamePanel fileRenamePanel = new FileRenamePanel();
         viewAndRenameSplitPane.setRightComponent(fileRenamePanel);
+
+        new FileRenameController(fileRenamePanel, openFileActionPublisher,
+                fileProcessingModelController);
         
         return viewAndRenameSplitPane;
     }

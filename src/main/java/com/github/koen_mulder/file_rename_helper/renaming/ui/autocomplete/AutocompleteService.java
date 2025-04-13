@@ -27,17 +27,21 @@ public interface AutocompleteService {
     List<CompletionItem> getCompletions(String leadingText, String trailingText);
 
     /**
-     * Returns a limited list of completions.
-     *
-     * @return A list of completions.
-     */
-    List<CompletionItem> getCompletions();
-
-    
-    /**
      * Returns a list of complete text suggestions.
      *
      * @return A list of complete text suggestions.
      */
     List<SuggestionItem> getSuggestions();
+
+    /**
+     * Sets the dictionary to use for this service.
+     * 
+     * @param dictionary The dictionary to use for this service.
+     */
+    void setDictionary(AutocompleteDictionary dictionary);
+
+    /**
+     * Clears the dictionary used by this service.
+     */
+    void clearDictionary();
 }

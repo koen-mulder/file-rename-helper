@@ -1,4 +1,4 @@
-package com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filename;
+package com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filepath;
 
 import java.awt.Component;
 
@@ -11,7 +11,7 @@ import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.Comple
 import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.SuggestionItem;
 
 @SuppressWarnings("serial") // Same-version serialization only
-public class FilenameCompletionCellRenderer extends DefaultListCellRenderer {
+public class FilepathCompletionCellRenderer extends DefaultListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index,

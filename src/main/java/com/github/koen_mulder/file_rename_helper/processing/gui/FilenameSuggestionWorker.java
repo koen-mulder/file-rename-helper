@@ -47,15 +47,15 @@ public class FilenameSuggestionWorker extends SwingWorker<Void, Void> {
                     Suggestions filenameSuggestions = aiService.getFilenameSuggestions(item);
                     item.addFilenameSuggestions(filenameSuggestions);
 
-                    // Get important keywords suggestions
-                    Suggestions keywordSuggestions = aiService
-                            .getImportantKeywordsSuggestions(item);
-                    item.addKeywordSuggestions(keywordSuggestions);
-
-                    // Get important date suggestions
-                    Suggestions dateSuggestions = aiService.getImportantDatesSuggestions(item);
-                    item.addDateSuggestions(dateSuggestions);
-
+//                    // Get important keywords suggestions
+//                    Suggestions keywordSuggestions = aiService
+//                            .getImportantKeywordsSuggestions(item);
+//                    item.addKeywordSuggestions(keywordSuggestions);
+//
+//                    // Get important date suggestions
+//                    Suggestions dateSuggestions = aiService.getImportantDatesSuggestions(item);
+//                    item.addDateSuggestions(dateSuggestions);
+//
                     // Get file path suggestions
                     Suggestions filepathSuggestions = aiService.getFilepathSuggestions(item);
                     item.addFilepathSuggestions(filepathSuggestions);
@@ -66,16 +66,16 @@ public class FilenameSuggestionWorker extends SwingWorker<Void, Void> {
                             .getAdditionalFilenameSuggestions(item);
                     item.addFilenameSuggestions(filenameSuggestions);
 
-                    // Get additional important keywords suggestions
-                    Suggestions keywordSuggestions = aiService
-                            .getAdditionalImportantKeywordsSuggestions(item);
-                    item.addKeywordSuggestions(keywordSuggestions);
-
-                    // Get additional important date suggestions
-                    Suggestions dateSuggestions = aiService
-                            .getAdditionalImportantDatesSuggestions(item);
-                    item.addDateSuggestions(dateSuggestions);
-
+//                    // Get additional important keywords suggestions
+//                    Suggestions keywordSuggestions = aiService
+//                            .getAdditionalImportantKeywordsSuggestions(item);
+//                    item.addKeywordSuggestions(keywordSuggestions);
+//
+//                    // Get additional important date suggestions
+//                    Suggestions dateSuggestions = aiService
+//                            .getAdditionalImportantDatesSuggestions(item);
+//                    item.addDateSuggestions(dateSuggestions);
+//
                     // Get additional file path suggestions
                     Suggestions filepathSuggestions = aiService
                             .getAdditionalFilepathSuggestions(item);
