@@ -47,11 +47,13 @@ public class FileProcessingItem {
     }
     
     public String getOriginalFileNameWithoutExtension() {
-        return originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+        int lastIndex = originalFileName.lastIndexOf('.');
+        return (lastIndex == -1) ? originalFileName : originalFileName.substring(0, lastIndex);
     }
     
     public String getOriginalFileExtension() {
-        return originalFileName.substring(originalFileName.lastIndexOf('.'));
+        int lastIndex = originalFileName.lastIndexOf('.');
+        return (lastIndex == -1) ? "" : originalFileName.substring(lastIndex);
     }
 
     public EFileProcessingItemState getState() {
