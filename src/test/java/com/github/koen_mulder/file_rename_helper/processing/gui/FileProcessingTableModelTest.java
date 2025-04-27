@@ -55,8 +55,8 @@ public class FileProcessingTableModelTest {
     void constructor_InitialDataLoad() throws Exception {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()));
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
 
@@ -90,7 +90,7 @@ public class FileProcessingTableModelTest {
         verify(mockController).addFileProcessingModelListener(listenerCaptor.capture());
 
         // Insert a new item
-        FileProcessingItem newItem = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf");
+        FileProcessingItem newItem = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of());
         when(mockController.getValueAt(0)).thenReturn(newItem);
 
         // Fire the event - wait for the event to be processed
@@ -119,7 +119,7 @@ public class FileProcessingTableModelTest {
         verify(mockController).addFileProcessingModelListener(listenerCaptor.capture());
 
         // Insert a new item
-        FileProcessingItem newItem1 = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf");
+        FileProcessingItem newItem1 = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of());
         when(mockController.getValueAt(0)).thenReturn(newItem1);
 
         // Fire the event - wait for the event to be processed
@@ -133,7 +133,7 @@ public class FileProcessingTableModelTest {
         assertEquals(newItem1, tableModel.getValueAt(0, 0));
 
         // Insert next item
-        FileProcessingItem newItem2 = new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf");
+        FileProcessingItem newItem2 = new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of());
         when(mockController.getValueAt(1)).thenReturn(newItem2);
 
         // Fire the event - wait for the event to be processed
@@ -163,8 +163,8 @@ public class FileProcessingTableModelTest {
         verify(mockController).addFileProcessingModelListener(listenerCaptor.capture());
 
         // Insert a new item
-        FileProcessingItem newItem1 = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf");
-        FileProcessingItem newItem2 = new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf");
+        FileProcessingItem newItem1 = new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of());
+        FileProcessingItem newItem2 = new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of());
         when(mockController.getValueAt(0)).thenReturn(newItem1);
         when(mockController.getValueAt(1)).thenReturn(newItem2);
 
@@ -188,8 +188,8 @@ public class FileProcessingTableModelTest {
     void onTableChanged_delete() throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -223,9 +223,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -270,9 +270,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -307,9 +307,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -346,8 +346,8 @@ public class FileProcessingTableModelTest {
     void onTableChanged_update() throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -367,7 +367,7 @@ public class FileProcessingTableModelTest {
 
         // Update the first item
         FileProcessingItem updatedItem = new FileProcessingItem("filepath/file UPDATED 1.pdf",
-                "file UPDATED 1.pdf");
+                "file UPDATED 1.pdf", List.of());
         updatedItem.setState(EFileProcessingItemState.PROCESSING);
         when(mockController.getValueAt(0)).thenReturn(updatedItem);
 
@@ -392,9 +392,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -415,7 +415,7 @@ public class FileProcessingTableModelTest {
 
         // Update the first item
         FileProcessingItem updatedItem1 = new FileProcessingItem("filepath/file UPDATED 1.pdf",
-                "file UPDATED 1.pdf");
+                "file UPDATED 1.pdf", List.of());
         updatedItem1.setState(EFileProcessingItemState.PROCESSING);
         when(mockController.getValueAt(0)).thenReturn(updatedItem1);
 
@@ -438,7 +438,7 @@ public class FileProcessingTableModelTest {
 
         // Update the second item
         FileProcessingItem updatedItem2 = new FileProcessingItem("filepath/file UPDATED 2.pdf",
-                "file UPDATED 2.pdf");
+                "file UPDATED 2.pdf", List.of());
         updatedItem2.setState(EFileProcessingItemState.PROCESSING);
         when(mockController.getValueAt(1)).thenReturn(updatedItem2);
 
@@ -465,9 +465,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -488,10 +488,10 @@ public class FileProcessingTableModelTest {
 
         // Update the first two items
         FileProcessingItem updatedItem1 = new FileProcessingItem("filepath/file UPDATED 1.pdf",
-                "file UPDATED 1.pdf");
+                "file UPDATED 1.pdf", List.of());
         updatedItem1.setState(EFileProcessingItemState.PROCESSING);
         FileProcessingItem updatedItem2 = new FileProcessingItem("filepath/file UPDATED 2.pdf",
-                "file UPDATED 2.pdf");
+                "file UPDATED 2.pdf", List.of());
         updatedItem2.setState(EFileProcessingItemState.PROCESSING);
         when(mockController.getValueAt(0)).thenReturn(updatedItem1);
         when(mockController.getValueAt(1)).thenReturn(updatedItem2);
@@ -519,9 +519,9 @@ public class FileProcessingTableModelTest {
             throws InvocationTargetException, InterruptedException {
         // Initialise a list of files
         List<FileProcessingItem> initialItems = Arrays.asList(
-                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf"),
-                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf"),
-                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf"));
+                new FileProcessingItem("filepath/file 1.pdf", "file 1.pdf", List.of()),
+                new FileProcessingItem("filepath/file 2.pdf", "file 2.pdf", List.of()),
+                new FileProcessingItem("filepath/file 3.pdf", "file 3.pdf", List.of()));
 
         // Set controller to return the initial items
         when(mockController.getAllValues()).thenReturn(initialItems);
@@ -542,10 +542,10 @@ public class FileProcessingTableModelTest {
 
         // Update the first two items
         FileProcessingItem updatedItem1 = new FileProcessingItem("filepath/file UPDATED 1.pdf",
-                "file UPDATED 1.pdf");
+                "file UPDATED 1.pdf", List.of());
         updatedItem1.setState(EFileProcessingItemState.PROCESSING);
         FileProcessingItem updatedItem2 = new FileProcessingItem("filepath/file UPDATED 2.pdf",
-                "file UPDATED 2.pdf");
+                "file UPDATED 2.pdf", List.of());
         updatedItem2.setState(EFileProcessingItemState.PROCESSING);
         when(mockController.getValueAt(0)).thenReturn(updatedItem1);
         when(mockController.getValueAt(1)).thenReturn(updatedItem2);

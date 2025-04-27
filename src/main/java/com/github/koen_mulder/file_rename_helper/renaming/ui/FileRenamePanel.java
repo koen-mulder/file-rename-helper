@@ -1,109 +1,168 @@
 package com.github.koen_mulder.file_rename_helper.renaming.ui;
 
-import java.awt.BorderLayout;
+import javax.swing.JPanel;
+
+import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
-import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
-import com.github.koen_mulder.file_rename_helper.renaming.NewFilenameFieldController;
+import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.AutocompleteDictionary;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.AutocompleteTextField;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filename.FilenameCompletionCellRenderer;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filename.FilenameCompletionService;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filepath.FilepathCompletionCellRenderer;
+import com.github.koen_mulder.file_rename_helper.renaming.ui.autocomplete.filepath.FilepathCompletionService;
 
-/**
- * Panel for selecting a file, viewing filename suggestions and composing a new filename. 
- */
+import javax.swing.JTree;
+import javax.swing.JButton;
+
 @SuppressWarnings("serial") // Same-version serialization only
 public class FileRenamePanel extends JPanel {
 
-    private static final int PREFERRED_COMPONENT_WIDTH = 400;
+    private AutocompleteTextField newFilenameField;
+    private JTextField fileExtensionField;
+    private AutocompleteTextField newFileLocationField;
+    
+    private JButton renameButton;
+
+    private FilenameCompletionService filenameCompletionService;
+    private FilepathCompletionService filepathCompletionService;
+    
+    private AutocompleteDictionary filenameDictionary;
+    private AutocompleteDictionary filepathDictionary;
     
     /**
      * Panel for selecting a file, viewing filename suggestions and composing a new filename.
-     * 
-     * @param aiController for requesting suggestions
-     * @param fileSelectionPublisher for notifying components (like the PDF viewer) that a file is selected
-     * @param suggestionPublisher for notifying components there are new suggestions
-     * @param formEventPublisher for notifying form components of the form state
      */
-    public FileRenamePanel(IOpenFileActionPublisher openFileActionPublisher,
-            FileProcessingModelController fileProcessingModelController) {
-
-        // Create panel with the input field for the new filename
-        NewFilenamePanel newFilenamePanel = new NewFilenamePanel();
-        openFileActionPublisher.addOpenFileActionListener(newFilenamePanel);
+    public FileRenamePanel() {
         
-        // Create controller for other panels to interact with the new filename input
-        NewFilenameFieldController newFilenameFieldController = new NewFilenameFieldController(newFilenamePanel.getNewFilenameField());
-
-        // Create panel showing filename suggestions
-        SuggestedFilenameListPanel suggestedFilenameListPanel = new SuggestedFilenameListPanel(
-                fileProcessingModelController, newFilenameFieldController);
-        openFileActionPublisher.addOpenFileActionListener(suggestedFilenameListPanel);
-        fileProcessingModelController.addFileProcessedListener(suggestedFilenameListPanel);
+        JLabel newFilenameLabel = new JLabel("New filename:");
         
-        // Create panel with relevant word and date suggestions
-        KeywordButtonPanel importantKeywordPanel = new KeywordButtonPanel(newFilenameFieldController);
-        openFileActionPublisher.addOpenFileActionListener(importantKeywordPanel);
-        fileProcessingModelController.addFileProcessedListener(importantKeywordPanel);
+        filenameCompletionService = new FilenameCompletionService();
+        FilenameCompletionCellRenderer filenameCellRenderer = new FilenameCompletionCellRenderer();
         
-        // Create panel for manipulating the new filename
-        ReplaceCharacterPanel replaceCharacterPanel = new ReplaceCharacterPanel(newFilenameFieldController);
-        openFileActionPublisher.addOpenFileActionListener(replaceCharacterPanel);
-
-        // Create panel for manipulating the new filename
-        MiscButtonPanel removeCharactersPanel = new MiscButtonPanel(newFilenameFieldController);
-        openFileActionPublisher.addOpenFileActionListener(removeCharactersPanel);
-
-        // Create panel with the rename button
-        RenameFileButtonPanel renameButtonPanel = new RenameFileButtonPanel(newFilenameFieldController);
-        openFileActionPublisher.addOpenFileActionListener(renameButtonPanel);
-
-        // Content panel
-        JPanel contentPanel = new JPanel();
+        newFilenameField = new AutocompleteTextField(filenameCompletionService,
+                filenameCellRenderer);
+        newFilenameField.setColumns(10);
         
-        // Set layout
-        GroupLayout groupLayout = new GroupLayout(contentPanel);
+        fileExtensionField = new JTextField();
+        fileExtensionField.setEnabled(false);
+        fileExtensionField.setEditable(false);
+        fileExtensionField.setColumns(10);
+        
+        JLabel newFileLocationLabel = new JLabel("New file location:");
+        
+        filepathCompletionService = new FilepathCompletionService();
+        FilepathCompletionCellRenderer filepathCellRenderer = new FilepathCompletionCellRenderer();
+        
+        newFileLocationField = new AutocompleteTextField(filepathCompletionService,filepathCellRenderer); 
+        newFileLocationField.setColumns(10);
+        
+        JTree tree = new JTree();
+        
+        renameButton = new JButton("Rename, relocate & open next file");
+        
+        GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(
-            groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+            groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(suggestedFilenameListPanel, GroupLayout.PREFERRED_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
-                        .addComponent(newFilenamePanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
-                        .addComponent(importantKeywordPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
-                        .addComponent(replaceCharacterPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
-                        .addComponent(removeCharactersPanel, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE)
-                        .addComponent(renameButtonPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, PREFERRED_COMPONENT_WIDTH, Short.MAX_VALUE))
+                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(tree, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                        .addComponent(newFileLocationField, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                        .addComponent(newFilenameLabel)
+                        .addGroup(groupLayout.createSequentialGroup()
+                            .addComponent(newFilenameField, GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                            .addGap(1)
+                            .addComponent(fileExtensionField, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(newFileLocationLabel)
+                        .addComponent(renameButton, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
                     .addContainerGap())
         );
         groupLayout.setVerticalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(suggestedFilenameListPanel, GroupLayout.PREFERRED_SIZE, 248, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newFilenameLabel)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(newFilenamePanel, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+                    .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(newFilenameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fileExtensionField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(importantKeywordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newFileLocationLabel)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(replaceCharacterPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newFileLocationField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(removeCharactersPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(renameButton)
                     .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(renameButtonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tree, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+                    .addContainerGap())
         );
-        
-        contentPanel.setLayout(groupLayout);
-        
-        // Add content panel to scroll pane
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        setLayout(groupLayout);
 
-        setLayout(new BorderLayout());
-        add(scrollPane, BorderLayout.CENTER);
+    }
+    
+    public void registerRenameButtonActionListener(ActionListener actionListener) {
+        renameButton.addActionListener(actionListener);
+    }
+    
+    public void setFileExtension(String fileExtension) {
+        fileExtensionField.setText(fileExtension);
+    }
+    
+    private void clearPanel() {
+        newFilenameField.setText("");
+        fileExtensionField.setText("");
+        newFileLocationField.setText("");
+    }
+    
+    public void closeFile() {
+        clearPanel();
+        clearFilenameDictionary();
+        clearFilepathDictionary();
+    }
+
+    public void openFile(FileProcessingItem fileItem) {
+        clearPanel();
+        setFileExtension(fileItem.getOriginalFileExtension());
+        clearFilenameDictionary();
+        clearFilepathDictionary();
+        updateFilenameDictionary(fileItem);
+        updateFilepathDictionary(fileItem);
+    }
+
+    public void updateFilenameDictionary(FileProcessingItem fileItem) {
+        if (filenameDictionary == null) {
+             filenameDictionary = new AutocompleteDictionary();
+        }
+        filenameDictionary.addCompletions(fileItem.getUsedKeywords());
+        filenameDictionary.addCompletions(fileItem.getKeywordSuggestions());
+        filenameDictionary.addCompletions(fileItem.getDateSuggestions());
+        filenameDictionary.addSuggestions(fileItem.getFilenameSuggestions());
+        newFilenameField.setDictionary(filenameDictionary);
+    }
+    
+    public void updateFilepathDictionary(FileProcessingItem fileItem) {
+        if (filepathDictionary == null) {
+            filepathDictionary = new AutocompleteDictionary();
+        }
+        filepathDictionary.addCompletions(fileItem.getKeywordSuggestions());
+        filepathDictionary.addSuggestions(fileItem.getFilepathSuggestions());
+        newFileLocationField.setDictionary(filepathDictionary);
+    }
+    
+    public void clearFilenameDictionary() {
+        filenameDictionary = null;
+        newFilenameField.clearDictionary();
+    }
+    
+    public void clearFilepathDictionary() {
+        filepathDictionary = null;
+        newFileLocationField.clearDictionary();
     }
 }

@@ -17,6 +17,9 @@
         <Logger name="com.github.koen_mulder.file_rename_helper" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="dev.langchain4j" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
