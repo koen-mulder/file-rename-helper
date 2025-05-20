@@ -31,6 +31,7 @@ import com.github.koen_mulder.file_rename_helper.app.Application;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingItem;
 import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
+import com.github.koen_mulder.file_rename_helper.project.ActiveProjectController;
 import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
 
 /**
@@ -53,10 +54,15 @@ public class FileProcessingPanel extends JPanel {
 
     protected FileProcessingItem previousFileItem;
 
-    public FileProcessingPanel(AIController aiController,
-            FileProcessingModelController fileProcessingModelController,
-            IOpenFileActionPublisher openFileActionPublisher) {
+    public FileProcessingPanel(ActiveProjectController activeProjectController) {
 
+        // Get controllers
+        FileProcessingModelController fileProcessingModelController = activeProjectController
+                .getProcessingController().getFileProcessingModelController();
+        AIController aiController = activeProjectController.getAIController();
+        IOpenFileActionPublisher openFileActionPublisher = activeProjectController
+                .getProcessingController().getOpenFileActionPublisher();
+        
         setPreferredSize(new Dimension(250, 500));
         setMinimumSize(new Dimension(200, 500));
         
@@ -162,7 +168,7 @@ public class FileProcessingPanel extends JPanel {
 
         setLayout(groupLayout);
     }
-    
+
     class FileProcessingItemRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,

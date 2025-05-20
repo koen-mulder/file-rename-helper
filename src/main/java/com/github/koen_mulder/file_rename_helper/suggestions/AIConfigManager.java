@@ -35,7 +35,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setModelName(String modelName) {
         if (!getModelName().equals(modelName)) {
             config.setModelName(modelName);
-            notifyConfigChangeListeners(EConfigIdentifier.MODEL_NAME);
+            setConfigChanged(EConfigIdentifier.MODEL_NAME);
         }
     }
    
@@ -46,8 +46,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setOllamaEndpoint(String ollamaEndpoint) {
         if (!getOllamaEndpoint().equals(ollamaEndpoint)) {
             config.setOllamaEndpoint(ollamaEndpoint);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.OLLAMA_ENDPOINT);
+            setConfigChanged(EConfigIdentifier.OLLAMA_ENDPOINT);
         }
     }
     
@@ -58,8 +57,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setEmbeddingStoreFile(String filePath) {
         if (!getEmbeddingStoreFile().equals(filePath)) {
             config.setEmbeddingStoreFile(filePath);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.EMBEDDING_STORE_FILE_PATH);
+            setConfigChanged(EConfigIdentifier.EMBEDDING_STORE_FILE_PATH);
         }
     }
 
@@ -70,8 +68,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setFilenamePrompt(String prompt) {
         if (!config.getFilenamePrompt().equals(prompt)) {
             config.setFilenamePrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.FILENAME_PROMPT);
+            setConfigChanged(EConfigIdentifier.FILENAME_PROMPT);
         }
     }
 
@@ -82,8 +79,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setAdditionalFilenamePrompt(String prompt) {
         if (!config.getAdditionalFilenamePrompt().equals(prompt)) {
             config.setAdditionalFilenamePrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT);
+            setConfigChanged(EConfigIdentifier.ADDITIONAL_FILENAME_PROMPT);
         }
     }
 
@@ -94,8 +90,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setKeywordsPrompt(String prompt) {
         if (!config.getKeywordsPrompt().equals(prompt)) {
             config.setKeywordsPrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.KEYWORDS_PROMPT);
+            setConfigChanged(EConfigIdentifier.KEYWORDS_PROMPT);
         }
     }
 
@@ -107,7 +102,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
         if (!config.getAdditionalKeywordsPrompt().equals(prompt)) {
             config.setAdditionalKeywordsPrompt(prompt);
             setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_KEYWORDS_PROMPT);
+            setConfigChanged(EConfigIdentifier.ADDITIONAL_KEYWORDS_PROMPT);
         }
     }
 
@@ -118,8 +113,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setDatesPrompt(String prompt) {
         if (!config.getDatesPrompt().equals(prompt)) {
             config.setDatesPrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.DATES_PROMPT);
+            setConfigChanged(EConfigIdentifier.DATES_PROMPT);
         }
     }
 
@@ -130,8 +124,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setAdditionalDatesPrompt(String prompt) {
         if (!config.getAdditionalDatesPrompt().equals(prompt)) {
             config.setAdditionalDatesPrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_DATES_PROMPT);
+            setConfigChanged(EConfigIdentifier.ADDITIONAL_DATES_PROMPT);
         }
     }
 
@@ -142,8 +135,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setFilepathPrompt(String prompt) {
         if (!config.getFilepathPrompt().equals(prompt)) {
             config.setFilepathPrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.FILEPATH_PROMPT);
+            setConfigChanged(EConfigIdentifier.FILEPATH_PROMPT);
         }
     }
 
@@ -154,8 +146,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setAdditionalFilepathPrompt(String prompt) {
         if (!config.getAdditionalFilepathPrompt().equals(prompt)) {
             config.setAdditionalFilepathPrompt(prompt);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.ADDITIONAL_FILEPATH_PROMPT);
+            setConfigChanged(EConfigIdentifier.ADDITIONAL_FILEPATH_PROMPT);
         }
     }
 
@@ -166,8 +157,7 @@ public class AIConfigManager extends ConfigManager<AIConfig> {
     public void setSystemMessage(String message) {
         if (!config.getSystemMessage().equals(message)) {
             config.setSystemMessage(message);
-            setConfigChanged();
-            notifyConfigChangeListeners(EConfigIdentifier.SYSTEM_MESSAGE);
+            setConfigChanged(EConfigIdentifier.SYSTEM_MESSAGE);
         }
     }
 

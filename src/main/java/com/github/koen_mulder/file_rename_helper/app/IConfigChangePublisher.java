@@ -8,6 +8,7 @@ package com.github.koen_mulder.file_rename_helper.app;
  * configuration and notify registered {@link IConfigChangeListener}s when a config value is changed.
  */
 public interface IConfigChangePublisher {
+    
     /**
      * Adds a listener that will be notified when a config value is changed
      * 
@@ -21,10 +22,4 @@ public interface IConfigChangePublisher {
      */
     void removeConfigChangeListener(IConfigChangeListener listener);
 
-    /**
-     * Notifies all registered listeners of the config value change event.
-     * 
-     * @param configId The id of the config item triggering the change event
-     */
-    void notifyConfigChangeListeners(EConfigIdentifier configId);
 }

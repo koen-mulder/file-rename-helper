@@ -8,6 +8,7 @@ import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelC
 import com.github.koen_mulder.file_rename_helper.processing.api.IFileProcessedListener;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionListener;
 import com.github.koen_mulder.file_rename_helper.processing.api.IOpenFileActionPublisher;
+import com.github.koen_mulder.file_rename_helper.project.ActiveProjectController;
 import com.github.koen_mulder.file_rename_helper.renaming.ui.FileRenamePanel;
 
 public class FileRenameController {
@@ -17,10 +18,14 @@ public class FileRenameController {
     private FileProcessingItem activeFileItem;
 
     public FileRenameController(FileRenamePanel fileRenamePanel,
-            IOpenFileActionPublisher openFileActionPublisher,
-            FileProcessingModelController fileProcessingModelController) {
+            ActiveProjectController activeProjectController) {
 
         this.fileRenamePanel = fileRenamePanel;
+        
+        IOpenFileActionPublisher openFileActionPublisher = activeProjectController
+                .getOpenFileActionPublisher();
+        FileProcessingModelController fileProcessingModelController = activeProjectController
+                .getProcessingController().getFileProcessingModelController();
         
         // Set listener to what happens when a file is opened
         openFileActionPublisher.addOpenFileActionListener(new IOpenFileActionListener() {
