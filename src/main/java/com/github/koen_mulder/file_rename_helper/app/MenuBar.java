@@ -93,7 +93,7 @@ public class MenuBar extends JMenuBar {
         // TODO: Add action listener for LLM configuration
         configMenu.add(llmConfigMenuItem);
 
-        promptConfigMenuItem = new JMenuItem("Promt");
+        promptConfigMenuItem = new JMenuItem("Prompt");
         promptConfigMenuItem.setEnabled(false);
         // TODO: Add action listener for prompt configuration
         configMenu.add(promptConfigMenuItem);
