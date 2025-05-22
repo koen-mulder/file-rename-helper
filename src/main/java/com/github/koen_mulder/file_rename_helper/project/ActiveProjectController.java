@@ -12,6 +12,9 @@ public class ActiveProjectController {
     private AIController aiController;
     
     public ActiveProjectController(Project currentProject) {
+        if (currentProject == null) {
+            throw new IllegalArgumentException("Project cannot be null");
+        }
         this.currentProject = currentProject;
         
         processingController = new FileProcessingController();

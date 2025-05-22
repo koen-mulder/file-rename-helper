@@ -17,7 +17,6 @@ public class MenuBar extends JMenuBar {
     private ProjectController projectController;
 
     private JMenuItem saveProjectMenuItem;
-    private JMenuItem saveAsMenuItem;
     private JMenuItem closeProjectMenuItem;
 
     private JMenuItem projectConfigMenuItem;
@@ -51,7 +50,7 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem openProjectMenuItem = new JMenuItem("Open Project...");
         openProjectMenuItem.addActionListener(e -> {
-            projectController.openProject(this);
+            projectController.openProject(frame);
         });
         fileMenu.add(openProjectMenuItem);
 
@@ -61,13 +60,6 @@ public class MenuBar extends JMenuBar {
             projectController.saveProject(this);
         });
         fileMenu.add(saveProjectMenuItem);
-
-        saveAsMenuItem = new JMenuItem("Save As...");
-        saveAsMenuItem.setEnabled(false);
-        saveAsMenuItem.addActionListener(e -> {
-            projectController.saveProjectAs(this);
-        });
-        fileMenu.add(saveAsMenuItem);
 
         closeProjectMenuItem = new JMenuItem("Close Project");
         closeProjectMenuItem.setEnabled(false);
@@ -81,7 +73,7 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(e -> {
-            applicationController.closeApplication();
+            applicationController.closeApplication(frame, false);
         });
         fileMenu.add(exitMenuItem);
 
@@ -111,22 +103,22 @@ public class MenuBar extends JMenuBar {
 
     private void projectOpened() {
         saveProjectMenuItem.setEnabled(true);
-        saveAsMenuItem.setEnabled(true);
         closeProjectMenuItem.setEnabled(true);
         
-        projectConfigMenuItem.setEnabled(true);
-        llmConfigMenuItem.setEnabled(true);
-        promptConfigMenuItem.setEnabled(true);
+        //TODO: Enable configuration menu items after implementing the configuration dialogs
+//        projectConfigMenuItem.setEnabled(true);
+//        llmConfigMenuItem.setEnabled(true);
+//        promptConfigMenuItem.setEnabled(true);
     }
 
     private void projectClosed() {
         saveProjectMenuItem.setEnabled(false);
-        saveAsMenuItem.setEnabled(false);
         closeProjectMenuItem.setEnabled(false);
         
-        projectConfigMenuItem.setEnabled(false);
-        llmConfigMenuItem.setEnabled(false);
-        promptConfigMenuItem.setEnabled(false);
+        //TODO: Disable configuration menu items after implementing the configuration dialogs
+//        projectConfigMenuItem.setEnabled(false);
+//        llmConfigMenuItem.setEnabled(false);
+//        promptConfigMenuItem.setEnabled(false);
     }
 
     private void addOpenedProjectListener() {

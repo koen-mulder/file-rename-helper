@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -130,8 +131,8 @@ class ApplicationWindow extends JFrame {
         
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                applicationController.closeApplication();
+            public void windowClosing(WindowEvent e) {
+                applicationController.closeApplication(e.getWindow(), true);
             }
         });
     }

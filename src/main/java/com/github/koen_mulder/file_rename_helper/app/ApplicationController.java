@@ -1,5 +1,7 @@
 package com.github.koen_mulder.file_rename_helper.app;
 
+import java.awt.Component;
+
 import com.github.koen_mulder.file_rename_helper.project.ProjectController;
 
 public class ApplicationController {
@@ -14,8 +16,8 @@ public class ApplicationController {
         return projectController;
     }
     
-    public void closeApplication() {
-        // TODO: Handle proper closing of the application (e.g. saving state, etc.)
+    public void closeApplication(Component parentComponent, boolean force) {
+        projectController.closeProject(parentComponent, force);
         System.exit(0);
     }
 }
