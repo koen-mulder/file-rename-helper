@@ -10,7 +10,7 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.Capability;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
@@ -22,7 +22,7 @@ public class OllamaSuggestionService implements IAISuggestionService {
 
     private final AIConfigManager aiConfigManager = AIConfigManager.getInstance();
 
-    private ChatLanguageModel model;
+    private ChatModel model;
     private IRenameAssistant assistant;
     
     public OllamaSuggestionService() {
@@ -60,7 +60,7 @@ public class OllamaSuggestionService implements IAISuggestionService {
     
     private void initialiseRenameAssistant() {
         assistant = AiServices.builder(IRenameAssistant.class)
-                .chatLanguageModel(model)
+                .chatModel(model)
                 .systemMessageProvider(message -> aiConfigManager.getSystemMessage())
                 // TODO: use chat memory provider
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
