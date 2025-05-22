@@ -53,7 +53,7 @@ public class Project {
     }
     
     public void setArchiveLocation(Path archiveLocation) {
-        if (Objects.equal(this.archiveLocation, archiveLocation)) {
+        if (!Objects.equal(this.archiveLocation, archiveLocation)) {
             isChanged = true;
         }
         this.archiveLocation = archiveLocation;
