@@ -11,10 +11,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.koen_mulder.file_rename_helper.processing.FileProcessingModelController;
-import com.github.koen_mulder.file_rename_helper.processing.OpenFileActionPublisher;
-import com.github.koen_mulder.file_rename_helper.suggestions.AIController;
-
 
 public class Application {
 
@@ -25,14 +21,8 @@ public class Application {
      * Launch the application.
      */
     public static void main(String[] args) {
-
-        // Log messages at various levels
         logger.debug("Main has been called!");
         
-        // Setup controllers
-        AIController aiController = new AIController();
-        OpenFileActionPublisher openFileActionPublisher = new OpenFileActionPublisher();
-        FileProcessingModelController fileProcessingModelController = new FileProcessingModelController();
         
         // Set the look and feel to the system default
         try {
@@ -45,8 +35,9 @@ public class Application {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    ApplicationWindow window = new ApplicationWindow(aiController, openFileActionPublisher,
-                            fileProcessingModelController);
+                    ApplicationController applicationController = new ApplicationController();
+                    ApplicationWindow window = new ApplicationWindow(applicationController);
+                    
                     window.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

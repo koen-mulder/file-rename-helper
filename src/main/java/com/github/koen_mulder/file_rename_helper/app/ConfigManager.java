@@ -82,8 +82,7 @@ public abstract class ConfigManager<T> implements IConfigChangePublisher {
         listeners.remove(listener);
     }
 
-    @Override
-    public void notifyConfigChangeListeners(EConfigIdentifier configId) {
+    private void notifyConfigChangeListeners(EConfigIdentifier configId) {
         for (IConfigChangeListener listener : listeners) {
             listener.onConfigChanged(configId);
         }
